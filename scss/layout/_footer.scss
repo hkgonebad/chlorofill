@@ -1,0 +1,136 @@
+footer{
+    border-top: 1px solid #E8E8E8;
+    background: url(../img/footerbanner.jpg);   
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    .footerBanner{
+        text-align: center;
+        padding: 15px 0;
+        margin-top: 10px;
+        position: relative;
+
+        h4{
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #0292ce;
+            margin-bottom: 0;
+
+            @include media-breakpoint-up(md){
+                font-size: 1.8rem;
+            }
+        }
+
+        p{
+            font-size: 1rem;
+            color: #fff;
+            margin-bottom: 20px;
+
+            @include media-breakpoint-up(md){
+                font-size: 1.2rem;
+            }
+        }
+
+        .row{
+            @include media-breakpoint-down(md){
+                flex-direction: column-reverse;
+            }
+        }
+
+        .fbBigImg{
+            position: absolute;
+            left: 0;
+            bottom: 0;
+
+            @include media-breakpoint-down(md){
+                margin-top: 15px;
+                display: none;
+            }
+        }
+
+        .fbBottom{
+            display: flex;
+            align-items: center;
+
+            @include media-breakpoint-up(md){
+                display: block;
+            }
+
+            .fbImg{
+                @include media-breakpoint-up(md){
+                    margin-bottom: 10px;
+                    display: none;
+                }
+
+                img{
+                    height: auto;
+                    width: 50px;
+                }
+            }
+
+            .fbDetails{
+                display: flex;
+                align-items: center;
+                flex: 1;
+                justify-content: space-evenly;
+
+                .fbDetail{
+                    padding: 0 5px;
+                    width: 100%;
+
+                    p{
+                        font-size: .9rem;
+                        color: #fff;
+                        margin-bottom: 10px;
+                        font-weight: 600;
+
+                        @include media-breakpoint-up(md){
+                            font-size: 1.1rem;
+                        }
+
+                        span{
+                            display: block;
+                            font-weight: 400;
+                        }
+                    }
+                }
+            }
+
+
+        }
+    }
+
+    .stickyFooter{
+        background: #fff;
+        @include border-radius($border-radius-lg $border-radius-lg 0 0);
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+
+        .listFooter{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+
+            li{
+                width: 1%;
+                flex: 1;
+            }
+
+            a{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-flow: column;
+                color: #444;
+                text-decoration: none;
+                
+
+                img{
+                    margin-right: 5px;
+                }
+            }
+        }
+    }
+}

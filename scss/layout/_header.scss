@@ -1,0 +1,111 @@
+.topHeader{
+    background: $danger;
+    position: relative;
+    height: 70px;
+    color: #fff;
+    padding: 0px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    @include border-radius(0 0 $border-radius-lg $border-radius-lg);
+    margin-bottom: 8px;
+
+    .container{
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+
+    .navbar{
+
+        .navbar-toggler{
+            color: #fff;
+            border: none;
+            box-shadow: none;
+        }
+
+        .offcanvas-start{
+            width: 280px;
+
+            .offcanvas-body{
+                padding-right: 0;
+                padding-left: 0;
+
+                .navbar-nav{
+
+                    .nav-link, .dropdown-item{
+                        padding: 8px 15px;
+                        background: transparent;
+                        color: #000;
+                        position: relative;
+                        text-transform: uppercase;
+                        font-weight: 600;
+                        font-size: 15px;
+
+                        &:after{
+                            position: absolute;
+                            right: 15px;
+                            top: 20px;
+                        }
+
+                        &.active, &:hover{
+                            background: $danger;
+                            color: #fff;
+                        }
+                    }
+
+                    .dropdown-menu{
+                        margin: 15px;
+                        border-color: #e1e1e1;
+
+                        .dropdown-item{
+                            text-transform: capitalize;
+                            font-weight: 400;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .logo{
+        flex: 1;
+        text-align: center;
+        width: 100%;
+        display: block;
+        display: block;
+        margin: 0 auto;
+        padding: 0 10px;
+
+        img{
+            max-width: 300px;
+            margin: 0 auto;
+
+            @include media-breakpoint-down(sm){
+                max-width: 240px;
+                width: 100%;
+            }
+        }
+    }
+
+    .extras{
+
+        .btn{
+            color: #fff;
+            display: flex;
+            flex-flow: column;
+            text-align: center;
+            justify-content: center;
+            width: 60px;
+            padding: 0 .3rem;
+
+            span{
+                font-size: .8rem;
+                display: inline-block;
+                text-align: center;
+                line-height: 1;
+                margin-top: 5px;
+            }
+        }
+    }
+}

@@ -1,0 +1,65 @@
+.banner{
+
+    img{
+        width: 100%;
+    }
+}
+
+.offersGrid{
+
+    .offerBox{
+        margin-bottom: 15px;
+        display: block;
+    }
+}
+
+.videos{
+
+    .videoCarousel{
+        position: relative;
+        padding: 40px 0;
+
+        &:after, &:before{
+            position: absolute;
+            content: '';
+            background-image: url('../img/film.png');
+            background-repeat: repeat;
+            background-size: contain;
+            width: 100%;
+            height: 40px;
+        }
+
+        &:before{
+            top: 0;
+        }
+
+        &:after{
+            bottom: 0;
+            @include transform(rotate(180deg));
+        }
+
+        .item{
+            margin: 5px;
+
+            a{
+                display: block;
+                text-align: center;
+
+                img{
+                    width: 100%;
+                    @include border-radius(4px);
+                }
+
+                span{
+                    display: inline-block;
+                    text-align: center;
+                    font-size: 16px;
+                    text-decoration: none;
+                    color: #000;
+                    font-weight: 600;
+                    margin-top: 5px;
+                }
+            }
+        }
+    }
+}
