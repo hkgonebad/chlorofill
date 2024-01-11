@@ -1,0 +1,111 @@
+
+.store-wrap h2.text-center {
+    margin: 34px 0px 25px;
+    font-size: 1.2rem;
+}
+
+.maptip {
+    position: relative;
+    min-width: 230px;
+    height: auto;
+    padding-bottom: 5px;
+}
+
+.map_loc {
+    color: #444;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.map_content {
+    font-size: 14px;
+    color: $danger;
+}
+
+#search .form-control {
+    border-radius: 0;
+}
+
+#search .btn {
+    border-radius: 0;
+    background: $primary;
+    color: #fff;
+    border-color: $primary;
+    text-transform: uppercase;
+    font-size: 18px;
+    line-height: 28px;
+}
+
+#jlocator .title{
+    color: $danger;
+}
+
+.map-list {
+    height: 400px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.map-list {
+    margin-bottom: 30px;
+}
+
+.map-list li, .art {
+    border-bottom: 1px solid #F5F5F5;
+    list-style-type: none;
+    padding: 10px 0;
+}
+
+.store:hover .art, #jlocator .active .art{
+    border-color: $danger;
+}
+
+.map-list h4, .map-list .title, .art h4{
+    font-size: 14px;
+    color: #444;
+}
+
+.map-list p, .map-list .address, .art p {
+    font-size: 12px;
+    color: #888;
+}
+
+.map-container {
+
+}
+
+.reach-map *, .map * {
+    -webkit-transition: none !important;
+       -moz-transition: none !important;
+            transition: none !important;
+}
+
+#zoomPreventer {
+
+}
+
+#googleMap, #map-canvas, .reach-map .map {
+    height: 400px;
+    width: 100%;
+    display: block;
+}
+
+@media only screen and (max-width: 768px) {
+    
+    #search {
+        max-width: 100%;
+    }
+
+    #jlocator > .panel, #jlocator > .map{width: 100%;float:none;}
+
+}
+
+.panel [data-type*="address"], .panel [data-type*="city"], .panel [data-type*="zipcode"], .panel [data-type*="phone"]{
+    display: none;
+}
+
+.map .art{
+    border-bottom: none;
+    padding: 0;
+}

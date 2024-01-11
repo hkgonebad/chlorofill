@@ -9,6 +9,12 @@
     overflow: hidden;
     @include border-radius(0 0 $border-radius-lg $border-radius-lg);
     margin-bottom: 8px;
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
 
     .container{
         display: flex;
