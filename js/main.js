@@ -1,71 +1,26 @@
-///////////////////////////////////
-$(function() {
+// Vite entry point
+// console.log("Vite + Vanilla JS loaded"); // Optional: keep or remove
 
-    // News slider
-    if ($('.videoCarousel').length > 0) {
-        $('.videoCarousel').slick({
-            slidesToShow: 4,
-            slidesToScroll: 1,
-            dots: true,
-            autoplay: false,
+// We will add TheMealDB API fetching logic here later
 
-            arrows: true,
-            prevArrow:"<button type='button' class='slick-prev pull-left text-dark arrowClr'><i class='fas fa-chevron-left'></i></button>",
-            nextArrow:"<button type='button' class='slick-next pull-right text-dark arrowClr'><i class='fas fa-chevron-right'></i></button>",
+// OLD JQUERY CODE REMOVED
 
-            responsive: [{
-                breakpoint: 1024,
-                settings: {
-                    slidesToShow: 3,
-                }
-            }, {
-                breakpoint: 640,
-                settings: {
-                    slidesToShow: 2,
-                }
-            }, {
-                breakpoint: 420,
-                settings: {
-                    slidesToShow: 1,
-                }
-            }]
+import { createApp } from "vue";
+import App from "../src/App.vue";
+// Import Bootstrap JS (bundle includes Popper)
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
-        });
-    }
+// Bootstrap SCSS will be imported within main.scss
+// import 'bootstrap/scss/bootstrap.scss';
 
-    // Store Locator
-    const jlocator = $('#jlocator');
-    if (jlocator.length > 0) { 
-		jlocator.jlocator({
-			openInfoWindowOnStoreClick: true,
-            startZoom: 4, //initial map zoom (on page load)
-            storeZoom: 17, //map zoom on store click
-            latitude: 20.593684, //initial map latitude (on page load)
-            longitude: 78.962880, //initial map longitude (on page load)         
-            geolocation: true
-		});
-	}
+// Import your custom main SCSS file (which now imports partials like _dark-mode.scss)
+import "../scss/main.scss";
 
-	var showData = $('.stores');
+// Import the router
+import router from "../src/router"; // Path relative to main.js
 
-    $.getJSON('json/data.json', function (data) {
+const app = createApp(App);
 
-	    var items = data.markers.map(function (item) {
-		    return `
-            <div data-type="store" class="store box" data-latitude="${item.Lat}" data-longitude="${item.Long}">
-              <div class="art">
-                <h4 class="title" data-type="title">${item.Location}</h4>
-                <p data-type="address">${item.Address}</p>
-                <p data-type="city">${item.City}</p>
-                <p data-type="state">${item.State}</p>
-                <p data-type="zipcode">${item.Pincode}</p>
-                <p data-type="phone">${item.PhoneNumber}</p>
-              </div>
-            </div>`;
-		});
+app.use(router); // Tell Vue to use the router
 
-	    showData.html(items);
-    });
-
-    showData.text('Loading the JSON file.');
-});
+app.mount("#app");

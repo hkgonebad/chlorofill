@@ -1,5 +1,5 @@
-.topHeader{
-    background: $danger;
+.topHeader {
+    background: $primary;
     position: relative;
     height: 70px;
     color: #fff;
@@ -16,30 +16,31 @@
     right: 0;
     width: 100%;
 
-    .container{
+    .container {
         display: flex;
         align-items: center;
         justify-content: space-evenly;
     }
 
-    .navbar{
+    .navbar {
 
-        .navbar-toggler{
+        .navbar-toggler {
             color: #fff;
             border: none;
             box-shadow: none;
         }
 
-        .offcanvas-start{
+        .offcanvas-start {
             width: 280px;
 
-            .offcanvas-body{
+            .offcanvas-body {
                 padding-right: 0;
                 padding-left: 0;
 
-                .navbar-nav{
+                .navbar-nav {
 
-                    .nav-link, .dropdown-item{
+                    .nav-link,
+                    .dropdown-item {
                         padding: 8px 15px;
                         background: transparent;
                         color: #000;
@@ -48,23 +49,24 @@
                         font-weight: 600;
                         font-size: 15px;
 
-                        &:after{
+                        &:after {
                             position: absolute;
                             right: 15px;
                             top: 20px;
                         }
 
-                        &.active, &:hover{
-                            background: $danger;
+                        &.active,
+                        &:hover {
+                            background: $primary;
                             color: #fff;
                         }
                     }
 
-                    .dropdown-menu{
+                    .dropdown-menu {
                         margin: 15px;
                         border-color: #e1e1e1;
 
-                        .dropdown-item{
+                        .dropdown-item {
                             text-transform: capitalize;
                             font-weight: 400;
                         }
@@ -74,7 +76,7 @@
         }
     }
 
-    .logo{
+    .logo {
         flex: 1;
         text-align: center;
         width: 100%;
@@ -83,20 +85,20 @@
         margin: 0 auto;
         padding: 0 10px;
 
-        img{
+        img {
             max-width: 300px;
             margin: 0 auto;
 
-            @include media-breakpoint-down(sm){
+            @include media-breakpoint-down(sm) {
                 max-width: 240px;
                 width: 100%;
             }
         }
     }
 
-    .extras{
+    .extras {
 
-        .btn{
+        .btn {
             color: #fff;
             display: flex;
             flex-flow: column;
@@ -105,7 +107,7 @@
             width: 60px;
             padding: 0 .3rem;
 
-            span{
+            span {
                 font-size: .8rem;
                 display: inline-block;
                 text-align: center;

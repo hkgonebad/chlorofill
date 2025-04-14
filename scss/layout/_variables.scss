@@ -1,0 +1,26 @@
+// ChloroFill Color Palette
+$green: #4CAF50; // Primary
+$orange: #FF7043; // Accent
+
+$light-gray: #FAFAFA; // Background
+$dark-gray: #212121; // Text
+
+// Bootstrap Theme Color Overrides (Example Mapping)
+$primary: $green;
+$secondary: $orange; // Using accent as secondary for now
+$danger: $orange;
+$light: $light-gray;
+$dark: $dark-gray;
+
+// You might want to define other Bootstrap colors (success, info, warning, danger) 
+// or derive them if needed later.
+
+// Body Overrides
+$body-bg: $light;
+$body-color: $dark;
+
+// Link overrides
+// $link-color:                $primary;
+// $link-hover-color:          darken($link-color, 15%);
+
+// Add other variable overrides as needed
