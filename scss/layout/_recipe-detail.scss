@@ -31,6 +31,15 @@
     padding: 0.75rem 0; // Adjust padding
 }
 
+.ingredient-thumbnail {
+    width: 35px; // Adjust size as needed
+    height: 35px;
+    object-fit: contain; // Use contain to avoid distortion
+    vertical-align: middle; // Align with text
+    background-color: var(--bs-tertiary-bg); // Add slight background for contrast
+    border-radius: $border-radius-sm; // Slightly rounded corners
+}
+
 .ingredients-list li:last-child {
     border-bottom: none;
 }

@@ -83,8 +83,16 @@
 						v-for="(ingredient, index) in ingredientsList"
 						:key="index"
 					>
-						<!-- Placeholder icon -->
-						<span class="ingredient-icon me-2">��️</span>
+						<!-- Ingredient Thumbnail -->
+						<img
+							:src="getIngredientImageUrl(ingredient.name)"
+							:alt="ingredient.name"
+							class="ingredient-thumbnail me-2"
+							@error="
+								($event) =>
+									($event.target.style.display = 'none')
+							"
+						/>
 						<div class="flex-grow-1">
 							<a
 								:href="getAmazonSearchUrl(ingredient.name)"
@@ -152,6 +160,18 @@ const error = ref(null);
 // --- START AFFILIATE LINK CONFIG ---
 const AMAZON_AFFILIATE_TAG = "awzdigital00-21"; // Your Amazon affiliate tag
 const AMAZON_BASE_URL = "https://www.amazon.in/s";
+
+// --- START INGREDIENT IMAGE LOGIC ---
+const getIngredientImageUrl = (ingredientName) => {
+	if (!ingredientName) return ""; // Handle empty name
+	// Replace spaces with underscores and encode for URL
+	const formattedName = encodeURIComponent(
+		ingredientName.trim().replace(/ /g, "_")
+	);
+	// Use the small thumbnail version
+	return `https://www.themealdb.com/images/ingredients/${formattedName}-small.png`;
+};
+// --- END INGREDIENT IMAGE LOGIC ---
 
 const getAmazonSearchUrl = (searchTerm) => {
 	if (!searchTerm) return "#"; // Return a harmless link if search term is empty
