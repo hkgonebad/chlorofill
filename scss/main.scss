@@ -1,30 +1,22 @@
-// 2. Import YOUR custom variables to override Bootstrap defaults
+// Import YOUR custom variables to override Bootstrap defaults
 @import 'layout/variables';
 
-// 4. Import the rest of Bootstrap OR specific components
-@import "bootstrap/scss/bootstrap"; // Imports everything
+// Import the rest of Bootstrap OR specific components
+@import "bootstrap/scss/bootstrap";
 
-// 5. Your custom default base styles
+
 @import 'layout/typo';
 @import 'layout/default';
 
 
-
-// 7. Your plugin styles (if still needed)
-@import 'primeicons/primeicons.css'; // Add PrimeIcons
-//@import 'plugins/jquery.mCustomScrollbar.min';
-//@import 'plugins/hamburgers/hamburgers';
-//@import 'plugins/fancybox';
-@import 'plugins/slick';
-@import 'plugins/slick-theme';
+@import 'primeicons/primeicons.css';
 @import 'plugins/animate';
 @import 'plugins/prefixer';
 @import 'plugins/jlocator';
 
-// 6. Your custom layout partials
 
 @import 'layout/header';
-@import 'layout/footer'; // Will hold bottom nav styles
+@import 'layout/footer';
 @import 'layout/home';
 @import 'layout/about';
 @import 'layout/storelocator';
