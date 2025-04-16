@@ -105,7 +105,6 @@ const fetchRecipesByCategory = async (category) => {
 			// Handle case where category might exist but have no listed meals
 			recipes.value = [];
 			console.log(`No meals found for category: ${category}`);
-			// Optionally set an error or message: error.value = `No meals found for ${category}`;
 		}
 	} catch (e) {
 		console.error("Error fetching recipes by category:", e);

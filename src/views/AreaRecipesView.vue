@@ -114,7 +114,6 @@ watch(
 </script>
 
 <style scoped>
-/* Use styles from _category-recipes.scss or create _area-recipes.scss if needed */
 .view-header h2 {
 	font-weight: 600;
 }

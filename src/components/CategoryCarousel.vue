@@ -98,12 +98,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Add styles for placeholders */
 .category-item-placeholder {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	min-width: 70px; /* Approximate width */
+	min-width: 70px;
 }
 .category-image-placeholder {
 	display: inline-block;
@@ -111,15 +110,14 @@ onMounted(() => {
 	height: 60px;
 	background-color: var(--bs-secondary-bg);
 	border-radius: 50%;
-	margin-bottom: 0.5rem; /* Match image margin */
+	margin-bottom: 0.5rem;
 }
 .category-name-placeholder {
 	display: inline-block;
-	height: 0.75rem; /* Match font size */
-	width: 50px; /* Approximate text width */
+	height: 0.75rem;
+	width: 50px;
 }
 
-/* Original styles below */
 .category-item {
 	display: block;
 	color: var(--bs-body-color);
