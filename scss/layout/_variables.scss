@@ -15,6 +15,9 @@ $dark: $dark-gray;
 // You might want to define other Bootstrap colors (success, info, warning, danger) 
 // or derive them if needed later.
 
+// Bootstrap Base Font Size Adjustment (Example)
+// $font-size-base: 0.9375rem; // Slightly smaller base font (15px if root is 16px)
+
 // Body Overrides
 $body-bg: $light;
 $body-color: $dark;
