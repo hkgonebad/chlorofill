@@ -43,6 +43,12 @@ rsmart/  # Or your project root name (e.g., chlorofill)
 └── rules.md       # This file
 ```
 
+## Styling Guidelines
+- **Prefer Global SCSS:** Manage theme colors, layout styles, typography, and general component overrides within the `scss/` directory structure.
+- **Use SCSS Variables:** Leverage SCSS variables (like `$primary`, `$body-bg`) for theming and consistency.
+- **Component Styles:** Use `<style scoped>` within Vue components primarily for styles tightly coupled to the component's internal structure, state, or unique functionality, not for general theme/layout overrides.
+- **Dark Mode:** Use the `[data-bs-theme="dark"]` selector in relevant SCSS partials (especially `_dark-mode.scss`) to apply dark theme overrides.
+
 ## Development Steps
 1.  Set up Vite with Bun to manage the project and handle SCSS compilation. (Done)
 2.  Verify the existing HTML pages (`index.html`, etc.) render correctly using the Vite dev server. (Done)
@@ -67,10 +73,14 @@ rsmart/  # Or your project root name (e.g., chlorofill)
 10. **Cleanup:** Delete old static HTML files (except `index.html`). (Done)
 11. **Verify Basic Vue App:** Run `bun run dev` and check if the basic layout (header/footer) and routes are working. (Done - Offcanvas & Dark Mode fixed)
 12. Rebrand the site (update titles, logos, text within Vue components). (Done - Name: ChloroFill, Colors defined, Logo temp)
-13. Implement JavaScript logic (within Vue components) to:
-    - Fetch recipe data from TheMealDB.
-    - Dynamically populate components with recipes.
+13. **Refactor & Improve UI:** (Done)
+    - Create reusable components (e.g., `ItemCard.vue`, `LoadingSpinner.vue`, `ErrorMessage.vue`, `CategoryCarousel.vue`). (Done)
+    - Update views (`HomeView`, `CategoriesView`, `CategoryRecipesView`) to use these components. (Done)
+    - Apply UI improvements based on design inspiration (layout, card styles, typography, header/footer). (Done)
+    - Standardize back buttons. (Done)
+    - Centralize styles into SCSS partials (removing from components). (Done)
+14. Implement JavaScript logic (within Vue components) to:
     - Generate and insert Amazon Affiliate links for ingredients/tools.
-14. Refine styling (including dark mode).
-15. Build for production (`bun run build`).
-16. Deploy the `dist` folder contents to GitHub Pages. 
+15. Refine styling (including dark mode).
+16. Build for production (`bun run build`).
+17. Deploy the `dist` folder contents to GitHub Pages. 
