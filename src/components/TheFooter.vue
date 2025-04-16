@@ -19,6 +19,16 @@
 				<span class="nav-text d-none d-sm-block">Categories</span>
 			</router-link>
 
+			<!-- Add Favorites Link -->
+			<router-link
+				:to="{ name: 'Favorites' }"
+				class="nav-item"
+				active-class="active"
+			>
+				<i class="pi pi-heart" style="font-size: 1.3rem"></i>
+				<span class="nav-text d-none d-sm-block">Favorites</span>
+			</router-link>
+
 			<router-link
 				:to="{ name: 'Offers' }"
 				class="nav-item"
