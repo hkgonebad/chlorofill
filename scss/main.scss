@@ -1,32 +1,17 @@
-// 1. Import Bootstrap functions & default variables
-@import "bootstrap/scss/functions";
-@import "bootstrap/scss/variables";
-@import "bootstrap/scss/variables-dark"; // Keep for dark mode base
-
 // 2. Import YOUR custom variables to override Bootstrap defaults
 @import 'layout/variables';
 
-// 3. Import Bootstrap maps & mixins (after your overrides)
-@import "bootstrap/scss/maps";
-@import "bootstrap/scss/mixins";
-@import "bootstrap/scss/root";
-
 // 4. Import the rest of Bootstrap OR specific components
 @import "bootstrap/scss/bootstrap"; // Imports everything
-// Alternatively, import only needed components:
-// @import "bootstrap/scss/reboot";
-// @import "bootstrap/scss/type";
-// @import "bootstrap/scss/grid";
-// @import "bootstrap/scss/buttons";
-// ... etc.
 
-// 5. Your custom partials
+// 5. Your custom default base styles
 @import 'layout/typo';
-// @import 'bootstrap/bootstrap'; // Old local import - removed
-@import 'plugins/font-awesome/fontawesome';
-@import 'plugins/font-awesome/brands';
-@import 'plugins/font-awesome/regular';
-@import 'plugins/font-awesome/solid';
+@import 'layout/default';
+
+
+
+// 7. Your plugin styles (if still needed)
+@import 'primeicons/primeicons.css'; // Add PrimeIcons
 //@import 'plugins/jquery.mCustomScrollbar.min';
 //@import 'plugins/hamburgers/hamburgers';
 //@import 'plugins/fancybox';
@@ -36,11 +21,14 @@
 @import 'plugins/prefixer';
 @import 'plugins/jlocator';
 
-@import 'layout/default';
+// 6. Your custom layout partials
+
 @import 'layout/header';
-@import 'layout/footer';
+@import 'layout/footer'; // Will hold bottom nav styles
 @import 'layout/home';
 @import 'layout/about';
 @import 'layout/storelocator';
 @import 'layout/category';
+@import 'layout/category-recipes';
+@import 'layout/recipe-detail';
 @import 'layout/dark-mode';
