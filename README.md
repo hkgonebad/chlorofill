@@ -1,8 +1,6 @@
-# ChloroFill - A Vue Recipe
+# ChloroFill - A Vue Recipe (No Bun intended)
 
-A modern recipe showcase website built with Vue.js 3, Vite, and Bootstrap 5, utilizing TheMealDB API for recipe data and demonstrating Amazon Affiliate link integration.
-
-**Live Demo:** [Link to your GitHub Pages deployment URL]
+A modern, mobile first recipe showcase app built with Vue.js 3, Vite, and Bootstrap 5, utilizing TheMealDB API for recipe data and demonstrating Amazon Affiliate link integration.
 
 ## Overview
 
@@ -29,7 +27,38 @@ This project repurposes a static HTML layout into a dynamic single-page applicat
     *   Bootstrap 5 integrated via SCSS for layout and base components.
     *   Custom SCSS partials (`scss/` directory) for theme overrides (`layout/_variables.scss`), component styles (`components/`), and layout adjustments.
     *   **Dark Mode:** Supports light and dark themes using Bootstrap's `data-bs-theme` attribute and custom variable overrides (`layout/_dark-mode.scss`).
-*   **Deployment:** Automated deployment to GitHub Pages via GitHub Actions on pushes to the `main` branch.
+*   **Deployment:** Automated deployment to GitHub Pages via GitHub Actions.
+*   **Accessibility:** ARIA labels and keyboard navigation support implemented throughout the application.
+
+## Project Status
+
+All core development steps are complete! The project is now ready for review and potential enhancements.
+
+### Completed Features
+
+* ✅ Core Vue.js setup and routing
+* ✅ Component-based architecture
+* ✅ TheMealDB API integration
+* ✅ Recipe search with debouncing
+* ✅ Dark mode support
+* ✅ Affiliate integration
+* ✅ Accessibility improvements
+* ✅ Centralized SCSS styling
+* ✅ Loading states and error handling
+* ✅ Favorites feature using LocalStorage
+* ✅ Random recipe functionality
+* ✅ Area-based recipe browsing
+
+### Potential Enhancements
+
+* **Styling & Polish:**
+    * Integrate final site logo
+    * Add subtle UI animations or page transitions
+    * Optimize web font loading
+
+* **Content & Feature Expansion:**
+    * Add filters/views to browse recipes by Main Ingredient
+    * Display ingredient thumbnail images (if feasible via API)
 
 ## Technology Stack
 
@@ -70,4 +99,4 @@ This is primarily a practice project, but contributions, issues, and feature req
 
 ## License
 
-[MIT License](LICENSE) - *(Optional: Create a LICENSE file if you wish)*
+[MIT License](LICENSE)
