@@ -127,6 +127,11 @@
                 }
             }
         }
+
+        // --- START Dark Mode Search Autocomplete Styles ---
+        // MOVED TO main dark mode block, targeting .recipe-search-component
+        // --- END Dark Mode Search Autocomplete Styles ---
+
     }
 
     .stickyFooter {
@@ -150,6 +155,45 @@
 
     // === Footer Overrides ===
     // Specific overrides for old footer removed as structure changed
+
+    // ==================================================
+    // Global Dark Mode Styles for Components
+    // ==================================================
+
+    .recipe-search-component {
+
+        // Style the input group addon in dark mode
+        .search-loader-addon {
+            background-color: transparent;
+            border-left: none;
+            border-color: var(--bs-border-color); // Match input group border
+
+            // Color for the spinner icon inside the addon
+            .search-loader {
+                color: var(--bs-secondary-color);
+            }
+        }
+
+        .suggestions-dropdown {
+            background-color: var(--bs-tertiary-bg); // Darker background for dropdown
+            border-color: var(--bs-border-color); // Use standard dark border color
+
+            .list-group-item,
+            .list-group-item-action {
+                color: var(--bs-body-color); // Ensure text is light
+
+                &:hover,
+                &:focus {
+                    background-color: var(--bs-dark-subtle); // Use subtle dark hover
+                }
+            }
+
+            // Ensure loading/no results text is also light
+            .text-muted {
+                color: var(--bs-secondary-color) !important; // Use a lighter muted color
+            }
+        }
+    }
 
     // === Bottom Nav Overrides ===
     .bottom-nav {

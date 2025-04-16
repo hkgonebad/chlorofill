@@ -1,10 +1,16 @@
 <template>
-	<div class="recipe-detail-view container-fluid pb-5">
-		<!-- Use container-fluid for edge-to-edge, add padding bottom -->
+	<section class="block recipe-detail-view pt-0">
+		<!-- Loading State -->
+		<div v-if="loading" class="container text-center p-5">
+			<LoadingSpinner />
+		</div>
 
-		<LoadingSpinner v-if="loading" />
-		<ErrorMessage v-else-if="error" :message="error" class="m-4" />
+		<!-- Error State -->
+		<div v-else-if="error" class="container p-4">
+			<ErrorMessage :message="error" />
+		</div>
 
+		<!-- Content State -->
 		<div v-else-if="recipeDetails" class="recipe-content">
 			<!-- Image Header (No Back Button Here) -->
 			<div class="image-header position-relative mb-3">
@@ -25,7 +31,7 @@
 					>
 						<i class="pi pi-arrow-left"></i>
 					</button>
-					<h2 class="mb-0 flex-grow-1">
+					<h2 class="mb-0 flex-grow-1 section-title">
 						{{ recipeDetails.strMeal }}
 					</h2>
 				</div>
@@ -78,7 +84,7 @@
 						:key="index"
 					>
 						<!-- Placeholder icon -->
-						<span class="ingredient-icon me-2">🍽️</span>
+						<span class="ingredient-icon me-2">��️</span>
 						<div class="flex-grow-1">
 							<a
 								:href="getAmazonSearchUrl(ingredient.name)"
@@ -118,7 +124,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</section>
 </template>
 
 <script setup>

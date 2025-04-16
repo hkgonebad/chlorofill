@@ -1,9 +1,8 @@
 .topHeader {
     background: $primary;
-    position: relative;
+    position: sticky;
     color: #fff;
     padding: 0.5rem 0;
-    overflow: hidden;
     @include border-radius(0 0 $border-radius-lg $border-radius-lg);
     z-index: 999;
 
@@ -100,5 +99,9 @@
         .theme-toggle-btn .fa-moon {
             display: none;
         }
+
+        // --- START Search Autocomplete Styles ---
+        // MOVED TO scss/components/_recipe-search.scss
+        // --- END Search Autocomplete Styles ---
     }
 }
