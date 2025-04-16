@@ -71,4 +71,19 @@ img {
     }
 }
 
-/* Add any other global default styles here */
+.btn {
+
+    &.btn-primary,
+    &.btn-secondary,
+    &.btn-danger {
+        color: $white;
+    }
+
+    &.btn-outline-primary,
+    &.btn-outline-secondary,
+    &.btn-outline-danger {
+        &:hover {
+            color: $white;
+        }
+    }
+}
