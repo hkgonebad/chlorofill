@@ -49,6 +49,23 @@ rsmart/  # Or your project root name (e.g., chlorofill)
 - **Component Styles:** Use `<style scoped>` within Vue components primarily for styles tightly coupled to the component's internal structure, state, or unique functionality, not for general theme/layout overrides.
 - **Dark Mode:** Use the `[data-bs-theme="dark"]` selector in relevant SCSS partials (especially `_dark-mode.scss`) to apply dark theme overrides.
 
+## Key Features & Optimizations
+
+- **Affiliate Integration:**
+    - Dynamically generated Amazon affiliate links for recipe ingredients, categories, and areas displayed in `RecipeDetailView.vue`.
+    - Curated affiliate links for deals, tools, and cookbooks presented in `OffersView.vue` using Bootstrap cards and custom category images.
+- **Reusable Autocomplete Search (`RecipeSearch.vue`):**
+    - Created a standalone component for recipe search functionality.
+    - Fetches suggestions from TheMealDB API (`search.php?s=`).
+    - **Optimized API Calls:** Implemented **debouncing** (400ms delay) on user input to limit API requests only after typing pauses.
+    - **Optimized UX:** Requires a **minimum query length** (3 characters) before triggering a search.
+    - Shows a loading spinner within the input group during API calls.
+    - Handles suggestion selection and navigates to the recipe detail page using Vue Router.
+    - **Component Integration:**
+        - Added to `TheHeader.vue`, conditionally hidden (`v-if`) on the homepage (`HomeView.vue`).
+        - Added to `HomeView.vue` with specific SCSS overrides in `_home.scss` for enhanced visibility.
+    - **Centralized Styling:** Component styles managed globally via `scss/components/_recipe-search.scss` and `scss/layout/_dark-mode.scss`.
+
 ## Development Steps
 1.  Set up Vite with Bun to manage the project and handle SCSS compilation. (Done)
 2.  Verify the existing HTML pages (`index.html`, etc.) render correctly using the Vite dev server. (Done)
@@ -79,9 +96,10 @@ rsmart/  # Or your project root name (e.g., chlorofill)
     - Apply UI improvements based on design inspiration (layout, card styles, typography, header/footer). (Done)
     - Standardize back buttons. (Done)
     - Centralize styles into SCSS partials (removing from components). (Done)
-14. Implement JavaScript logic (within Vue components) to:
-    - Fetch data from TheMealDB API.
+14. Implement JavaScript logic (within Vue components). (Done)
+    - Fetch data from TheMealDB API. (Done)
     - Generate and insert Amazon Affiliate links for ingredients/tools. (Done)
+    - Implement reusable Recipe Search component with autocomplete & debouncing. (Done)
 15. Refine styling (including dark mode).
 16. Build for production (`bun run build`).
 17. Deploy the `dist` folder contents to GitHub Pages. 
