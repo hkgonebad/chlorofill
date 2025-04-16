@@ -49,6 +49,9 @@ rsmart/  # Or your project root name (e.g., chlorofill)
 - **Component Styles:** Use `<style scoped>` within Vue components primarily for styles tightly coupled to the component's internal structure, state, or unique functionality, not for general theme/layout overrides.
 - **Dark Mode:** Use the `[data-bs-theme="dark"]` selector in relevant SCSS partials (especially `_dark-mode.scss`) to apply dark theme overrides.
 
+## Commenting Guidelines
+- **Keep Comments Concise:** Focus comments on *why* something is done, not *what* it does, especially for complex logic. Avoid overly detailed comments for simple code, as they can appear verbose or AI-generated.
+
 ## Key Features & Optimizations
 
 - **Affiliate Integration:**
@@ -102,4 +105,22 @@ rsmart/  # Or your project root name (e.g., chlorofill)
     - Implement reusable Recipe Search component with autocomplete & debouncing. (Done)
 15. Refine styling (including dark mode).
 16. Build for production (`bun run build`).
-17. Deploy the `dist` folder contents to GitHub Pages. 
+17. Deploy the `dist` folder contents to GitHub Pages.
+
+## Potential Enhancements (Future Ideas)
+
+- **Content & Feature Expansion:**
+    - Add filters/views to browse recipes by Area (Cuisine) or Main Ingredient.
+    - Implement a \"Random Recipe\" button/feature.
+    - Display ingredient thumbnail images (if feasible via API).
+- **User Experience:**
+    - Implement a \"Favorites\" feature using LocalStorage.
+    - Enhance loading states with skeleton loaders.
+    - Conduct an accessibility review (ARIA, keyboard nav, contrast).
+- **Styling & Polish:**
+    - Integrate the final site logo.
+    - Add subtle UI animations or page transitions.
+    - Optimize web font loading.
+- **Monetization:**
+    - Feature specific, curated affiliate products/links instead of only searches.
+    - Consider adding affiliate banners (optional). 
