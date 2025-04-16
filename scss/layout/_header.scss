@@ -1,33 +1,27 @@
 .topHeader {
     background: $primary;
     position: relative;
-    height: 70px;
     color: #fff;
-    padding: 0px;
-    display: flex;
-    align-items: center;
+    padding: 0.5rem 0;
     overflow: hidden;
     @include border-radius(0 0 $border-radius-lg $border-radius-lg);
-    margin-bottom: 8px;
     z-index: 999;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
 
     .container {
         display: flex;
         align-items: center;
-        justify-content: space-evenly;
+        justify-content: space-between;
+        min-height: 55px;
     }
 
     .navbar {
+        padding: 0;
 
         .navbar-toggler {
             color: #fff;
             border: none;
             box-shadow: none;
+            font-size: 1.5rem;
         }
 
         .offcanvas-start {
@@ -77,43 +71,34 @@
     }
 
     .logo {
-        flex: 1;
-        text-align: center;
-        width: 100%;
-        display: block;
-        display: block;
-        margin: 0 auto;
-        padding: 0 10px;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
 
         img {
-            max-width: 300px;
-            margin: 0 auto;
-
-            @include media-breakpoint-down(sm) {
-                max-width: 240px;
-                width: 100%;
-            }
+            max-height: 40px;
+            filter: brightness(0) invert(1);
         }
     }
 
     .extras {
-
         .btn {
             color: #fff;
-            display: flex;
-            flex-flow: column;
-            text-align: center;
-            justify-content: center;
-            width: 60px;
-            padding: 0 .3rem;
+            padding: 0.25rem 0.5rem;
+            border-color: rgba(255, 255, 255, 0.25);
 
-            span {
-                font-size: .8rem;
-                display: inline-block;
-                text-align: center;
-                line-height: 1;
-                margin-top: 5px;
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.1);
             }
+        }
+
+        .theme-toggle-btn .fa-moon,
+        .theme-toggle-btn .fa-sun {
+            display: inline-block;
+        }
+
+        .theme-toggle-btn .fa-moon {
+            display: none;
         }
     }
 }

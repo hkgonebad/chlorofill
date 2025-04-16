@@ -1,6 +1,6 @@
 <template>
 	<header>
-		<div class="topHeader">
+		<div class="topHeader fixed-top">
 			<div class="container">
 				<nav class="navbar navbar-light">
 					<button
@@ -10,7 +10,7 @@
 						data-bs-target="#offcanvasNavbar"
 						aria-controls="offcanvasNavbar"
 					>
-						<i class="fa fa-bars"></i>
+						<i class="pi pi-bars"></i>
 					</button>
 					<div
 						class="offcanvas offcanvas-start"
@@ -104,10 +104,18 @@
 					><img src="/img/logo.png" alt="ChloroFill Logo"
 				/></router-link>
 
-				<!-- Remove Store Locator button for now -->
-				<!-- <div class="extras">
-          <a href="store-locator.html" class="btn"><i class="fa fa-map-marker-alt"></i><span>Store Locator</span></a>
-        </div> -->
+				<div class="extras d-flex align-items-center">
+					<!-- Dark Mode Toggle Button -->
+					<button
+						@click="toggleDarkMode"
+						class="btn btn-sm btn-outline-secondary p-1 me-2 theme-toggle-btn"
+					>
+						<i class="pi pi-moon d-none d-theme-dark"></i>
+						<i class="pi pi-sun d-theme-light"></i>
+					</button>
+					<!-- Placeholder for Search/Profile Icon -->
+					<!-- <a href="#" class="btn p-1"><i class="fas fa-search"></i></a> -->
+				</div>
 			</div>
 		</div>
 	</header>
@@ -115,13 +123,15 @@
 
 <script setup>
 import { RouterLink } from "vue-router";
-// No specific script logic needed for header yet
-</script>
 
-<style scoped>
-/* Add component-specific styles if needed */
-.nav-link.active {
-	/* Add styles for active link if Bootstrap defaults aren't enough */
-	font-weight: bold;
-}
-</style>
+// Dark mode toggle logic
+const toggleDarkMode = () => {
+	console.log("Theme toggle clicked!");
+	const htmlElement = document.documentElement;
+	const currentTheme = htmlElement.getAttribute("data-bs-theme") || "light";
+	htmlElement.setAttribute(
+		"data-bs-theme",
+		currentTheme === "dark" ? "light" : "dark"
+	);
+};
+</script>
