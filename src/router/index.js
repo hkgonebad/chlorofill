@@ -15,6 +15,7 @@ const CategoryRecipesView = () => import("../views/CategoryRecipesView.vue");
 const RecipeDetailView = () => import("../views/RecipeDetailView.vue");
 const AreasView = () => import("../views/AreasView.vue"); // <-- Import AreasView
 const AreaRecipesView = () => import("../views/AreaRecipesView.vue"); // <-- Import AreaRecipesView
+const FavoritesView = () => import("../views/FavoritesView.vue"); // <-- Import FavoritesView
 
 const routes = [
 	{
@@ -63,6 +64,12 @@ const routes = [
 		name: "RecipeDetail",
 		component: RecipeDetailView,
 		props: true,
+	},
+	// Route for Favorites page
+	{
+		path: "/favorites",
+		name: "Favorites",
+		component: FavoritesView,
 	},
 	// Add other routes as needed
 ];
