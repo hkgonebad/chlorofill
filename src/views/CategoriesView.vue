@@ -3,11 +3,22 @@
 		<div class="container">
 			<h1 class="section-title">ChloroFill Recipe Categories</h1>
 
-			<LoadingSpinner v-if="loading" />
+			<h2>Recipe Categories</h2>
+
+			<!-- Loading State -->
+			<div
+				v-if="loading"
+				class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 placeholder-glow"
+			>
+				<SkeletonCard v-for="n in 8" :key="'sk-' + n" />
+				<!-- Show ~8 skeletons -->
+			</div>
+			<!-- Error State -->
 			<ErrorMessage v-else-if="error" :message="error" />
 
+			<!-- Categories List -->
 			<div
-				v-else
+				v-else-if="categories.length > 0"
 				class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
 			>
 				<ItemCard
@@ -43,8 +54,8 @@ import { ref, onMounted } from "vue";
 import { RouterLink } from "vue-router"; // Import RouterLink if using it in the template
 // Import reusable components
 import ItemCard from "../components/ItemCard.vue";
-import LoadingSpinner from "../components/LoadingSpinner.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
+import SkeletonCard from "../components/SkeletonCard.vue"; // <-- Import SkeletonCard
 
 const categories = ref([]); // Holds the array of category objects
 const loading = ref(false);

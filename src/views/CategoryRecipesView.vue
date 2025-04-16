@@ -6,6 +6,7 @@
 				<button
 					@click="goBack"
 					class="btn btn-light btn-sm rounded-circle me-3 back-button-icon"
+					aria-label="Go back"
 				>
 					<i class="pi pi-arrow-left"></i>
 				</button>
@@ -14,7 +15,15 @@
 				</h2>
 			</div>
 
-			<LoadingSpinner v-if="loading" />
+			<!-- Loading State -->
+			<div
+				v-if="loading"
+				class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 placeholder-glow"
+			>
+				<SkeletonCard v-for="n in 8" :key="'sk-' + n" />
+				<!-- Show ~8 skeletons -->
+			</div>
+			<!-- Error State -->
 			<ErrorMessage v-else-if="error" :message="error" />
 
 			<!-- Recipe List -->
@@ -50,8 +59,8 @@ import { ref, onMounted, watch } from "vue";
 import { useRouter, RouterLink } from "vue-router";
 // Import reusable components
 import ItemCard from "../components/ItemCard.vue";
-import LoadingSpinner from "../components/LoadingSpinner.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
+import SkeletonCard from "../components/SkeletonCard.vue";
 
 // Initialize router
 const router = useRouter();

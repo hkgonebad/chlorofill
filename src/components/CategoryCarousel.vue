@@ -1,7 +1,19 @@
 <template>
 	<div class="category-carousel-wrapper">
-		<LoadingSpinner v-if="loading" />
+		<!-- Loading State with Placeholders -->
+		<div v-if="loading" class="d-flex overflow-hidden placeholder-glow">
+			<div
+				v-for="n in 8"
+				:key="'sk-cat-' + n"
+				class="text-center me-3 category-item-placeholder"
+			>
+				<span class="placeholder category-image-placeholder"></span>
+				<span class="placeholder category-name-placeholder"></span>
+			</div>
+		</div>
+		<!-- Error State -->
 		<ErrorMessage v-else-if="error" :message="error" />
+		<!-- Swiper Content -->
 		<swiper
 			v-else
 			:slides-per-view="6"
@@ -53,7 +65,6 @@ import "swiper/css/free-mode";
 import { FreeMode } from "swiper/modules";
 
 // Import reusable components
-import LoadingSpinner from "./LoadingSpinner.vue";
 import ErrorMessage from "./ErrorMessage.vue";
 
 const modules = [FreeMode];
@@ -85,3 +96,32 @@ onMounted(() => {
 	fetchCategories();
 });
 </script>
+
+<style scoped>
+/* Add styles for placeholders */
+.category-item-placeholder {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-width: 70px; /* Approximate width */
+}
+.category-image-placeholder {
+	display: inline-block;
+	width: 60px;
+	height: 60px;
+	background-color: var(--bs-secondary-bg);
+	border-radius: 50%;
+	margin-bottom: 0.5rem; /* Match image margin */
+}
+.category-name-placeholder {
+	display: inline-block;
+	height: 0.75rem; /* Match font size */
+	width: 50px; /* Approximate text width */
+}
+
+/* Original styles below */
+.category-item {
+	display: block;
+	color: var(--bs-body-color);
+}
+</style>

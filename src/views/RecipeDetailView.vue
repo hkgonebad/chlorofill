@@ -1,8 +1,54 @@
 <template>
 	<section class="block recipe-detail-view pt-0">
-		<!-- Loading State -->
-		<div v-if="loading" class="container text-center p-5">
-			<LoadingSpinner />
+		<!-- Loading State with Placeholders -->
+		<div v-if="loading" class="recipe-detail-placeholder placeholder-glow">
+			<!-- Image Placeholder -->
+			<div class="placeholder image-header-placeholder mb-3"></div>
+			<div class="container recipe-body px-4 py-2">
+				<!-- Header Placeholder -->
+				<div class="d-flex align-items-center mb-4 view-header">
+					<span
+						class="placeholder back-button-placeholder me-3"
+					></span>
+					<h2 class="mb-0 flex-grow-1 placeholder col-8"></h2>
+					<span
+						class="placeholder favorite-button-placeholder ms-3"
+					></span>
+				</div>
+				<!-- Meta Placeholder -->
+				<p class="placeholder-glow small mb-3">
+					<span class="placeholder col-3 me-2"></span>
+					<span class="placeholder col-3"></span>
+				</p>
+				<!-- Tags Placeholder (Optional) -->
+				<p class="placeholder-glow mb-3">
+					<span class="placeholder col-2 me-1"></span>
+					<span class="placeholder col-3 me-1"></span>
+				</p>
+				<!-- Ingredients Placeholder -->
+				<h5 class="mt-4 placeholder col-4"></h5>
+				<ul class="list-unstyled ingredients-list mb-4">
+					<li
+						v-for="n in 5"
+						:key="'sk-ing-' + n"
+						class="d-flex align-items-center mb-2 placeholder-glow"
+					>
+						<span
+							class="placeholder ingredient-thumbnail-placeholder me-2"
+						></span>
+						<span class="placeholder col-5 me-2"></span>
+						<span class="placeholder col-3 ms-auto"></span>
+					</li>
+				</ul>
+				<!-- Instructions Placeholder -->
+				<h5 class="mt-4 placeholder col-5"></h5>
+				<p class="placeholder-glow">
+					<span class="placeholder col-12 mb-1"></span>
+					<span class="placeholder col-10"></span>
+					<span class="placeholder col-11 mb-1"></span>
+					<span class="placeholder col-8"></span>
+				</p>
+			</div>
 		</div>
 
 		<!-- Error State -->
@@ -23,17 +69,37 @@
 			</div>
 
 			<div class="container recipe-body px-4 py-2">
-				<!-- Header Row with Back Button and Title -->
+				<!-- Header Row with Back Button, Title, and Favorite Button -->
 				<div class="d-flex align-items-center mb-4 view-header">
 					<button
 						@click="goBack"
 						class="btn btn-light btn-sm rounded-circle me-3 back-button-icon"
+						aria-label="Go back"
 					>
 						<i class="pi pi-arrow-left"></i>
 					</button>
 					<h2 class="mb-0 flex-grow-1 section-title">
 						{{ recipeDetails.strMeal }}
 					</h2>
+					<!-- Favorite Button -->
+					<button
+						@click="toggleFavorite"
+						class="btn btn-outline-danger btn-sm rounded-circle ms-3 favorite-button"
+						:class="{ active: isCurrentFavorite }"
+						:aria-label="
+							isCurrentFavorite
+								? 'Remove from favorites'
+								: 'Add to favorites'
+						"
+					>
+						<i
+							:class="
+								isCurrentFavorite
+									? 'pi pi-heart-fill'
+									: 'pi pi-heart'
+							"
+						></i>
+					</button>
 				</div>
 
 				<!-- Meta Info -->
@@ -138,8 +204,8 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
-import LoadingSpinner from "../components/LoadingSpinner.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
+import { useFavorites } from "../composables/useFavorites";
 
 // Initialize router for back button
 const router = useRouter();
@@ -156,6 +222,12 @@ const props = defineProps({
 const recipeDetails = ref(null);
 const loading = ref(false);
 const error = ref(null);
+
+// --- Composables ---
+const { addFavorite, removeFavorite, isFavorite } = useFavorites();
+
+// --- Reactive State ---
+const isCurrentFavorite = isFavorite(props.id);
 
 // --- START AFFILIATE LINK CONFIG ---
 const AMAZON_AFFILIATE_TAG = "awzdigital00-21"; // Your Amazon affiliate tag
@@ -183,6 +255,16 @@ const getAmazonSearchUrl = (searchTerm) => {
 // Back navigation method
 const goBack = () => {
 	router.go(-1);
+};
+
+// Toggle favorite status
+const toggleFavorite = () => {
+	if (isCurrentFavorite.value) {
+		removeFavorite(props.id);
+	} else {
+		addFavorite(props.id);
+	}
+	// Note: isCurrentFavorite updates reactively because it's based on favoriteIds
 };
 
 // Function to fetch full recipe details by ID
@@ -242,6 +324,34 @@ watch(
 	() => props.id,
 	(newId) => {
 		fetchRecipeDetails(newId);
+		// Note: isCurrentFavorite will update automatically due to reactivity
 	}
 );
 </script>
+
+<style scoped>
+/* Add styles for detail placeholders */
+.image-header-placeholder {
+	width: 100%;
+	height: 30vh; /* Approximate height */
+	background-color: var(--bs-secondary-bg);
+}
+.back-button-placeholder,
+.favorite-button-placeholder {
+	display: inline-block;
+	width: 35px; /* Match button size */
+	height: 35px;
+	border-radius: 50%;
+	background-color: var(--bs-secondary-bg);
+}
+.ingredient-thumbnail-placeholder {
+	display: inline-block;
+	width: 35px; /* Match thumbnail size */
+	height: 35px;
+	border-radius: var(--bs-border-radius-sm);
+	background-color: var(--bs-secondary-bg);
+	vertical-align: middle;
+}
+
+/* Add any other specific placeholder styles if needed */
+</style>
