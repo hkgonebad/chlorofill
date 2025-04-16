@@ -31,6 +31,20 @@ const routes = [
 		name: "Offers",
 		component: () => import("../views/OffersView.vue"),
 	},
+	// Add route for recipes by category
+	{
+		path: "/category/:categoryName", // Dynamic segment for category name
+		name: "CategoryRecipes", // Name used in <router-link>
+		component: () => import("../views/CategoryRecipesView.vue"),
+		props: true, // Pass route params as props to the component
+	},
+	// Add route for individual recipe details
+	{
+		path: "/recipe/:id", // Dynamic segment for recipe ID
+		name: "RecipeDetail", // Name used in <router-link>
+		component: () => import("../views/RecipeDetailView.vue"),
+		props: true, // Pass route params (id) as props
+	},
 	// Add other routes as needed
 ];
 

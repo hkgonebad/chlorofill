@@ -1,0 +1,49 @@
+// Styles specific to the Recipe Detail View
+
+.recipe-detail-view {
+    padding-bottom: 80px;
+    /* Ensure space above bottom nav */
+}
+
+.recipe-image {
+    width: 100%;
+    max-height: 40vh;
+    /* Limit image height */
+    object-fit: cover;
+}
+
+.back-button {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    line-height: 1;
+    font-size: 1.2rem;
+    opacity: 0.9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); // Add shadow for visibility
+}
+
+.recipe-body h1 {
+    font-weight: 700;
+}
+
+.ingredients-list li {
+    border-bottom: 1px solid var(--bs-border-color-translucent);
+    padding: 0.75rem 0; // Adjust padding
+}
+
+.ingredients-list li:last-child {
+    border-bottom: none;
+}
+
+.ingredient-icon {
+    font-size: 1.1rem;
+}
+
+.instructions-text {
+    white-space: pre-wrap;
+    /* Preserve line breaks */
+    line-height: 1.6;
+}
+
+// Dark mode adjustments are now handled globally via CSS variables
+// or in _dark-mode.scss if specific overrides needed 

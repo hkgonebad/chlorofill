@@ -1,0 +1,35 @@
+// Styles specific to the Category Recipes View
+
+.category-recipes-view {
+    .view-header {
+
+        // Styles for the header row within this view
+        h2 {
+            font-weight: 600;
+        }
+    }
+
+    .back-button-icon {
+        width: 35px;
+        height: 35px;
+        line-height: 1;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--bs-box-shadow-sm);
+    }
+
+    .recipe-thumb {
+        // This class was defined in the component, move it here if needed
+        // or keep it in ItemCard.vue if that's where it applies
+        // max-height: 200px; 
+        // object-fit: cover;
+    }
+}
+
+// Add dark mode overrides for this specific view if needed, 
+// although variables should handle most cases.
+// [data-bs-theme="dark"] .category-recipes-view {
+//    .view-header h2 { ... }
+// } 
