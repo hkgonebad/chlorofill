@@ -13,8 +13,8 @@
         border-radius: 50%;
         padding: 5px;
         transition: transform 0.2s ease;
-        margin-left: auto; // Center image within link
-        margin-right: auto; // Center image within link
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .category-item:hover .category-image {
@@ -29,6 +29,6 @@
     /* Ensure swiper slides have correct width */
     .swiper-slide {
         width: auto !important;
-        /* Let content determine width */
+
     }
 }
