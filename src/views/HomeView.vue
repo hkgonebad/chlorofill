@@ -5,6 +5,7 @@
 			<!-- Add user name later if implementing auth -->
 			<h2>What would you like<br />to cook today?</h2>
 			<!-- Add Search Bar component later -->
+			<RecipeSearch class="mt-3 mb-4" />
 		</div>
 
 		<section class="recipe-section mb-5">
@@ -74,6 +75,7 @@ import ItemCard from "../components/ItemCard.vue";
 import LoadingSpinner from "../components/LoadingSpinner.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
 import CategoryCarousel from "../components/CategoryCarousel.vue";
+import RecipeSearch from "../components/RecipeSearch.vue";
 
 const userName = ref(null); // Placeholder for username
 const featuredRecipes = ref([]);

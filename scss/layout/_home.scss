@@ -77,5 +77,31 @@
         margin-bottom: 0;
     }
 
+    // --- Styles for RecipeSearch component on Home View ---
+    .recipe-search-component {
+        max-width: 600px; // Allow it to be wider on home
+        margin-left: auto;
+        margin-right: auto;
+
+        .search-input {
+            // Make input larger on home page
+            font-size: 1.1rem;
+            padding-top: 0.6rem;
+            padding-bottom: 0.6rem;
+        }
+
+        .search-loader-addon {
+
+            // Adjust addon padding/size if input size changed
+            .search-loader {
+                font-size: 1rem; // Match input font size increase slightly
+            }
+        }
+
+        .suggestions-dropdown {
+            font-size: 1rem; // Make suggestions text slightly larger
+        }
+    }
+
     // .home-recipe-img class removed as it wasn't used in the template.
 }

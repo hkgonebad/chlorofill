@@ -105,6 +105,9 @@
 				/></router-link>
 
 				<div class="extras d-flex align-items-center">
+					<!-- Conditionally render Search Input -->
+					<RecipeSearch v-if="route.name !== 'Home'" class="me-2" />
+
 					<!-- Dark Mode Toggle Button -->
 					<button
 						@click="toggleDarkMode"
@@ -122,7 +125,17 @@
 </template>
 
 <script setup>
-import { RouterLink } from "vue-router";
+import { ref } from "vue";
+import { useRouter, RouterLink, useRoute } from "vue-router";
+import RecipeSearch from "./RecipeSearch.vue"; // Import the new component
+
+// Router instance for navigation
+const router = useRouter();
+const route = useRoute(); // Get current route info
+
+// Search Autocomplete State REMOVED
+// const searchQuery = ref("");
+// ... all other search refs and functions removed ...
 
 // Dark mode toggle logic
 const toggleDarkMode = () => {

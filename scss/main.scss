@@ -12,17 +12,16 @@
 @import 'primeicons/primeicons.css';
 @import 'plugins/animate';
 @import 'plugins/prefixer';
-@import 'plugins/jlocator';
 
 
 @import 'layout/header';
 @import 'layout/footer';
 @import 'layout/home';
 @import 'layout/about';
-@import 'layout/storelocator';
 @import 'layout/category';
 @import 'layout/category-recipes';
 @import 'layout/recipe-detail';
 @import 'components/category-carousel';
+@import 'components/recipe-search';
 
 @import 'layout/dark-mode';
