@@ -135,4 +135,6 @@ dist
 .bun
 bun.lockb 
 
+.rules.md
+/rules.md
 rules.md
