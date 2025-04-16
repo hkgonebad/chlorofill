@@ -77,12 +77,22 @@ img {
     &.btn-secondary,
     &.btn-danger {
         color: $white;
+
+        &:active,
+        &:focus,
+        &:hover {
+            color: $white;
+        }
     }
 
     &.btn-outline-primary,
     &.btn-outline-secondary,
     &.btn-outline-danger {
-        &:hover {
+
+        &:hover,
+        &:focus,
+        &:active,
+        &:focus-visible {
             color: $white;
         }
     }
