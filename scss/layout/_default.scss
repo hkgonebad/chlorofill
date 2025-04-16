@@ -1,32 +1,45 @@
-body{
+/* Default base styles */
+:root {
+    /* Adjust default Bootstrap font sizes if needed via CSS vars */
+    /* --bs-body-font-size: 0.95rem; */
+}
+
+body {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    /* Smoother font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     height: 100%;
-    min-height: 100vh;
+    min-height: 100lvh;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-img{
+main {
+    padding-top: 0px;
+    padding-bottom: 70px;
+}
+
+
+img {
     @extend .img-fluid;
 }
 
-main{
-    padding-top: 70px;
-}
-
-.block{
+.block {
     padding: 15px 0;
 
     // & ~ .block{
     //     padding-bottom: 0;
     // }
 
-    &.overlay{
+    &.overlay {
         position: relative;
         background-repeat: no-repeat;
         background-color: transparent;
         background-position: center;
 
-        &:before{
+        &:before {
             content: '';
             position: absolute;
             top: 0;
@@ -38,25 +51,27 @@ main{
             opacity: 0.9;
         }
 
-        .container{
+        .container {
             position: relative;
             z-index: 2;
         }
     }
 }
 
-.secTitle{
+.secTitle {
     padding: 8px 0;
 
-    h2{
+    h2 {
         text-align: center;
         font-size: 1.2rem;
         margin: 0;
         font-weight: bold;
 
-        @include media-breakpoint-up(md){
+        @include media-breakpoint-up(md) {
             font-size: 1.8rem;
             margin-bottom: 15px;
         }
     }
 }
+
+/* Add any other global default styles here */

@@ -1,106 +1,114 @@
 <template>
 	<div class="home-view container py-4">
-		<h1>Welcome to ChloroFill 🌍🥑</h1>
+		<div class="welcome-header mb-4">
+			<p class="text-muted mb-1">Hello, {{ userName || "User" }}</p>
+			<!-- Add user name later if implementing auth -->
+			<h2>What would you like<br />to cook today?</h2>
+			<!-- Add Search Bar component later -->
+		</div>
 
-		<hr />
+		<section class="recipe-section mb-5">
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<h4 class="section-title">Featured Desserts</h4>
+				<!-- Optional: Link to Desserts category -->
+				<router-link
+					:to="{
+						name: 'CategoryRecipes',
+						params: { categoryName: 'Dessert' },
+					}"
+					class="btn btn-sm btn-outline-secondary"
+					>See all</router-link
+				>
+			</div>
+			<LoadingSpinner v-if="loadingFeatured" />
+			<ErrorMessage v-else-if="errorFeatured" :message="errorFeatured" />
+			<!-- Use ItemCard in a grid -->
+			<div
+				v-else-if="featuredRecipes.length > 0"
+				class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
+			>
+				<ItemCard
+					v-for="recipe in featuredRecipes"
+					:key="recipe.idMeal"
+					:image-url="recipe.strMealThumb"
+					:title="recipe.strMeal"
+					:link-to="{
+						name: 'RecipeDetail',
+						params: { id: recipe.idMeal },
+					}"
+				/>
+			</div>
+			<p v-else>Could not load featured recipes.</p>
+		</section>
 
-		<h2>Recipe of the Moment</h2>
-		<div v-if="loading" class="text-center">
-			<div class="spinner-border text-primary" role="status">
-				<span class="visually-hidden">Loading...</span>
+		<section class="recipe-section mb-5">
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<h4 class="section-title">Categories</h4>
+				<router-link
+					:to="{ name: 'Categories' }"
+					class="btn btn-sm btn-outline-secondary"
+					>See all</router-link
+				>
 			</div>
-		</div>
-		<div v-else-if="error" class="alert alert-danger">
-			{{ error }}
-		</div>
-		<div v-else-if="recipe" class="card mb-3">
-			<div class="row g-0">
-				<div class="col-md-4">
-					<img
-						:src="recipe.strMealThumb"
-						class="img-fluid rounded-start"
-						:alt="recipe.strMeal"
-					/>
-				</div>
-				<div class="col-md-8">
-					<div class="card-body">
-						<h5 class="card-title">{{ recipe.strMeal }}</h5>
-						<p class="card-text">
-							<small class="text-muted"
-								>Category: {{ recipe.strCategory }} | Area:
-								{{ recipe.strArea }}</small
-							>
-						</p>
-						<p class="card-text">
-							{{ recipe.strInstructions.substring(0, 200) }}...
-						</p>
-						<!-- Add link to full recipe details later -->
-						<a
-							:href="recipe.strSource || '#'"
-							target="_blank"
-							class="btn btn-primary"
-							>View Full Recipe</a
-						>
-						<a
-							v-if="recipe.strYoutube"
-							:href="recipe.strYoutube"
-							target="_blank"
-							class="btn btn-danger ms-2"
-							>Watch Video</a
-						>
-					</div>
-				</div>
+			<CategoryCarousel />
+		</section>
+
+		<section class="recipe-section mb-5">
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<h4 class="section-title">Recommendations</h4>
+				<a href="#" class="btn btn-sm btn-outline-secondary">See all</a>
 			</div>
-		</div>
-		<div v-else>
-			<p>No recipe loaded yet.</p>
-		</div>
+			<!-- Placeholder for recommendations -->
+			<p class="text-muted">(Recommended recipes will go here)</p>
+		</section>
+
+		<!-- Add more sections as needed -->
 	</div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { RouterLink } from "vue-router";
+import ItemCard from "../components/ItemCard.vue";
+// Import reusable components
+import LoadingSpinner from "../components/LoadingSpinner.vue";
+import ErrorMessage from "../components/ErrorMessage.vue";
+import CategoryCarousel from "../components/CategoryCarousel.vue";
 
-const recipe = ref(null); // Holds the fetched recipe object
-const loading = ref(false);
-const error = ref(null);
+const userName = ref(null); // Placeholder for username
+const featuredRecipes = ref([]);
+const loadingFeatured = ref(false);
+const errorFeatured = ref(null);
 
-const fetchRandomRecipe = async () => {
-	loading.value = true;
-	error.value = null;
-	recipe.value = null;
+// Fetch featured recipes (e.g., from Dessert category)
+const fetchFeaturedRecipes = async () => {
+	loadingFeatured.value = true;
+	errorFeatured.value = null;
+	featuredRecipes.value = [];
+	const category = "Dessert"; // Or choose another category
 	try {
 		const response = await fetch(
-			"https://www.themealdb.com/api/json/v1/1/random.php"
+			`https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`
 		);
-		if (!response.ok) {
+		if (!response.ok)
 			throw new Error(`HTTP error! status: ${response.status}`);
-		}
 		const data = await response.json();
-		if (data.meals && data.meals.length > 0) {
-			// The API returns an array 'meals', even for random, get the first one
-			recipe.value = data.meals[0];
+		if (data.meals) {
+			featuredRecipes.value = data.meals.slice(0, 6); // Limit to e.g., 6 items
 		} else {
-			throw new Error("No meal data received from API.");
+			featuredRecipes.value = [];
+			console.warn(`No meals found for featured category: ${category}`);
 		}
 	} catch (e) {
-		console.error("Error fetching recipe:", e);
-		error.value = `Failed to load recipe: ${e.message}`;
+		console.error("Error fetching featured recipes:", e);
+		errorFeatured.value = `Failed to load featured recipes: ${e.message}`;
 	} finally {
-		loading.value = false;
+		loadingFeatured.value = false;
 	}
 };
 
-// Fetch the recipe when the component is mounted
+// Fetch when the component is mounted
 onMounted(() => {
-	fetchRandomRecipe();
+	fetchFeaturedRecipes();
 });
 </script>
-
-<style scoped>
-/* Add styles if needed */
-.img-fluid {
-	max-height: 300px; /* Limit image height */
-	object-fit: cover;
-}
-</style>

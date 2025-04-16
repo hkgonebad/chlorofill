@@ -1,25 +1,26 @@
-.banner{
+.banner {
 
-    img{
+    img {
         width: 100%;
     }
 }
 
-.offersGrid{
+.offersGrid {
 
-    .offerBox{
+    .offerBox {
         margin-bottom: 15px;
         display: block;
     }
 }
 
-.videos{
+.videos {
 
-    .videoCarousel{
+    .videoCarousel {
         position: relative;
         padding: 40px 0;
 
-        &:after, &:before{
+        &:after,
+        &:before {
             position: absolute;
             content: '';
             background-image: url('../img/film.png');
@@ -29,28 +30,28 @@
             height: 40px;
         }
 
-        &:before{
+        &:before {
             top: 0;
         }
 
-        &:after{
+        &:after {
             bottom: 0;
             @include transform(rotate(180deg));
         }
 
-        .item{
+        .item {
             margin: 5px;
 
-            a{
+            a {
                 display: block;
                 text-align: center;
 
-                img{
+                img {
                     width: 100%;
                     @include border-radius(4px);
                 }
 
-                span{
+                span {
                     display: inline-block;
                     text-align: center;
                     font-size: 16px;
@@ -64,3 +65,17 @@
     }
 }
 
+// Styles specific to the Home View
+.home-view {
+    .welcome-header h2 {
+        font-weight: 600;
+        line-height: 1.2;
+    }
+
+    .section-title {
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+
+    // .home-recipe-img class removed as it wasn't used in the template.
+}
