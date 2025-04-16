@@ -34,13 +34,13 @@
 							></button>
 						</div>
 						<div class="offcanvas-body">
-							<!-- Use router-link for navigation -->
 							<ul class="navbar-nav flex-grow-1">
 								<li class="nav-item">
 									<router-link
 										class="nav-link"
 										active-class="active"
 										to="/"
+										@click="closeOffcanvas"
 										>Home</router-link
 									>
 								</li>
@@ -49,24 +49,19 @@
 										class="nav-link"
 										active-class="active"
 										to="/about"
+										@click="closeOffcanvas"
 										>About Us</router-link
 									>
 								</li>
-								<!-- <li class="nav-item">
-                  <a class="nav-link" href="#">Contact</a>
-                </li> -->
 								<li class="nav-item dropdown">
 									<a
 										class="nav-link dropdown-toggle"
 										href="#"
-										id="offcanvasNavbarDropdown"
 										role="button"
 										data-bs-toggle="dropdown"
 										aria-expanded="false"
+										>Category</a
 									>
-										Category
-									</a>
-									<!-- Static categories for now - replace with dynamic later -->
 									<ul
 										class="dropdown-menu"
 										aria-labelledby="offcanvasNavbarDropdown"
@@ -75,19 +70,18 @@
 											<router-link
 												class="dropdown-item"
 												to="/categories"
+												@click="closeOffcanvas"
 												>All Categories</router-link
 											>
 										</li>
-										<!-- Add specific category links later if needed -->
-										<!-- <li><a class="dropdown-item" href="#">Fresh Produce</a></li> ... -->
 									</ul>
 								</li>
-								<!-- Add Link for Areas -->
 								<li class="nav-item">
 									<router-link
 										class="nav-link"
 										active-class="active"
 										:to="{ name: 'Areas' }"
+										@click="closeOffcanvas"
 										>Browse by Area</router-link
 									>
 								</li>
@@ -96,13 +90,28 @@
 										class="nav-link"
 										active-class="active"
 										to="/offers"
+										@click="closeOffcanvas"
 										>Offers</router-link
 									>
 								</li>
-								<!-- Remove Store Locator for now -->
-								<!-- <li class="nav-item">
-                  <router-link class="nav-link" active-class="active" to="/store-locator">Store Locator</router-link>
-                </li> -->
+								<!-- Random Recipe Button keeps data-bs-dismiss -->
+								<li class="nav-item">
+									<a
+										@click.prevent="goToRandomRecipe"
+										class="nav-link"
+										:disabled="loadingRandom"
+										style="cursor: pointer"
+										data-bs-dismiss="offcanvas"
+									>
+										<span
+											v-if="loadingRandom"
+											class="spinner-border spinner-border-sm"
+											role="status"
+											aria-hidden="true"
+										></span>
+										Random Recipe
+									</a>
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -136,17 +145,47 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter, RouterLink, useRoute } from "vue-router";
-import RecipeSearch from "./RecipeSearch.vue"; // Import the new component
+import RecipeSearch from "./RecipeSearch.vue";
 
-// Router instance for navigation
 const router = useRouter();
-const route = useRoute(); // Get current route info
+const route = useRoute();
+const loadingRandom = ref(false);
 
-// Search Autocomplete State REMOVED
-// const searchQuery = ref("");
-// ... all other search refs and functions removed ...
+// Function to programmatically click the close button
+const closeOffcanvas = () => {
+	const closeButton = document.querySelector("#offcanvasNavbar .btn-close");
+	if (closeButton) {
+		closeButton.click();
+	}
+};
 
-// Dark mode toggle logic
+const goToRandomRecipe = async () => {
+	loadingRandom.value = true;
+	console.log("goToRandomRecipe START");
+	try {
+		const response = await fetch(
+			`https://www.themealdb.com/api/json/v1/1/random.php`
+		);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		const data = await response.json();
+		if (data.meals && data.meals.length > 0) {
+			const mealId = data.meals[0].idMeal;
+			console.log(`goToRandomRecipe: Navigating to recipe ${mealId}...`);
+			router.push({ name: "RecipeDetail", params: { id: mealId } });
+		} else {
+			throw new Error("No random meal found.");
+		}
+	} catch (error) {
+		console.error("Error fetching random recipe:", error);
+		alert("Failed to load a random recipe. Please try again.");
+	} finally {
+		loadingRandom.value = false;
+		console.log("goToRandomRecipe END");
+	}
+};
+
 const toggleDarkMode = () => {
 	console.log("Theme toggle clicked!");
 	const htmlElement = document.documentElement;
