@@ -9,7 +9,7 @@
 			<!-- Image Header (No Back Button Here) -->
 			<div class="image-header position-relative mb-3">
 				<img
-					:src="recipeDetails.strMealThumb + '/preview'"
+					:src="recipeDetails.strMealThumb + '/large'"
 					class="img-fluid recipe-image"
 					:alt="recipeDetails.strMeal"
 				/>
@@ -33,11 +33,31 @@
 				<!-- Meta Info -->
 				<p class="text-muted small mb-3">
 					<span v-if="recipeDetails.strCategory"
-						>Category: {{ recipeDetails.strCategory }}</span
-					>
+						>Category:
+						<a
+							:href="
+								getAmazonSearchUrl(
+									recipeDetails.strCategory + ' Cuisine'
+								)
+							"
+							target="_blank"
+							rel="noopener noreferrer"
+							>{{ recipeDetails.strCategory }}</a
+						>
+					</span>
 					<span v-if="recipeDetails.strArea">
-						| Area: {{ recipeDetails.strArea }}</span
-					>
+						| Area:
+						<a
+							:href="
+								getAmazonSearchUrl(
+									recipeDetails.strArea + ' Cuisine'
+								)
+							"
+							target="_blank"
+							rel="noopener noreferrer"
+							>{{ recipeDetails.strArea }}</a
+						>
+					</span>
 					<!-- Add other meta like time, difficulty if available -->
 				</p>
 				<p v-if="recipeDetails.strTags" class="mb-3">
@@ -59,7 +79,14 @@
 					>
 						<!-- Placeholder icon -->
 						<span class="ingredient-icon me-2">🍽️</span>
-						<div class="flex-grow-1">{{ ingredient.name }}</div>
+						<div class="flex-grow-1">
+							<a
+								:href="getAmazonSearchUrl(ingredient.name)"
+								target="_blank"
+								rel="noopener noreferrer"
+								>{{ ingredient.name }}</a
+							>
+						</div>
 						<div class="text-muted ms-2">
 							{{ ingredient.measure }}
 						</div>
@@ -115,6 +142,17 @@ const props = defineProps({
 const recipeDetails = ref(null);
 const loading = ref(false);
 const error = ref(null);
+
+// --- START AFFILIATE LINK CONFIG ---
+const AMAZON_AFFILIATE_TAG = "awzdigital00-21"; // Your Amazon affiliate tag
+const AMAZON_BASE_URL = "https://www.amazon.in/s";
+
+const getAmazonSearchUrl = (searchTerm) => {
+	if (!searchTerm) return "#"; // Return a harmless link if search term is empty
+	const encodedSearchTerm = encodeURIComponent(searchTerm.trim());
+	return `${AMAZON_BASE_URL}?k=${encodedSearchTerm}&tag=${AMAZON_AFFILIATE_TAG}`;
+};
+// --- END AFFILIATE LINK CONFIG ---
 
 // Back navigation method
 const goBack = () => {
