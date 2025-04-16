@@ -80,7 +80,8 @@ rsmart/  # Or your project root name (e.g., chlorofill)
     - Standardize back buttons. (Done)
     - Centralize styles into SCSS partials (removing from components). (Done)
 14. Implement JavaScript logic (within Vue components) to:
-    - Generate and insert Amazon Affiliate links for ingredients/tools.
+    - Fetch data from TheMealDB API.
+    - Generate and insert Amazon Affiliate links for ingredients/tools. (Done)
 15. Refine styling (including dark mode).
 16. Build for production (`bun run build`).
 17. Deploy the `dist` folder contents to GitHub Pages. 
