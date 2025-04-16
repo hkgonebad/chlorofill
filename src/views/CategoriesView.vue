@@ -1,39 +1,41 @@
 <template>
-	<div class="categories-view container py-4">
-		<h1>ChloroFill Recipe Categories</h1>
+	<section class="block categories-view">
+		<div class="container">
+			<h1 class="section-title">ChloroFill Recipe Categories</h1>
 
-		<LoadingSpinner v-if="loading" />
-		<ErrorMessage v-else-if="error" :message="error" />
+			<LoadingSpinner v-if="loading" />
+			<ErrorMessage v-else-if="error" :message="error" />
 
-		<div
-			v-else
-			class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
-		>
-			<ItemCard
-				v-for="category in categories"
-				:key="category.idCategory"
-				:image-url="category.strCategoryThumb"
-				:title="category.strCategory"
-				:subtitle="category.strCategoryDescription"
-				:link-to="{
-					name: 'CategoryRecipes',
-					params: { categoryName: category.strCategory },
-				}"
+			<div
+				v-else
+				class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
 			>
-				<!-- Override default button text using the slot -->
-				<template #actions>
-					<router-link
-						:to="{
-							name: 'CategoryRecipes',
-							params: { categoryName: category.strCategory },
-						}"
-						class="btn btn-sm btn-outline-primary"
-						>View Recipes</router-link
-					>
-				</template>
-			</ItemCard>
+				<ItemCard
+					v-for="category in categories"
+					:key="category.idCategory"
+					:image-url="category.strCategoryThumb"
+					:title="category.strCategory"
+					:subtitle="category.strCategoryDescription"
+					:link-to="{
+						name: 'CategoryRecipes',
+						params: { categoryName: category.strCategory },
+					}"
+				>
+					<!-- Override default button text using the slot -->
+					<template #actions>
+						<router-link
+							:to="{
+								name: 'CategoryRecipes',
+								params: { categoryName: category.strCategory },
+							}"
+							class="btn btn-sm btn-outline-primary"
+							>View Recipes</router-link
+						>
+					</template>
+				</ItemCard>
+			</div>
 		</div>
-	</div>
+	</section>
 </template>
 
 <script setup>
