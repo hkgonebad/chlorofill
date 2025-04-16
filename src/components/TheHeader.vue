@@ -82,6 +82,15 @@
 										<!-- <li><a class="dropdown-item" href="#">Fresh Produce</a></li> ... -->
 									</ul>
 								</li>
+								<!-- Add Link for Areas -->
+								<li class="nav-item">
+									<router-link
+										class="nav-link"
+										active-class="active"
+										:to="{ name: 'Areas' }"
+										>Browse by Area</router-link
+									>
+								</li>
 								<li class="nav-item">
 									<router-link
 										class="nav-link"

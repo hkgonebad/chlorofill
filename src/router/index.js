@@ -6,53 +6,72 @@ import { createRouter, createWebHistory } from "vue-router";
 // import CategoriesView from '../views/CategoriesView.vue';
 // import OffersView from '../views/OffersView.vue';
 
+// Lazy-load imports
+const HomeView = () => import("../views/HomeView.vue");
+const AboutView = () => import("../views/AboutView.vue");
+const CategoriesView = () => import("../views/CategoriesView.vue");
+const OffersView = () => import("../views/OffersView.vue");
+const CategoryRecipesView = () => import("../views/CategoryRecipesView.vue");
+const RecipeDetailView = () => import("../views/RecipeDetailView.vue");
+const AreasView = () => import("../views/AreasView.vue"); // <-- Import AreasView
+const AreaRecipesView = () => import("../views/AreaRecipesView.vue"); // <-- Import AreaRecipesView
+
 const routes = [
 	{
 		path: "/",
 		name: "Home",
-		// component: HomeView // Add component later
-		component: () => import("../views/HomeView.vue"), // Lazy load example
+		component: HomeView,
 	},
 	{
 		path: "/about",
 		name: "About",
-		// route level code-splitting
-		// this generates a separate chunk (About.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component: () => import("../views/AboutView.vue"),
+		component: AboutView,
 	},
 	{
 		path: "/categories",
 		name: "Categories",
-		component: () => import("../views/CategoriesView.vue"),
+		component: CategoriesView,
 	},
 	{
 		path: "/offers",
 		name: "Offers",
-		component: () => import("../views/OffersView.vue"),
+		component: OffersView,
 	},
-	// Add route for recipes by category
+	// Route for recipes by category
 	{
-		path: "/category/:categoryName", // Dynamic segment for category name
-		name: "CategoryRecipes", // Name used in <router-link>
-		component: () => import("../views/CategoryRecipesView.vue"),
+		path: "/category/:categoryName",
+		name: "CategoryRecipes",
+		component: CategoryRecipesView,
+		props: true,
+	},
+	// Route for list of areas
+	{
+		path: "/areas",
+		name: "Areas",
+		component: AreasView,
+	},
+	// Route for recipes by area
+	{
+		path: "/areas/:areaName", // Dynamic segment for area name
+		name: "AreaRecipes", // Name used in <router-link>
+		component: AreaRecipesView,
 		props: true, // Pass route params as props to the component
 	},
-	// Add route for individual recipe details
+	// Route for individual recipe details
 	{
-		path: "/recipe/:id", // Dynamic segment for recipe ID
-		name: "RecipeDetail", // Name used in <router-link>
-		component: () => import("../views/RecipeDetailView.vue"),
-		props: true, // Pass route params (id) as props
+		path: "/recipe/:id",
+		name: "RecipeDetail",
+		component: RecipeDetailView,
+		props: true,
 	},
 	// Add other routes as needed
 ];
 
 const router = createRouter({
-	history: createWebHistory(import.meta.env.BASE_URL), // Use history mode
+	history: createWebHistory(import.meta.env.BASE_URL),
 	routes,
-	linkActiveClass: "active", // Optional: class for active links (matches existing CSS)
-	linkExactActiveClass: "exact-active", // Optional: class for exact active links
+	linkActiveClass: "active",
+	linkExactActiveClass: "exact-active",
 });
 
 export default router;
