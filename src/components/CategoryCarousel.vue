@@ -4,12 +4,13 @@
 		<ErrorMessage v-else-if="error" :message="error" />
 		<swiper
 			v-else
-			:slides-per-view="3.5"
+			:slides-per-view="6"
 			:space-between="15"
 			:free-mode="true"
 			:modules="modules"
 			class="category-swiper"
 			:breakpoints="{
+				375: { slidesPerView: 3.5 },
 				576: { slidesPerView: 4.5 },
 				768: { slidesPerView: 5.5 },
 				992: { slidesPerView: 7.5 },
@@ -84,31 +85,3 @@ onMounted(() => {
 	fetchCategories();
 });
 </script>
-
-<style scoped>
-.category-item {
-	display: block;
-	color: var(--bs-body-color);
-}
-.category-image {
-	width: 60px;
-	height: 60px;
-	object-fit: contain;
-	background-color: var(--bs-tertiary-bg);
-	border-radius: 50%;
-	padding: 5px;
-	transition: transform 0.2s ease;
-}
-.category-item:hover .category-image {
-	transform: scale(1.1);
-}
-.category-name {
-	color: var(--bs-emphasis-color);
-	font-size: 0.75rem;
-}
-
-/* Ensure swiper slides have correct width */
-.swiper-slide {
-	width: auto !important; /* Let content determine width */
-}
-</style>

@@ -1,5 +1,5 @@
 <template>
-	<nav class="bottom-nav fixed-bottom bg-light border-top">
+	<nav class="bottom-nav fixed-bottom border-top">
 		<div
 			class="container-fluid d-flex justify-content-around align-items-center h-100"
 		>

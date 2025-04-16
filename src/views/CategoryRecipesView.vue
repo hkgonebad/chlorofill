@@ -1,44 +1,48 @@
 <template>
-	<div class="category-recipes-view container py-4">
-		<!-- Header with Back Button -->
-		<div class="d-flex align-items-center mb-4 view-header">
-			<button
-				@click="goBack"
-				class="btn btn-light btn-sm rounded-circle me-3 back-button-icon"
+	<section class="block category-recipes-view">
+		<div class="container">
+			<!-- Header with Back Button -->
+			<div class="d-flex align-items-center mb-4 view-header">
+				<button
+					@click="goBack"
+					class="btn btn-light btn-sm rounded-circle me-3 back-button-icon"
+				>
+					<i class="pi pi-arrow-left"></i>
+				</button>
+				<h2 class="mb-0 flex-grow-1 section-title">
+					{{ categoryName }} Recipes
+				</h2>
+			</div>
+
+			<LoadingSpinner v-if="loading" />
+			<ErrorMessage v-else-if="error" :message="error" />
+
+			<!-- Recipe List -->
+			<div
+				v-else-if="recipes.length > 0"
+				class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
 			>
-				<i class="pi pi-arrow-left"></i>
-			</button>
-			<h2 class="mb-0 flex-grow-1">{{ categoryName }} Recipes</h2>
+				<ItemCard
+					v-for="recipe in recipes"
+					:key="recipe.idMeal"
+					:image-url="recipe.strMealThumb"
+					:title="recipe.strMeal"
+					:link-to="{
+						name: 'RecipeDetail',
+						params: { id: recipe.idMeal },
+					}"
+				/>
+				<!-- Subtitle is not available in filter.php result -->
+				<!-- Button uses the default slot content -->
+			</div>
+			<!-- No Recipes Found State -->
+			<div v-else>
+				<p class="alert alert-info">
+					No recipes found for the category "{{ categoryName }}".
+				</p>
+			</div>
 		</div>
-
-		<LoadingSpinner v-if="loading" />
-		<ErrorMessage v-else-if="error" :message="error" />
-
-		<!-- Recipe List -->
-		<div
-			v-else-if="recipes.length > 0"
-			class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
-		>
-			<ItemCard
-				v-for="recipe in recipes"
-				:key="recipe.idMeal"
-				:image-url="recipe.strMealThumb"
-				:title="recipe.strMeal"
-				:link-to="{
-					name: 'RecipeDetail',
-					params: { id: recipe.idMeal },
-				}"
-			/>
-			<!-- Subtitle is not available in filter.php result -->
-			<!-- Button uses the default slot content -->
-		</div>
-		<!-- No Recipes Found State -->
-		<div v-else>
-			<p class="alert alert-info">
-				No recipes found for the category "{{ categoryName }}".
-			</p>
-		</div>
-	</div>
+	</section>
 </template>
 
 <script setup>

@@ -58,19 +58,16 @@ img {
     }
 }
 
-.secTitle {
+.section-title {
     padding: 8px 0;
 
-    h2 {
-        text-align: center;
-        font-size: 1.2rem;
-        margin: 0;
-        font-weight: bold;
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: bold;
 
-        @include media-breakpoint-up(md) {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-        }
+    @include media-breakpoint-up(md) {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
     }
 }
 

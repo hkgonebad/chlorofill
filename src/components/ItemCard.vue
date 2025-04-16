@@ -4,7 +4,7 @@
 			<router-link :to="linkTo" class="card-link-wrapper">
 				<img
 					:src="imageUrl"
-					class="card-img-top item-thumb p-3"
+					class="card-img-top item-thumb"
 					:alt="title"
 				/>
 			</router-link>
@@ -68,48 +68,3 @@ const truncatedSubtitle = computed(() => {
 	return props.subtitle;
 });
 </script>
-
-<style scoped>
-.item-card {
-	border: none; /* Remove default border */
-	border-radius: 15px; /* More rounded corners like design */
-	background-color: var(
-		--bs-card-bg,
-		var(--bs-body-bg)
-	); /* Use CSS var for background */
-	transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-	overflow: hidden; /* Ensure content respects border-radius */
-}
-.item-card:hover {
-	transform: translateY(-5px);
-	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important; /* Softer shadow */
-}
-
-.item-thumb {
-	max-height: 160px; /* Adjust height */
-	object-fit: cover; /* Cover the area, might crop */
-	border-radius: 0; /* Remove radius if image goes edge-to-edge */
-	padding: 0 !important; /* Remove padding if edge-to-edge */
-}
-
-.card-link-wrapper {
-	display: block; /* Make the image link clickable */
-	text-decoration: none;
-	color: inherit;
-}
-
-.card-body {
-	padding: 0.8rem 1rem; /* Adjust padding */
-}
-
-.card-title {
-	font-weight: 600; /* Slightly bolder title */
-	font-size: 1rem; /* Adjust font size */
-	margin-bottom: 0.25rem;
-}
-
-.card-text.small {
-	font-size: 0.8rem; /* Adjust subtitle size */
-	line-height: 1.3;
-}
-</style>
