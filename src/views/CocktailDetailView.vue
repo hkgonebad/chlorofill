@@ -174,6 +174,7 @@ import ErrorMessage from "@/components/ErrorMessage.vue";
 import BackButton from "@/components/BackButton.vue";
 import { getAmazonSearchUrl } from "@/utils/affiliateLinks.js";
 import { useCocktailFavorites } from "@/composables/useCocktailFavorites.js";
+import { useHead } from "@vueuse/head";
 
 const props = defineProps({
 	id: {
@@ -253,6 +254,60 @@ const ingredientsList = computed(() => {
 	}
 	return list;
 });
+
+// --- Dynamic Meta Tags ---
+useHead(
+	computed(() => {
+		if (!cocktail.value) {
+			return { title: "Cocktail Details" }; // Default while loading or if error
+		}
+		const description = cocktail.value.strInstructions
+			? cocktail.value.strInstructions.substring(0, 160) + "..."
+			: `Details for ${cocktail.value.strDrink}`;
+
+		// Construct the canonical URL - adjust if your base URL is different or comes from env vars
+		const canonicalUrl = `${window.location.origin}/cocktail/${cocktail.value.idDrink}`;
+
+		return {
+			title: cocktail.value.strDrink,
+			meta: [
+				{
+					name: "description",
+					content: description,
+				},
+				// Open Graph Tags
+				{
+					property: "og:title",
+					content: cocktail.value.strDrink,
+				},
+				{
+					property: "og:description",
+					content: description,
+				},
+				{
+					property: "og:image",
+					content: cocktail.value.strDrinkThumb, // Use the cocktail thumbnail
+				},
+				{
+					property: "og:type",
+					content: "article", // Or 'website' if more appropriate
+				},
+				{
+					property: "og:url",
+					content: canonicalUrl,
+				},
+				// Add other relevant meta tags like twitter cards if needed
+			],
+			link: [
+				{
+					rel: "canonical",
+					href: canonicalUrl,
+				},
+			],
+		};
+	})
+);
+// --- End Meta Tags ---
 
 // Fetch on initial mount
 onMounted(() => {

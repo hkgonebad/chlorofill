@@ -20,27 +20,32 @@ const CocktailsView = () => import("../views/CocktailsView.vue"); // <-- Import 
 const CocktailListView = () => import("../views/CocktailListView.vue"); // <-- Import CocktailListView
 const CocktailDetailView = () => import("../views/CocktailDetailView.vue"); // <-- Import CocktailDetailView
 const BrowseView = () => import("../views/BrowseView.vue"); // <-- Import BrowseView
+const NotFoundView = () => import("../views/NotFoundView.vue"); // <-- Import NotFoundView
 
 const routes = [
 	{
 		path: "/",
 		name: "Home",
 		component: HomeView,
+		meta: { title: "Home" },
 	},
 	{
 		path: "/about",
 		name: "About",
 		component: AboutView,
+		meta: { title: "About Us" },
 	},
 	{
 		path: "/categories",
 		name: "Categories",
 		component: CategoriesView,
+		meta: { title: "Meal Categories" },
 	},
 	{
 		path: "/offers",
 		name: "Offers",
 		component: OffersView,
+		meta: { title: "Offers & Deals" },
 	},
 	// Route for recipes by category
 	{
@@ -48,12 +53,14 @@ const routes = [
 		name: "CategoryRecipes",
 		component: CategoryRecipesView,
 		props: true,
+		meta: { title: "Category Recipes" },
 	},
 	// Route for list of areas
 	{
 		path: "/areas",
 		name: "Areas",
 		component: AreasView,
+		meta: { title: "Browse by Area" },
 	},
 	// Route for recipes by area
 	{
@@ -61,6 +68,7 @@ const routes = [
 		name: "AreaRecipes", // Name used in <router-link>
 		component: AreaRecipesView,
 		props: true, // Pass route params as props to the component
+		meta: { title: "Area Recipes" },
 	},
 	// Route for individual recipe details
 	{
@@ -68,18 +76,21 @@ const routes = [
 		name: "RecipeDetail",
 		component: RecipeDetailView,
 		props: true,
+		meta: { title: "Recipe Details" },
 	},
 	// Route for Favorites page
 	{
 		path: "/favorites",
 		name: "Favorites",
 		component: FavoritesView,
+		meta: { title: "My Favorites" },
 	},
 	// Route for Cocktails listing/filters page
 	{
 		path: "/cocktails",
 		name: "Cocktails",
 		component: CocktailsView,
+		meta: { title: "Cocktail Filters" },
 	},
 	// Route for list of cocktails by filter
 	{
@@ -87,6 +98,7 @@ const routes = [
 		name: "CocktailList",
 		component: CocktailListView,
 		props: true, // Pass filterType and filterValue as props
+		meta: { title: "Filtered Cocktails" },
 	},
 	// Route for individual cocktail details
 	{
@@ -94,14 +106,22 @@ const routes = [
 		name: "CocktailDetail",
 		component: CocktailDetailView,
 		props: true, // Pass id as prop
+		meta: { title: "Cocktail Details" },
 	},
 	// Route for Browse view
 	{
 		path: "/browse",
 		name: "Browse",
 		component: BrowseView,
+		meta: { title: "Browse All" },
 	},
 	// Add other routes as needed
+	{
+		path: "/:pathMatch(.*)*",
+		name: "NotFound",
+		component: NotFoundView,
+		meta: { title: "Page Not Found" },
+	},
 ];
 
 const router = createRouter({
@@ -109,6 +129,10 @@ const router = createRouter({
 	routes,
 	linkActiveClass: "active",
 	linkExactActiveClass: "exact-active",
+	scrollBehavior(to, from, savedPosition) {
+		// always scroll to top
+		return { top: 0 };
+	},
 });
 
 export default router;

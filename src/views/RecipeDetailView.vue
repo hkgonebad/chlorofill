@@ -205,6 +205,7 @@ import { useFavorites } from "../composables/useFavorites";
 import BackButton from "@/components/BackButton.vue";
 import { getAmazonSearchUrl } from "@/utils/affiliateLinks.js";
 import { getMealDetailsById } from "@/services/mealApi.js";
+import { useHead } from "@vueuse/head";
 
 // Initialize router for back button
 // const router = useRouter(); // No longer needed if BackButton handles it
@@ -289,6 +290,60 @@ const ingredientsList = computed(() => {
 	}
 	return list;
 });
+
+// --- Dynamic Meta Tags ---
+useHead(
+	computed(() => {
+		if (!recipeDetails.value) {
+			return { title: "Recipe Details" }; // Default while loading or if error
+		}
+		const description = recipeDetails.value.strInstructions
+			? recipeDetails.value.strInstructions.substring(0, 160) + "..."
+			: `Details for ${recipeDetails.value.strMeal}`;
+
+		// Construct the canonical URL - adjust if your base URL is different or comes from env vars
+		const canonicalUrl = `${window.location.origin}/recipe/${recipeDetails.value.idMeal}`;
+
+		return {
+			title: recipeDetails.value.strMeal,
+			meta: [
+				{
+					name: "description",
+					content: description,
+				},
+				// Open Graph Tags
+				{
+					property: "og:title",
+					content: recipeDetails.value.strMeal,
+				},
+				{
+					property: "og:description",
+					content: description,
+				},
+				{
+					property: "og:image",
+					content: recipeDetails.value.strMealThumb, // Use the meal thumbnail
+				},
+				{
+					property: "og:type",
+					content: "article", // Or 'website' if more appropriate
+				},
+				{
+					property: "og:url",
+					content: canonicalUrl,
+				},
+				// Add other relevant meta tags like twitter cards if needed
+			],
+			link: [
+				{
+					rel: "canonical",
+					href: canonicalUrl,
+				},
+			],
+		};
+	})
+);
+// --- End Meta Tags ---
 
 // Fetch details when the component mounts
 onMounted(() => {
