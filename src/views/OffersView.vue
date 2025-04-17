@@ -163,6 +163,13 @@
 <script setup>
 import { ref } from "vue";
 
+// Import images
+import appliancesImg from "/img/offers/appliances.jpg";
+import cookwareImg from "/img/offers/cookware.jpg";
+import toolsImg from "/img/offers/tools.jpg";
+import dealsImg from "/img/offers/deals.jpg";
+import cookbooksImg from "/img/offers/cookbooks.jpg";
+
 // --- START AFFILIATE LINK CONFIG ---
 const AMAZON_AFFILIATE_TAG = "awzdigital00-21"; // Your Amazon affiliate tag
 const AMAZON_BASE_URL = "https://www.amazon.in/s";
@@ -182,27 +189,27 @@ const amazonDeals = ref([
 		name: "Kitchen Appliance Deals",
 		searchTerm: "kitchen appliance deals",
 		description: "Find discounts on mixers, blenders, and more.",
-		imageUrl: "/img/offers/appliances.jpg",
+		imageUrl: appliancesImg,
 		offerText: "Up to 40% Off",
 	},
 	{
 		name: "Cookware Savings",
 		searchTerm: "cookware set deals",
 		description: "Save on pots, pans, and baking dishes.",
-		imageUrl: "/img/offers/cookware.jpg",
+		imageUrl: cookwareImg,
 		offerText: "Flash Sale",
 	},
 	{
 		name: "Cutlery & Gadgets",
 		searchTerm: "kitchen knife set deals",
 		description: "Sharp deals on knife sets and essential gadgets.",
-		imageUrl: "/img/offers/tools.jpg",
+		imageUrl: toolsImg,
 	},
 	{
 		name: "General Home Deals",
 		searchTerm: "home kitchen deals",
 		description: "Check out offers on various home & kitchen items.",
-		imageUrl: "/img/offers/deals.jpg",
+		imageUrl: dealsImg,
 		offerText: "Limited Time",
 	},
 ]);
@@ -213,39 +220,39 @@ const kitchenTools = ref([
 		name: "Quality Chef's Knife",
 		searchTerm: "chef knife 8 inch",
 		description: "An essential tool for any kitchen.",
-		imageUrl: "/img/offers/tools.jpg",
+		imageUrl: toolsImg,
 		offerText: "Best Seller",
 	},
 	{
 		name: "Non-Stick Frying Pan",
 		searchTerm: "non-stick frying pan 10 inch",
 		description: "Perfect for eggs, pancakes, and sauteing.",
-		imageUrl: "/img/offers/cookware.jpg",
+		imageUrl: cookwareImg,
 	},
 	{
 		name: "Stand Mixer",
 		searchTerm: "stand mixer kitchen",
 		description: "For baking bread, cakes, and whipping cream.",
-		imageUrl: "/img/offers/appliances.jpg",
+		imageUrl: appliancesImg,
 		offerText: "Top Rated",
 	},
 	{
 		name: "High-Speed Blender",
 		searchTerm: "high speed blender smoothie",
 		description: "Great for smoothies, soups, and sauces.",
-		imageUrl: "/img/offers/appliances.jpg",
+		imageUrl: appliancesImg,
 	},
 	{
 		name: "Instant Pot / Multicooker",
 		searchTerm: "instant pot multi cooker",
 		description: "Versatile cooking with pressure and slow cooking.",
-		imageUrl: "/img/offers/appliances.jpg",
+		imageUrl: appliancesImg,
 	},
 	{
 		name: "Digital Kitchen Scale",
 		searchTerm: "digital kitchen scale food",
 		description: "Accurate measurements for baking and cooking.",
-		imageUrl: "/img/offers/tools.jpg",
+		imageUrl: toolsImg,
 		offerText: "Essential",
 	},
 ]);
@@ -256,40 +263,40 @@ const cookbooks = ref([
 		name: "Italian Cuisine",
 		searchTerm: "italian cookbook best seller",
 		description: "Master pasta, pizza, and classic Italian dishes.",
-		imageUrl: "/img/offers/cookbooks.jpg",
+		imageUrl: cookbooksImg,
 		offerText: "Classic Recipes",
 	},
 	{
 		name: "Indian Cooking Guides",
 		searchTerm: "indian cookbook authentic",
 		description: "Explore the rich flavors of Indian cooking.",
-		imageUrl: "/img/offers/cookbooks.jpg",
+		imageUrl: cookbooksImg,
 	},
 	{
 		name: "Baking Essentials",
 		searchTerm: "baking cookbook for beginners",
 		description:
 			"Learn the fundamentals of baking bread, cakes, and pastries.",
-		imageUrl: "/img/offers/cookbooks.jpg",
+		imageUrl: cookbooksImg,
 		offerText: "Beginner Friendly",
 	},
 	{
 		name: "Healthy Eating Recipes",
 		searchTerm: "healthy cookbook quick easy",
 		description: "Find nutritious and delicious meal ideas.",
-		imageUrl: "/img/offers/cookbooks.jpg",
+		imageUrl: cookbooksImg,
 	},
 	{
 		name: "Vegetarian Favorites",
 		searchTerm: "vegetarian cookbook modern",
 		description: "Discover creative and satisfying vegetarian meals.",
-		imageUrl: "/img/offers/cookbooks.jpg",
+		imageUrl: cookbooksImg,
 	},
 	{
 		name: "World Cuisine",
 		searchTerm: "world cuisine cookbook",
 		description: "Travel the globe through your kitchen.",
-		imageUrl: "/img/offers/cookbooks.jpg",
+		imageUrl: cookbooksImg,
 		offerText: "Explore Flavors",
 	},
 ]);
