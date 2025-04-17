@@ -25,18 +25,28 @@
 			<ul v-else-if="suggestions.length > 0" class="list-unstyled mb-0">
 				<li
 					v-for="suggestion in suggestions"
-					:key="suggestion.id"
-					class="list-group-item list-group-item-action p-2"
+					:key="suggestion.type + '-' + suggestion.id"
+					class="list-group-item list-group-item-action p-2 d-flex justify-content-between align-items-center"
 					@mousedown.prevent="selectSuggestion(suggestion)"
 				>
-					{{ suggestion.name }}
+					<span>{{ suggestion.name }}</span>
+					<span
+						class="badge rounded-pill ms-2"
+						:class="{
+							'bg-primary text-white': suggestion.type === 'meal',
+							'bg-secondary text-white':
+								suggestion.type === 'cocktail',
+						}"
+					>
+						{{ suggestion.type === "meal" ? "Recipe" : "Cocktail" }}
+					</span>
 				</li>
 			</ul>
 			<div
 				v-else-if="searchQuery.length >= MIN_QUERY_LENGTH"
 				class="list-group-item text-muted small p-2"
 			>
-				No recipes found.
+				No results found.
 			</div>
 		</div>
 	</div>
@@ -45,6 +55,8 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { searchMealsByName } from "@/services/mealApi.js";
+import { searchCocktailsByName } from "@/services/cocktailApi.js";
 
 // Router instance for navigation
 const router = useRouter();
@@ -58,7 +70,7 @@ const debounceTimer = ref(null);
 const MIN_QUERY_LENGTH = 3;
 const DEBOUNCE_DELAY = 400; // ms
 
-// Fetch suggestions from TheMealDB
+// Fetch suggestions from BOTH APIs
 const fetchSuggestions = async (query) => {
 	if (query.length < MIN_QUERY_LENGTH) {
 		suggestions.value = [];
@@ -68,35 +80,73 @@ const fetchSuggestions = async (query) => {
 
 	isLoading.value = true;
 	suggestions.value = []; // Clear previous suggestions
+	let apiError = null;
 
 	try {
-		const response = await fetch(
-			`https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(
-				query
-			)}`
-		);
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		const data = await response.json();
+		// Fetch from both APIs concurrently, wait for all results (even if one fails)
+		const results = await Promise.allSettled([
+			searchMealsByName(query),
+			searchCocktailsByName(query),
+		]);
 
-		if (data.meals) {
-			suggestions.value = data.meals.map((meal) => ({
-				id: meal.idMeal,
-				name: meal.strMeal,
-			}));
-		} else {
-			suggestions.value = [];
+		const combinedSuggestions = [];
+
+		// Process MealDB results
+		if (results[0].status === "fulfilled" && results[0].value) {
+			results[0].value.forEach((meal) => {
+				combinedSuggestions.push({
+					id: meal.idMeal,
+					name: meal.strMeal,
+					type: "meal", // Add type identifier
+				});
+			});
+		} else if (results[0].status === "rejected") {
+			console.error(
+				"Error fetching meal suggestions:",
+				results[0].reason
+			);
+			apiError = "Could not load meal suggestions."; // Capture error
 		}
+
+		// Process CocktailDB results
+		if (results[1].status === "fulfilled" && results[1].value) {
+			results[1].value.forEach((cocktail) => {
+				combinedSuggestions.push({
+					id: cocktail.idDrink,
+					name: cocktail.strDrink,
+					type: "cocktail", // Add type identifier
+				});
+			});
+		} else if (results[1].status === "rejected") {
+			console.error(
+				"Error fetching cocktail suggestions:",
+				results[1].reason
+			);
+			// Append error or set if no previous error
+			apiError = apiError
+				? apiError + " Could not load cocktail suggestions."
+				: "Could not load cocktail suggestions.";
+		}
+
+		// Optional: Sort combined results alphabetically?
+		combinedSuggestions.sort((a, b) => a.name.localeCompare(b.name));
+
+		suggestions.value = combinedSuggestions;
 	} catch (error) {
-		console.error("Error fetching recipe suggestions:", error);
-		suggestions.value = []; // Clear suggestions on error
+		// Catch unexpected errors during Promise.allSettled or processing
+		console.error("Error fetching combined suggestions:", error);
+		suggestions.value = [];
+		apiError = "An unexpected error occurred during search.";
 	} finally {
 		isLoading.value = false;
-		// Keep suggestions open if loading finished and there are results or no results for a valid query
-		showSuggestions.value =
-			suggestions.value.length > 0 ||
-			(searchQuery.value.length >= MIN_QUERY_LENGTH && !isLoading.value);
+		// Show suggestions if there are results or if there was an error to display?
+		// Let's keep it simple: show if not loading and query is long enough
+		showSuggestions.value = searchQuery.value.length >= MIN_QUERY_LENGTH;
+
+		// TODO: Display apiError message in the dropdown if needed
+		if (apiError) {
+			console.warn("API Errors:", apiError); // Log for now
+		}
 	}
 };
 
@@ -128,11 +178,18 @@ const hideSuggestionsWithDelay = () => {
 	}, 150); // Adjust delay if needed
 };
 
-// Handle suggestion selection
+// Handle suggestion selection based on type
 const selectSuggestion = (suggestion) => {
 	searchQuery.value = ""; // Clear search input
 	suggestions.value = []; // Clear suggestions
 	showSuggestions.value = false; // Hide dropdown
-	router.push({ name: "RecipeDetail", params: { id: suggestion.id } });
+
+	if (suggestion.type === "meal") {
+		router.push({ name: "RecipeDetail", params: { id: suggestion.id } });
+	} else if (suggestion.type === "cocktail") {
+		router.push({ name: "CocktailDetail", params: { id: suggestion.id } });
+	} else {
+		console.warn("Unknown suggestion type selected:", suggestion);
+	}
 };
 </script>
