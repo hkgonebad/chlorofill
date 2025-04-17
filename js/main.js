@@ -1,10 +1,6 @@
 // Vite entry point
 // console.log("Vite + Vanilla JS loaded"); // Optional: keep or remove
 
-// We will add TheMealDB API fetching logic here later
-
-// OLD JQUERY CODE REMOVED
-
 import { createApp } from "vue";
 import App from "../src/App.vue";
 // Import Bootstrap JS (bundle includes Popper)
@@ -18,9 +14,12 @@ import "../scss/main.scss";
 
 // Import the router
 import router from "../src/router"; // Path relative to main.js
+import { createHead } from "@vueuse/head";
 
 const app = createApp(App);
+const head = createHead();
 
 app.use(router); // Tell Vue to use the router
+app.use(head); // Use @vueuse/head for meta management
 
 app.mount("#app");

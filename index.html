@@ -4,26 +4,39 @@
 <head>
 	<meta charset="utf-8" />
 	<!-- Title will be managed by Vue Router later -->
-	<title>ChloroFill 🌍🥑 - Your Recipe Hub</title>
-	<meta name="description" content="Find delicious recipes with ChloroFill 🌍🥑" />
+	<title>ChloroFill 🍴🍹 - A Vue Recipe</title>
+	<meta name="description" content="Find delicious recipes  and cocktails  with ChloroFill 🍴🍹" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="author" content="Harikrishna Nair" />
 
-	<!-- Keep existing CSS link for now, Vite will handle SCSS imports via JS -->
+	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	<link rel="shortcut icon" href="/favicon.ico" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+	<meta name="apple-mobile-web-app-title" content="ChloroFill" />
+	<link rel="manifest" href="/site.webmanifest" />
 
-	<meta name="theme-color" content="#fafafa" />
+	<!-- Google Site Verification -->
+	<meta name="google-site-verification" content="J8XII2yJpqGYwWIrVml_CL7Y2bdRlT_zIKQVagmuq6U" />
 
-	<!-- Remove vendor JS links like modernizr, jquery, plugins - manage via Vue/npm if needed -->
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-EXP4CKP0TN"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
+
+		gtag('config', 'G-EXP4CKP0TN');
+	</script>
+
 </head>
 
 <body>
-	<!-- Vue app mount point -->
 	<div id="app"></div>
 
 	<!-- Vite entry point (adjust path if main.js is moved) -->
 	<script type="module" src="/js/main.js"></script>
 
-	<!-- Remove old Modal HTML -->
 </body>
 
 </html>

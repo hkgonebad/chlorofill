@@ -18,13 +18,10 @@
 				<div
 					class="d-flex justify-content-between align-items-center mb-3"
 				>
-					<h4 class="section-title">Featured Desserts</h4>
-					<!-- Optional: Link to Desserts category -->
+					<h4 class="section-title">Featured Recipes</h4>
+					<!-- Optional: Link to Categories view -->
 					<router-link
-						:to="{
-							name: 'CategoryRecipes',
-							params: { categoryName: 'Dessert' },
-						}"
+						:to="{ name: 'Categories' }"
 						class="btn btn-sm btn-outline-secondary"
 						>See all</router-link
 					>
@@ -69,7 +66,7 @@
 				<div
 					class="d-flex justify-content-between align-items-center mb-3"
 				>
-					<h4 class="section-title">Featured Cocktail</h4>
+					<h4 class="section-title">Featured Cocktails</h4>
 					<!-- Optional: Link to Cocktails view -->
 					<router-link
 						:to="{ name: 'Cocktails' }"
@@ -79,38 +76,34 @@
 				</div>
 				<!-- Loading State -->
 				<div
-					v-if="loadingCocktail"
-					class="row row-cols-1 g-4 placeholder-glow justify-content-center"
+					v-if="loadingCocktails"
+					class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 placeholder-glow"
 				>
-					<div class="col" style="max-width: 400px">
-						<SkeletonCard />
-					</div>
+					<SkeletonCard v-for="n in 3" :key="'sk-cocktail-' + n" />
 				</div>
 				<!-- Error State -->
 				<ErrorMessage
-					v-else-if="errorCocktail"
-					:message="errorCocktail"
+					v-else-if="errorCocktails"
+					:message="errorCocktails"
 				/>
-				<!-- Cocktail Card Display -->
+				<!-- Cocktail Cards Display -->
 				<div
-					v-else-if="randomCocktail"
-					class="row row-cols-1 g-4 justify-content-center"
+					v-else-if="featuredCocktails.length > 0"
+					class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
 				>
-					<!-- Centering the single card -->
-					<div class="col" style="max-width: 400px">
-						<CocktailCard
-							:key="randomCocktail.idDrink"
-							:image-url="randomCocktail.strDrinkThumb"
-							:title="randomCocktail.strDrink"
-							:link-to="{
-								name: 'CocktailDetail',
-								params: { id: randomCocktail.idDrink },
-							}"
-						/>
-					</div>
+					<CocktailCard
+						v-for="cocktail in featuredCocktails"
+						:key="cocktail.idDrink"
+						:image-url="cocktail.strDrinkThumb"
+						:title="cocktail.strDrink"
+						:link-to="{
+							name: 'CocktailDetail',
+							params: { id: cocktail.idDrink },
+						}"
+					/>
 				</div>
-				<!-- No Cocktail Found -->
-				<p v-else>Could not load a featured cocktail.</p>
+				<!-- No Cocktails Found -->
+				<p v-else>Could not load featured cocktails.</p>
 			</div>
 		</section>
 		<!-- === End Featured Cocktail Section === -->
@@ -193,7 +186,7 @@
 			</section>
 		</template>
 
-		<!-- Add more sections as needed -->
+		<!-- More sections will be added later -->
 	</div>
 </template>
 
@@ -201,21 +194,25 @@
 import { ref, onMounted, watch, computed } from "vue";
 import { RouterLink } from "vue-router";
 import ItemCard from "../components/ItemCard.vue";
-import CocktailCard from "../components/CocktailCard.vue"; // <-- Import CocktailCard
+import CocktailCard from "../components/CocktailCard.vue"; // Import CocktailCard
 // Import reusable components
 import ErrorMessage from "../components/ErrorMessage.vue";
 import CategoryCarousel from "../components/CategoryCarousel.vue";
 import RecipeSearch from "../components/RecipeSearch.vue";
 import SkeletonCard from "../components/SkeletonCard.vue";
 import { useFavorites } from "../composables/useFavorites";
-import { useCocktailFavorites } from "../composables/useCocktailFavorites.js"; // <-- Import cocktail favorites
-import { getRandomCocktail } from "@/services/cocktailApi.js"; // <-- Import cocktail API function
-import { getMealsByCategory, getMealDetailsById } from "@/services/mealApi.js"; // <-- Import meal service functions
+import { useCocktailFavorites } from "../composables/useCocktailFavorites.js"; // Import cocktail favorites
+import { getRandomCocktail } from "@/services/cocktailApi.js"; // Import cocktail API function
+import {
+	getMealsByCategory,
+	getMealDetailsById,
+	getRandomMeal,
+} from "@/services/mealApi.js"; // Import meal service functions including getRandomMeal
 
-const userName = ref(null); // Placeholder for username
-const userGreeting = ref(""); // Placeholder for user greeting, say "Good Morning" or "Good Afternoon" or "Good Evening" based on the current time
+//const userName = ref(null); // Username
+const userGreeting = ref(""); // User greeting, say "Good Morning" or "Good Afternoon" or "Good Evening" based on the current time
 const { favoriteIds: mealFavoriteIds } = useFavorites();
-const { favoriteCocktailIds } = useCocktailFavorites(); // <-- Use cocktail favorites
+const { favoriteCocktailIds } = useCocktailFavorites(); // Use cocktail favorites
 
 // Featured Recipes State
 const featuredRecipes = ref([]);
@@ -228,9 +225,9 @@ const loadingRecommended = ref(false);
 const errorRecommended = ref(null);
 
 // === Featured Cocktail State ===
-const randomCocktail = ref(null);
-const loadingCocktail = ref(false);
-const errorCocktail = ref(null);
+const featuredCocktails = ref([]);
+const loadingCocktails = ref(false);
+const errorCocktails = ref(null);
 // === End Featured Cocktail State ===
 
 // Combine meal and cocktail IDs for triggering recommendation fetch
@@ -253,18 +250,41 @@ const fetchUserGreeting = async () => {
 	}
 };
 
-// Fetch featured recipes (e.g., from Dessert category)
+// Fetch featured recipes (random recipes from different categories)
 const fetchFeaturedRecipes = async () => {
 	loadingFeatured.value = true;
 	errorFeatured.value = null;
 	featuredRecipes.value = [];
-	const category = "Dessert";
+
 	try {
-		// Use service function
-		const meals = await getMealsByCategory(category);
-		featuredRecipes.value = meals.slice(0, 6); // Limit to e.g., 6 items
+		// Fetch 6 random meals
+		const randomMeals = [];
+		for (let i = 0; i < 6; i++) {
+			const meal = await getRandomMeal();
+			if (meal) {
+				// Check if this meal is already in our list to avoid duplicates
+				const isDuplicate = randomMeals.some(
+					(m) => m.idMeal === meal.idMeal
+				);
+				if (!isDuplicate) {
+					randomMeals.push(meal);
+				} else {
+					// If duplicate, try one more time
+					const retryMeal = await getRandomMeal();
+					if (
+						retryMeal &&
+						!randomMeals.some((m) => m.idMeal === retryMeal.idMeal)
+					) {
+						randomMeals.push(retryMeal);
+					}
+				}
+			}
+		}
+
+		featuredRecipes.value = randomMeals;
+
 		if (featuredRecipes.value.length === 0) {
-			console.warn(`No meals found for featured category: ${category}`);
+			console.warn("No random meals found for featured section");
 		}
 	} catch (e) {
 		console.error("Error fetching featured recipes:", e);
@@ -274,24 +294,52 @@ const fetchFeaturedRecipes = async () => {
 	}
 };
 
-// === Fetch Random Cocktail ===
-const fetchRandomCocktail = async () => {
-	loadingCocktail.value = true;
-	errorCocktail.value = null;
-	randomCocktail.value = null;
+// === Fetch Featured Cocktails ===
+const fetchFeaturedCocktails = async () => {
+	loadingCocktails.value = true;
+	errorCocktails.value = null;
+	featuredCocktails.value = [];
+
 	try {
-		randomCocktail.value = await getRandomCocktail();
-		if (!randomCocktail.value) {
-			throw new Error("No cocktail returned from API.");
+		// Fetch 3 random cocktails
+		const randomCocktails = [];
+		for (let i = 0; i < 3; i++) {
+			const cocktail = await getRandomCocktail();
+			if (cocktail) {
+				// Check if this cocktail is already in our list to avoid duplicates
+				const isDuplicate = randomCocktails.some(
+					(c) => c.idDrink === cocktail.idDrink
+				);
+				if (!isDuplicate) {
+					randomCocktails.push(cocktail);
+				} else {
+					// If duplicate, try one more time
+					const retryCocktail = await getRandomCocktail();
+					if (
+						retryCocktail &&
+						!randomCocktails.some(
+							(c) => c.idDrink === retryCocktail.idDrink
+						)
+					) {
+						randomCocktails.push(retryCocktail);
+					}
+				}
+			}
+		}
+
+		featuredCocktails.value = randomCocktails;
+
+		if (featuredCocktails.value.length === 0) {
+			console.warn("No random cocktails found for featured section");
 		}
 	} catch (e) {
-		console.error("Error fetching random cocktail:", e);
-		errorCocktail.value = `Failed to load featured cocktail: ${e.message}`;
+		console.error("Error fetching featured cocktails:", e);
+		errorCocktails.value = `Failed to load featured cocktails: ${e.message}`;
 	} finally {
-		loadingCocktail.value = false;
+		loadingCocktails.value = false;
 	}
 };
-// === End Fetch Random Cocktail ===
+// === End Fetch Featured Cocktails ===
 
 // Fetch recommendations
 const fetchRecommendations = async () => {
@@ -305,7 +353,7 @@ const fetchRecommendations = async () => {
 	loadingRecommended.value = true;
 	errorRecommended.value = null;
 	recommendedItems.value = []; // Clear previous recommendations
-	console.log("Fetching recommendations based on meal favorites...");
+	// console.log("Fetching recommendations based on meal favorites...");
 
 	let fetchedMeals = [];
 	let fetchedCocktails = [];
@@ -328,7 +376,7 @@ const fetchRecommendations = async () => {
 			fetchedMeals = filteredMeals
 				.slice(0, 4)
 				.map((meal) => ({ ...meal, type: "meal" })); // Limit meals, add type
-			console.log("Recommended Meals Fetched:", fetchedMeals);
+			// console.log("Recommended Meals Fetched:", fetchedMeals);
 		} else {
 			console.warn(
 				`Could not get category for favorite meal ${randomFavId} or no category found.`
@@ -346,7 +394,7 @@ const fetchRecommendations = async () => {
 			if (cocktail2 && cocktail2.idDrink !== cocktail1?.idDrink) {
 				fetchedCocktails.push({ ...cocktail2, type: "cocktail" });
 			}
-			console.log("Recommended Cocktails Fetched:", fetchedCocktails);
+			// console.log("Recommended Cocktails Fetched:", fetchedCocktails);
 		} catch (cocktailError) {
 			console.error(
 				"Could not fetch recommended cocktails:",
@@ -381,7 +429,7 @@ const fetchRecommendations = async () => {
 // Fetch when the component is mounted
 onMounted(async () => {
 	// Fetch essentials concurrently
-	Promise.all([fetchFeaturedRecipes(), fetchRandomCocktail()]).then(() => {
+	Promise.all([fetchFeaturedRecipes(), fetchFeaturedCocktails()]).then(() => {
 		// Once featured sections are loaded (or failed),
 		// fetch recommendations based on favorites (if any meal favs exist)
 		fetchRecommendations();

@@ -41,9 +41,16 @@
                         background: transparent;
                         color: #000;
                         position: relative;
-                        text-transform: uppercase;
-                        font-weight: 600;
-                        font-size: 15px;
+                        text-transform: capitalize;
+                        font-weight: 500;
+                        font-size: 1rem;
+
+                        &.disabled {
+                            opacity: 0.5;
+                            pointer-events: none;
+                            font-weight: 400;
+                            font-size: .875rem;
+                        }
 
                         &:after {
                             position: absolute;

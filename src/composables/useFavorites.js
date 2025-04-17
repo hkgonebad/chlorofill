@@ -14,10 +14,10 @@ const loadFavorites = () => {
 			// Basic validation: ensure it's an array
 			if (Array.isArray(parsedIds)) {
 				favoriteIds.value = parsedIds;
-				console.log(
-					"Favorites loaded from LocalStorage:",
-					favoriteIds.value
-				);
+				// console.log(
+				// 	"Favorites loaded from LocalStorage:",
+				// 	favoriteIds.value
+				// );
 			} else {
 				console.warn(
 					"Invalid data found in LocalStorage for favorites, resetting."

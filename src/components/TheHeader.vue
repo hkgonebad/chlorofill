@@ -41,7 +41,9 @@
 										active-class="active"
 										to="/"
 										@click="closeOffcanvas"
-										>Home</router-link
+									>
+										<i class="pi pi-home"></i>
+										Home</router-link
 									>
 								</li>
 								<li class="nav-item">
@@ -50,108 +52,96 @@
 										active-class="active"
 										to="/about"
 										@click="closeOffcanvas"
-										>About Us</router-link
+									>
+										<i class="pi pi-info-circle"></i>
+										About Us</router-link
 									>
 								</li>
 
-								<!-- Recipes Dropdown -->
-								<li class="nav-item dropdown">
+								<!-- Recipes Section (No longer Dropdown) -->
+								<li class="nav-item">
+									<span
+										class="nav-link disabled text-uppercase fw-bold pe-none"
+									>
+										<i class="pi pi-list"></i>
+										Recipes</span
+									>
+								</li>
+								<li class="nav-item">
+									<router-link
+										class="nav-link ps-4"
+										to="/categories"
+										@click="closeOffcanvas"
+									>
+										<i class="pi pi-angle-right"></i>
+										All Categories</router-link
+									>
+								</li>
+								<li class="nav-item">
+									<router-link
+										class="nav-link ps-4"
+										:to="{ name: 'Areas' }"
+										@click="closeOffcanvas"
+									>
+										<i class="pi pi-angle-right"></i>
+										Browse by Area</router-link
+									>
+								</li>
+								<li class="nav-item">
 									<a
-										class="nav-link dropdown-toggle"
-										href="#"
-										role="button"
-										data-bs-toggle="dropdown"
-										aria-expanded="false"
-										>Recipes</a
+										@click.prevent="goToRandomRecipe"
+										class="nav-link ps-4"
+										:disabled="loadingRandom"
+										style="cursor: pointer"
+										data-bs-dismiss="offcanvas"
 									>
-									<ul
-										class="dropdown-menu"
-										aria-labelledby="offcanvasNavbarDropdown"
-									>
-										<li>
-											<router-link
-												class="dropdown-item"
-												to="/categories"
-												@click="closeOffcanvas"
-												>All Categories</router-link
-											>
-										</li>
-										<li>
-											<router-link
-												class="dropdown-item"
-												:to="{ name: 'Areas' }"
-												@click="closeOffcanvas"
-												>Browse by Area</router-link
-											>
-										</li>
-										<li><hr class="dropdown-divider" /></li>
-										<li>
-											<a
-												@click.prevent="
-													goToRandomRecipe
-												"
-												class="dropdown-item"
-												:disabled="loadingRandom"
-												style="cursor: pointer"
-												data-bs-dismiss="offcanvas"
-											>
-												<span
-													v-if="loadingRandom"
-													class="spinner-border spinner-border-sm me-1"
-													role="status"
-													aria-hidden="true"
-												></span>
-												Random Recipe
-											</a>
-										</li>
-									</ul>
+										<span
+											v-if="loadingRandom"
+											class="spinner-border spinner-border-sm me-1"
+											role="status"
+											aria-hidden="true"
+										></span>
+										<i class="pi pi-angle-right"></i>
+										Random Recipe
+									</a>
 								</li>
 
-								<!-- Cocktails Dropdown -->
-								<li class="nav-item dropdown">
+								<!-- Cocktails Section (No longer Dropdown) -->
+								<li class="nav-item">
+									<span
+										class="nav-link disabled text-uppercase fw-bold pe-none"
+									>
+										<i class="pi pi-filter"></i>
+										Cocktails</span
+									>
+								</li>
+								<li class="nav-item">
+									<router-link
+										class="nav-link ps-4"
+										:to="{ name: 'Cocktails' }"
+										@click="closeOffcanvas"
+									>
+										<i class="pi pi-angle-right"></i>
+										Browse Filters</router-link
+									>
+								</li>
+								<li class="nav-item">
 									<a
-										class="nav-link dropdown-toggle"
-										href="#"
-										role="button"
-										data-bs-toggle="dropdown"
-										aria-expanded="false"
-										>Cocktails</a
+										@click.prevent="goToRandomCocktail"
+										class="nav-link ps-4"
+										:disabled="loadingRandomCocktail"
+										style="cursor: pointer"
+										data-bs-dismiss="offcanvas"
 									>
-									<ul
-										class="dropdown-menu"
-										aria-labelledby="offcanvasNavbarDropdown"
-									>
-										<li>
-											<router-link
-												class="dropdown-item"
-												:to="{ name: 'Cocktails' }"
-												@click="closeOffcanvas"
-												>Browse Filters</router-link
-											>
-										</li>
-										<li><hr class="dropdown-divider" /></li>
-										<li>
-											<a
-												@click.prevent="
-													goToRandomCocktail
-												"
-												class="dropdown-item"
-												:disabled="
-													loadingRandomCocktail
-												"
-												style="cursor: pointer"
-												data-bs-dismiss="offcanvas"
-											>
-												<span
-													v-if="loadingRandomCocktail"
-													class="spinner-border spinner-border-sm me-1"
-													role="status"
-													aria-hidden="true"
-												></span>
-												Random Cocktail
-											</a>
-										</li>
-									</ul>
+										<span
+											v-if="loadingRandomCocktail"
+											class="spinner-border spinner-border-sm me-1"
+											role="status"
+											aria-hidden="true"
+										></span>
+										<i class="pi pi-angle-right"></i>
+										Random Cocktail
+									</a>
 								</li>
 
 								<li class="nav-item">
@@ -160,7 +150,9 @@
 										active-class="active"
 										to="/offers"
 										@click="closeOffcanvas"
-										>Offers</router-link
+									>
+										<i class="pi pi-tag"></i>
+										Offers</router-link
 									>
 								</li>
 							</ul>
@@ -279,32 +271,33 @@ const route = useRoute();
 const loadingRandom = ref(false);
 const loadingRandomCocktail = ref(false);
 
-// Use the theme composable
-const { toggleTheme, isDarkMode } = useTheme();
-
-// Inject the toggle function from App.vue
+// Inject the search modal toggle function
 const toggleSearchModal = inject("toggleSearchModal", () => {
 	console.warn("toggleSearchModal function not provided in Header");
 });
 
-// Function to programmatically click the close button
+// Use the theme composable
+const { toggleTheme, isDarkMode } = useTheme();
+
+// Function to programmatically click the close button (Reverted to this method)
 const closeOffcanvas = () => {
 	const closeButton = document.querySelector("#offcanvasNavbar .btn-close");
 	if (closeButton) {
 		closeButton.click();
 	}
+	// console.log("Attempting to close offcanvas via button click");
 };
 
 const goToRandomRecipe = async () => {
 	loadingRandom.value = true;
-	console.log("goToRandomRecipe START");
+	// console.log("goToRandomRecipe START");
 	try {
 		const meal = await getRandomMeal();
 
 		if (meal && meal.idMeal) {
-			console.log(
-				`goToRandomRecipe: Navigating to recipe ${meal.idMeal}...`
-			);
+			// console.log(
+			// 	`goToRandomRecipe: Navigating to recipe ${meal.idMeal}...`
+			// );
 			router.push({ name: "RecipeDetail", params: { id: meal.idMeal } });
 		} else {
 			throw new Error("No random meal found or meal has no ID.");
@@ -314,19 +307,19 @@ const goToRandomRecipe = async () => {
 		alert("Failed to load a random recipe. Please try again.");
 	} finally {
 		loadingRandom.value = false;
-		console.log("goToRandomRecipe END");
+		// console.log("goToRandomRecipe END");
 	}
 };
 
 const goToRandomCocktail = async () => {
 	loadingRandomCocktail.value = true;
-	console.log("goToRandomCocktail START");
+	// console.log("goToRandomCocktail START");
 	try {
 		const cocktail = await getRandomCocktail();
 		if (cocktail && cocktail.idDrink) {
-			console.log(
-				`goToRandomCocktail: Navigating to cocktail ${cocktail.idDrink}...`
-			);
+			// console.log(
+			// 	`goToRandomCocktail: Navigating to cocktail ${cocktail.idDrink}...`
+			// );
 			router.push({
 				name: "CocktailDetail",
 				params: { id: cocktail.idDrink },
