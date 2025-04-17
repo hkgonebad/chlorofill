@@ -41,7 +41,9 @@
 										active-class="active"
 										to="/"
 										@click="closeOffcanvas"
-										>Home</router-link
+									>
+										<i class="pi pi-home"></i>
+										Home</router-link
 									>
 								</li>
 								<li class="nav-item">
@@ -50,7 +52,9 @@
 										active-class="active"
 										to="/about"
 										@click="closeOffcanvas"
-										>About Us</router-link
+									>
+										<i class="pi pi-info-circle"></i>
+										About Us</router-link
 									>
 								</li>
 
@@ -58,7 +62,9 @@
 								<li class="nav-item">
 									<span
 										class="nav-link disabled text-uppercase fw-bold pe-none"
-										>Recipes</span
+									>
+										<i class="pi pi-list"></i>
+										Recipes</span
 									>
 								</li>
 								<li class="nav-item">
@@ -66,7 +72,9 @@
 										class="nav-link ps-4"
 										to="/categories"
 										@click="closeOffcanvas"
-										>All Categories</router-link
+									>
+										<i class="pi pi-angle-right"></i>
+										All Categories</router-link
 									>
 								</li>
 								<li class="nav-item">
@@ -74,7 +82,9 @@
 										class="nav-link ps-4"
 										:to="{ name: 'Areas' }"
 										@click="closeOffcanvas"
-										>Browse by Area</router-link
+									>
+										<i class="pi pi-angle-right"></i>
+										Browse by Area</router-link
 									>
 								</li>
 								<li class="nav-item">
@@ -91,6 +101,7 @@
 											role="status"
 											aria-hidden="true"
 										></span>
+										<i class="pi pi-angle-right"></i>
 										Random Recipe
 									</a>
 								</li>
@@ -99,7 +110,9 @@
 								<li class="nav-item">
 									<span
 										class="nav-link disabled text-uppercase fw-bold pe-none"
-										>Cocktails</span
+									>
+										<i class="pi pi-filter"></i>
+										Cocktails</span
 									>
 								</li>
 								<li class="nav-item">
@@ -107,7 +120,9 @@
 										class="nav-link ps-4"
 										:to="{ name: 'Cocktails' }"
 										@click="closeOffcanvas"
-										>Browse Filters</router-link
+									>
+										<i class="pi pi-angle-right"></i>
+										Browse Filters</router-link
 									>
 								</li>
 								<li class="nav-item">
@@ -124,6 +139,7 @@
 											role="status"
 											aria-hidden="true"
 										></span>
+										<i class="pi pi-angle-right"></i>
 										Random Cocktail
 									</a>
 								</li>
@@ -134,7 +150,9 @@
 										active-class="active"
 										to="/offers"
 										@click="closeOffcanvas"
-										>Offers</router-link
+									>
+										<i class="pi pi-tag"></i>
+										Offers</router-link
 									>
 								</li>
 							</ul>
