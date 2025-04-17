@@ -34,6 +34,10 @@ This project repurposes a static HTML layout into a dynamic single-page applicat
     *   Responsive design targeting mobile-first.
     *   Standardized back button component.
     *   Offcanvas navigation (simplified to links due to JS conflicts).
+*   **SEO Optimization:**
+    *   Dynamic meta tags using `@vueuse/head`.
+    *   Open Graph tags for social sharing.
+    *   Canonical URLs for recipe and cocktail detail pages.
 
 ## Project Status
 
@@ -51,6 +55,8 @@ The application includes both meal and cocktail browsing, searching, detail view
 *   ✅ Cocktail Favorites (LocalStorage)
 *   ✅ Skeleton loading states
 *   ✅ Responsive design & SCSS customization
+*   ✅ Random recipe/cocktail features
+*   ✅ SEO optimization with dynamic meta tags
 
 ### Known Issues
 
@@ -65,7 +71,7 @@ The application includes both meal and cocktail browsing, searching, detail view
 *   **Styling:** Bootstrap 5 (SCSS), PrimeIcons
 *   **State Management:** Vue Composables (for Theme, Favorites)
 *   **APIs:** TheMealDB, TheCocktailDB
-*   **Libraries:** `lodash-es` (for debounce)
+*   **Libraries:** `lodash-es` (for debounce), `@vueuse/head` (for meta tags)
 
 ## Getting Started
 
