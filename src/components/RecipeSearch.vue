@@ -4,7 +4,7 @@
 			<input
 				type="search"
 				class="form-control form-control-sm search-input"
-				placeholder="Search recipes..."
+				placeholder="Start typing to search..."
 				v-model="searchQuery"
 				@input="onSearchInput"
 				@focus="showSuggestionsList"
