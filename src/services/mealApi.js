@@ -27,4 +27,31 @@ export const getCategories = async () => {
 	}
 };
 
+/**
+ * Searches for meals by name.
+ * @param {string} query - The search query.
+ * @returns {Promise<Array>} A promise resolving to an array of meal summary objects.
+ * @throws {Error} If the fetch fails.
+ */
+export const searchMealsByName = async (query) => {
+	if (!query || query.trim().length === 0) {
+		return []; // Return empty if query is empty
+	}
+	const encodedQuery = encodeURIComponent(query.trim());
+	const url = `${API_BASE_URL}/search.php?s=${encodedQuery}`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		const data = await response.json();
+		// Search returns { meals: [...] } or { meals: null }
+		return data.meals || [];
+	} catch (error) {
+		console.error(`Error searching meals for "${query}":`, error);
+		throw new Error(`Failed to search meals: ${error.message}`);
+	}
+};
+
 // Add other MealDB API functions here (e.g., getMealsByCategory, getMealDetails, etc.)
