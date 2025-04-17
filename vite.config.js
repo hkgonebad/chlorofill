@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import { fileURLToPath, URL } from "node:url";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -9,6 +10,11 @@ export default defineConfig(({ mode }) => {
 	return {
 		base: base,
 		plugins: [vue()],
+		resolve: {
+			alias: {
+				"@": fileURLToPath(new URL("./src", import.meta.url)),
+			},
+		},
 		// No specific config needed yet,
 		// but this file allows future customization.
 		// Vite will automatically use index.html as the entry point.
