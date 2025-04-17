@@ -1,15 +1,9 @@
 <template>
 	<section class="block category-recipes-view">
 		<div class="container">
-			<!-- Header with Back Button -->
+			<!-- Header with Back Button and Title -->
 			<div class="d-flex align-items-center mb-4 view-header">
-				<button
-					@click="goBack"
-					class="btn btn-light btn-sm rounded-circle me-3 back-button-icon"
-					aria-label="Go back"
-				>
-					<i class="pi pi-arrow-left"></i>
-				</button>
+				<BackButton class="me-3" />
 				<h2 class="mb-0 flex-grow-1 section-title">
 					{{ categoryName }} Recipes
 				</h2>
@@ -56,14 +50,12 @@
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { useRouter, RouterLink } from "vue-router";
+import { RouterLink } from "vue-router";
 // Import reusable components
 import ItemCard from "../components/ItemCard.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
 import SkeletonCard from "../components/SkeletonCard.vue";
-
-// Initialize router
-const router = useRouter();
+import BackButton from "@/components/BackButton.vue";
 
 // Define props received from the router
 const props = defineProps({
@@ -76,11 +68,6 @@ const props = defineProps({
 const recipes = ref([]);
 const loading = ref(false);
 const error = ref(null);
-
-// Back navigation method
-const goBack = () => {
-	router.go(-1);
-};
 
 const fetchRecipesByCategory = async (category) => {
 	console.log(`Fetching recipes for category: ${category}`);

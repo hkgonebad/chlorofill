@@ -1,15 +1,11 @@
 <template>
 	<div class="area-recipes-view container py-4">
-		<!-- Header with Back Button -->
+		<!-- Header with Back Button and Title -->
 		<div class="d-flex align-items-center mb-4 view-header">
-			<button
-				@click="goBack"
-				class="btn btn-light btn-sm rounded-circle me-3 back-button-icon"
-				aria-label="Go back"
-			>
-				<i class="pi pi-arrow-left"></i>
-			</button>
-			<h2 class="mb-0 flex-grow-1">{{ areaName }} Recipes</h2>
+			<BackButton class="me-3" />
+			<h2 class="mb-0 flex-grow-1 section-title">
+				{{ areaName }} Recipes
+			</h2>
 		</div>
 
 		<!-- Loading State -->
@@ -54,6 +50,7 @@ import { useRouter } from "vue-router";
 import ItemCard from "../components/ItemCard.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
 import SkeletonCard from "../components/SkeletonCard.vue";
+import BackButton from "@/components/BackButton.vue";
 
 const router = useRouter();
 
@@ -67,10 +64,6 @@ const props = defineProps({
 const recipes = ref([]);
 const loading = ref(false);
 const error = ref(null);
-
-const goBack = () => {
-	router.go(-1);
-};
 
 const fetchRecipesByArea = async (area) => {
 	console.log(`Fetching recipes for area: ${area}`);
@@ -112,20 +105,3 @@ watch(
 	}
 );
 </script>
-
-<style scoped>
-.view-header h2 {
-	font-weight: 600;
-}
-
-.back-button-icon {
-	width: 35px;
-	height: 35px;
-	line-height: 1;
-	padding: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	box-shadow: var(--bs-box-shadow-sm);
-}
-</style>

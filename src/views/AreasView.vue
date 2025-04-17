@@ -1,7 +1,10 @@
 <template>
 	<div class="areas-view container py-4">
-		<div class="view-header mb-4">
-			<h2>Browse Recipes by Area (Cuisine)</h2>
+		<div class="d-flex align-items-center mb-4 view-header">
+			<BackButton class="me-3" />
+			<h2 class="mb-0 flex-grow-1 section-title">
+				Browse Recipes by Area (Cuisine)
+			</h2>
 		</div>
 
 		<LoadingSpinner v-if="loading" />
@@ -32,6 +35,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { RouterLink } from "vue-router";
+import BackButton from "../components/BackButton.vue";
 import LoadingSpinner from "../components/LoadingSpinner.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
 
@@ -74,14 +78,3 @@ onMounted(() => {
 	fetchAreas();
 });
 </script>
-
-<style scoped>
-/* Add minimal styling if needed, prefer global */
-.view-header h2 {
-	font-weight: 600;
-}
-.list-group-item i {
-	font-size: 0.8rem;
-	color: var(--bs-secondary-color);
-}
-</style>

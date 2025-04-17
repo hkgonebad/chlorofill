@@ -71,13 +71,9 @@
 			<div class="container recipe-body px-4 py-2">
 				<!-- Header Row with Back Button, Title, and Favorite Button -->
 				<div class="d-flex align-items-center mb-4 view-header">
-					<button
-						@click="goBack"
+					<BackButton
 						class="btn btn-light btn-sm rounded-circle me-3 back-button-icon"
-						aria-label="Go back"
-					>
-						<i class="pi pi-arrow-left"></i>
-					</button>
+					/>
 					<h2 class="mb-0 flex-grow-1 section-title">
 						{{ recipeDetails.strMeal }}
 					</h2>
@@ -206,9 +202,10 @@ import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import ErrorMessage from "../components/ErrorMessage.vue";
 import { useFavorites } from "../composables/useFavorites";
+import BackButton from "@/components/BackButton.vue";
 
 // Initialize router for back button
-const router = useRouter();
+// const router = useRouter(); // No longer needed if BackButton handles it
 
 // Define props received from the router
 const props = defineProps({
@@ -251,11 +248,6 @@ const getAmazonSearchUrl = (searchTerm) => {
 	return `${AMAZON_BASE_URL}?k=${encodedSearchTerm}&tag=${AMAZON_AFFILIATE_TAG}`;
 };
 // --- END AFFILIATE LINK CONFIG ---
-
-// Back navigation method
-const goBack = () => {
-	router.go(-1);
-};
 
 // Toggle favorite status
 const toggleFavorite = () => {
