@@ -203,6 +203,7 @@ import { useRouter } from "vue-router";
 import ErrorMessage from "../components/ErrorMessage.vue";
 import { useFavorites } from "../composables/useFavorites";
 import BackButton from "@/components/BackButton.vue";
+import { getAmazonSearchUrl } from "@/utils/affiliateLinks.js";
 
 // Initialize router for back button
 // const router = useRouter(); // No longer needed if BackButton handles it
@@ -226,10 +227,6 @@ const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 // --- Reactive State ---
 const isCurrentFavorite = isFavorite(props.id);
 
-// --- START AFFILIATE LINK CONFIG ---
-const AMAZON_AFFILIATE_TAG = "awzdigital00-21"; // Your Amazon affiliate tag
-const AMAZON_BASE_URL = "https://www.amazon.in/s";
-
 // --- START INGREDIENT IMAGE LOGIC ---
 const getIngredientImageUrl = (ingredientName) => {
 	if (!ingredientName) return ""; // Handle empty name
@@ -241,13 +238,6 @@ const getIngredientImageUrl = (ingredientName) => {
 	return `https://www.themealdb.com/images/ingredients/${formattedName}-small.png`;
 };
 // --- END INGREDIENT IMAGE LOGIC ---
-
-const getAmazonSearchUrl = (searchTerm) => {
-	if (!searchTerm) return "#"; // Return a harmless link if search term is empty
-	const encodedSearchTerm = encodeURIComponent(searchTerm.trim());
-	return `${AMAZON_BASE_URL}?k=${encodedSearchTerm}&tag=${AMAZON_AFFILIATE_TAG}`;
-};
-// --- END AFFILIATE LINK CONFIG ---
 
 // Toggle favorite status
 const toggleFavorite = () => {

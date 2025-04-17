@@ -162,6 +162,7 @@
 
 <script setup>
 import { ref } from "vue";
+import { getAmazonSearchUrl } from "@/utils/affiliateLinks.js"; // <-- Import from utility
 
 // Import images
 import appliancesImg from "/img/offers/appliances.jpg";
@@ -170,16 +171,11 @@ import toolsImg from "/img/offers/tools.jpg";
 import dealsImg from "/img/offers/deals.jpg";
 import cookbooksImg from "/img/offers/cookbooks.jpg";
 
-// --- START AFFILIATE LINK CONFIG ---
-const AMAZON_AFFILIATE_TAG = "awzdigital00-21"; // Your Amazon affiliate tag
-const AMAZON_BASE_URL = "https://www.amazon.in/s";
-
-const getAmazonSearchUrl = (searchTerm) => {
-	if (!searchTerm) return "#"; // Return a harmless link if search term is empty
-	const encodedSearchTerm = encodeURIComponent(searchTerm.trim());
-	return `${AMAZON_BASE_URL}?k=${encodedSearchTerm}&tag=${AMAZON_AFFILIATE_TAG}`;
-};
-// --- END AFFILIATE LINK CONFIG ---
+// --- Remove Local Affiliate Config ---
+// const AMAZON_AFFILIATE_TAG = "awzdigital00-21";
+// const AMAZON_BASE_URL = "https://www.amazon.in/s";
+// const getAmazonSearchUrl = (searchTerm) => { ... };
+// --- End Remove Local Config ---
 
 // --- START SAMPLE OFFER DATA ---
 

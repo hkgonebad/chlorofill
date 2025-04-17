@@ -144,17 +144,7 @@ import { useRoute, useRouter } from "vue-router";
 import { getCocktailDetailsById } from "@/services/cocktailApi.js";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import BackButton from "@/components/BackButton.vue";
-
-// --- START AFFILIATE LINK CONFIG (Consider moving to a utility file) ---
-const AMAZON_AFFILIATE_TAG = "awzdigital00-21"; // Your Amazon affiliate tag
-const AMAZON_BASE_URL = "https://www.amazon.in/s";
-
-const getAmazonSearchUrl = (searchTerm) => {
-	if (!searchTerm) return "#"; // Return a harmless link if search term is empty
-	const encodedSearchTerm = encodeURIComponent(searchTerm.trim());
-	return `${AMAZON_BASE_URL}?k=${encodedSearchTerm}&tag=${AMAZON_AFFILIATE_TAG}`;
-};
-// --- END AFFILIATE LINK CONFIG ---
+import { getAmazonSearchUrl } from "@/utils/affiliateLinks.js";
 
 const props = defineProps({
 	id: {
