@@ -177,17 +177,6 @@
 					/>
 				</router-link>
 				<div class="extras d-flex align-items-center">
-					<!-- Search Icon Button (Not on Home) -->
-					<button
-						v-if="route.name !== 'Home'"
-						@click="openSearchModal"
-						class="btn btn-sm btn-outline-secondary me-2"
-						aria-label="Open search modal"
-						title="Search Recipes & Cocktails"
-					>
-						<i class="pi pi-search"></i>
-					</button>
-
 					<!-- Dark Mode Toggle Button -->
 					<button
 						@click="toggleTheme"
@@ -254,6 +243,18 @@
 							</g>
 						</svg>
 					</button>
+
+					<!-- Search Icon Button (Not on Home) -->
+					<button
+						v-if="route.name !== 'Home'"
+						@click="openSearchModal"
+						class="btn btn-sm btn-outline-secondary me-2"
+						aria-label="Open search modal"
+						title="Search Recipes & Cocktails"
+					>
+						<i class="pi pi-search"></i>
+					</button>
+
 					<!-- Placeholder for Search/Profile Icon -->
 					<!-- <a href="#" class="btn p-1"><i class="fas fa-search"></i></a> -->
 				</div>
