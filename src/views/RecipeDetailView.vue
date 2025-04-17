@@ -204,6 +204,7 @@ import ErrorMessage from "../components/ErrorMessage.vue";
 import { useFavorites } from "../composables/useFavorites";
 import BackButton from "@/components/BackButton.vue";
 import { getAmazonSearchUrl } from "@/utils/affiliateLinks.js";
+import { getMealDetailsById } from "@/services/mealApi.js";
 
 // Initialize router for back button
 // const router = useRouter(); // No longer needed if BackButton handles it
@@ -235,7 +236,7 @@ const getIngredientImageUrl = (ingredientName) => {
 		ingredientName.trim().replace(/ /g, "_")
 	);
 	// Use the small thumbnail version
-	return `https://www.themealdb.com/images/ingredients/${formattedName}-small.png`;
+	return `https://www.themealdb.com/images/ingredients/${formattedName}-medium.png`;
 };
 // --- END INGREDIENT IMAGE LOGIC ---
 
@@ -249,29 +250,22 @@ const toggleFavorite = () => {
 	// Note: isCurrentFavorite updates reactively because it's based on favoriteIds
 };
 
-// Function to fetch full recipe details by ID
+// Function to fetch full recipe details by ID using service
 const fetchRecipeDetails = async (recipeId) => {
 	console.log(`Fetching details for recipe ID: ${recipeId}`);
 	loading.value = true;
 	error.value = null;
 	recipeDetails.value = null;
 	try {
-		const response = await fetch(
-			`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${recipeId}`
-		);
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		const data = await response.json();
-		if (data.meals && data.meals.length > 0) {
-			recipeDetails.value = data.meals[0];
-			// Optional: Process ingredients/measures into a cleaner array here if needed
-		} else {
+		// Use service function
+		recipeDetails.value = await getMealDetailsById(recipeId);
+
+		if (!recipeDetails.value) {
 			throw new Error(`Recipe with ID ${recipeId} not found.`);
 		}
 	} catch (e) {
 		console.error("Error fetching recipe details:", e);
-		error.value = `Failed to load recipe details: ${e.message}`;
+		error.value = `Failed to load recipe details: ${e.message}`; // Error from service
 	} finally {
 		loading.value = false;
 	}

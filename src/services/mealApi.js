@@ -54,4 +54,109 @@ export const searchMealsByName = async (query) => {
 	}
 };
 
+/**
+ * Fetches meals by area/cuisine.
+ * @param {string} areaName - The name of the area (e.g., 'British', 'Canadian').
+ * @returns {Promise<Array>} A promise resolving to an array of meal summary objects.
+ * @throws {Error} If the fetch fails.
+ */
+export const getMealsByArea = async (areaName) => {
+	if (!areaName) {
+		return [];
+	}
+	const encodedArea = encodeURIComponent(areaName.trim());
+	const url = `${API_BASE_URL}/filter.php?a=${encodedArea}`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		const data = await response.json();
+		return data.meals || [];
+	} catch (error) {
+		console.error(`Error fetching meals for area "${areaName}":`, error);
+		throw new Error(
+			`Failed to load meals for ${areaName}: ${error.message}`
+		);
+	}
+};
+
+/**
+ * Fetches the full details for a specific meal by its ID.
+ * @param {string} id - The meal ID.
+ * @returns {Promise<Object|null>} A promise resolving to the full meal details object or null if not found.
+ * @throws {Error} If the fetch fails.
+ */
+export const getMealDetailsById = async (id) => {
+	if (!id) {
+		throw new Error("Meal ID is required.");
+	}
+	const url = `${API_BASE_URL}/lookup.php?i=${id}`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		const data = await response.json();
+		// Lookup returns { meals: [ mealObject ] } or { meals: null }
+		return data.meals && data.meals.length > 0 ? data.meals[0] : null;
+	} catch (error) {
+		console.error(`Error fetching meal details for ID ${id}:`, error);
+		throw new Error(`Failed to load meal details: ${error.message}`);
+	}
+};
+
+/**
+ * Fetches meals by category name.
+ * @param {string} categoryName - The name of the category (e.g., 'Seafood', 'Dessert').
+ * @returns {Promise<Array>} A promise resolving to an array of meal summary objects.
+ * @throws {Error} If the fetch fails.
+ */
+export const getMealsByCategory = async (categoryName) => {
+	if (!categoryName) {
+		return [];
+	}
+	const encodedCategory = encodeURIComponent(categoryName.trim());
+	const url = `${API_BASE_URL}/filter.php?c=${encodedCategory}`;
+
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		const data = await response.json();
+		return data.meals || [];
+	} catch (error) {
+		console.error(
+			`Error fetching meals for category "${categoryName}":`,
+			error
+		);
+		throw new Error(
+			`Failed to load meals for ${categoryName}: ${error.message}`
+		);
+	}
+};
+
+/**
+ * Fetches a single random meal.
+ * @returns {Promise<Object|null>} A promise resolving to the random meal object or null if none found.
+ * @throws {Error} If the fetch fails.
+ */
+export const getRandomMeal = async () => {
+	const url = `${API_BASE_URL}/random.php`;
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		const data = await response.json();
+		return data.meals && data.meals.length > 0 ? data.meals[0] : null;
+	} catch (error) {
+		console.error("Error fetching random meal:", error);
+		throw new Error(`Failed to load random meal: ${error.message}`);
+	}
+};
+
 // Add other MealDB API functions here (e.g., getMealsByCategory, getMealDetails, etc.)
