@@ -1,9 +1,10 @@
 <template>
 	<section class="block categories-view">
 		<div class="container">
-			<h1 class="section-title">ChloroFill Recipe Categories</h1>
-
-			<h2>Recipe Categories</h2>
+			<div class="view-header mb-4 d-flex align-items-center">
+				<BackButton class="me-3" />
+				<h1 class="section-title mb-0">ChloroFill Recipe Categories</h1>
+			</div>
 
 			<!-- Loading State -->
 			<div
@@ -58,7 +59,7 @@ import { getCategories } from "@/services/mealApi.js"; // <-- Import from servic
 import ItemCard from "../components/ItemCard.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
 import SkeletonCard from "../components/SkeletonCard.vue"; // <-- Import SkeletonCard
-
+import BackButton from "../components/BackButton.vue";
 const categories = ref([]); // Holds the array of category objects
 const loading = ref(false);
 const error = ref(null);

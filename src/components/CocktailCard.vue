@@ -70,18 +70,4 @@ const truncatedSubtitle = computed(() => {
 });
 </script>
 
-<style scoped>
-.cocktail-card {
-	/* Add specific styling for cocktail cards if needed */
-	/* Example: border-color: var(--bs-secondary); */
-}
-.cocktail-thumb {
-	/* Adjust object-fit or height if needed for cocktail images */
-	max-height: 200px; /* Example height */
-	object-fit: cover;
-}
-.card-link-wrapper {
-	display: block; /* Make the image link clickable over the whole area */
-	text-decoration: none;
-}
-</style>
+<style scoped></style>

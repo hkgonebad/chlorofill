@@ -57,14 +57,14 @@
 			<!-- Image Header -->
 			<div class="image-header position-relative mb-3">
 				<img
-					:src="cocktail.strDrinkThumb + '/preview'"
+					:src="cocktail.strDrinkThumb + '/large'"
 					class="img-fluid recipe-image"
 					:alt="cocktail.strDrink"
 				/>
 			</div>
 
 			<div class="container recipe-body px-4 py-2">
-				<!-- Header Row with Back Button, Title -->
+				<!-- Header Row with Back Button, Title, and Favorite Button -->
 				<div class="d-flex align-items-center mb-4 view-header">
 					<BackButton
 						class="btn btn-light btn-sm rounded-circle me-3 back-button-icon"
@@ -72,6 +72,25 @@
 					<h2 class="mb-0 flex-grow-1 section-title">
 						{{ cocktail.strDrink }}
 					</h2>
+					<!-- Favorite Button -->
+					<button
+						@click="toggleFavorite"
+						class="btn btn-outline-danger btn-sm rounded-circle ms-3 favorite-button"
+						:class="{ active: isCurrentFavorite }"
+						:aria-label="
+							isCurrentFavorite
+								? 'Remove from favorites'
+								: 'Add to favorites'
+						"
+					>
+						<i
+							:class="
+								isCurrentFavorite
+									? 'pi pi-heart-fill'
+									: 'pi pi-heart'
+							"
+						></i>
+					</button>
 				</div>
 
 				<!-- Meta Info -->
@@ -109,6 +128,15 @@
 						v-for="ingredient in ingredientsList"
 						:key="ingredient.name"
 					>
+						<img
+							:src="getIngredientImageUrl(ingredient.name)"
+							:alt="ingredient.name"
+							class="ingredient-thumbnail me-2"
+							@error="
+								($event) =>
+									($event.target.style.display = 'none')
+							"
+						/>
 						<div class="flex-grow-1">
 							<a
 								:href="getAmazonSearchUrl(ingredient.name)"
@@ -145,6 +173,7 @@ import { getCocktailDetailsById } from "@/services/cocktailApi.js";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import BackButton from "@/components/BackButton.vue";
 import { getAmazonSearchUrl } from "@/utils/affiliateLinks.js";
+import { useCocktailFavorites } from "@/composables/useCocktailFavorites.js";
 
 const props = defineProps({
 	id: {
@@ -158,6 +187,33 @@ const router = useRouter(); // Initialize router
 const loading = ref(false);
 const error = ref(null);
 const cocktail = ref(null);
+
+// --- Composables ---
+const { addFavorite, removeFavorite, isFavorite } = useCocktailFavorites();
+
+// --- Reactive State for Favorite Button ---
+const isCurrentFavorite = isFavorite(props.id);
+
+// --- START INGREDIENT IMAGE LOGIC ---
+const getIngredientImageUrl = (ingredientName) => {
+	if (!ingredientName) return ""; // Handle empty name
+	// Replace spaces with underscores and encode for URL
+	const formattedName = encodeURIComponent(
+		ingredientName.trim().replace(/ /g, "_")
+	);
+	// Use the medium thumbnail version
+	return `https://www.thecocktaildb.com/images/ingredients/${formattedName}-medium.png`;
+};
+// --- END INGREDIENT IMAGE LOGIC ---
+
+// --- Toggle Favorite Function ---
+const toggleFavorite = () => {
+	if (isCurrentFavorite.value) {
+		removeFavorite(props.id);
+	} else {
+		addFavorite(props.id);
+	}
+};
 
 const fetchCocktailDetails = async (cocktailId) => {
 	loading.value = true;
