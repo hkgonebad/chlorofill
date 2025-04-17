@@ -1,6 +1,9 @@
 // Import YOUR custom variables to override Bootstrap defaults
 @import 'layout/variables';
 
+// Import Open Props easings
+@import "open-props/easings.min.css";
+
 // Import the rest of Bootstrap OR specific components
 @import "bootstrap/scss/bootstrap";
 
@@ -25,5 +28,6 @@
 @import 'layout/cocktail-detail';
 @import 'components/category-carousel';
 @import 'components/recipe-search';
+@import 'components/theme-toggle';
 
 @import 'layout/dark-mode';

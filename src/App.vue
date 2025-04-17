@@ -13,4 +13,8 @@
 import TheHeader from "./components/TheHeader.vue";
 import TheFooter from "./components/TheFooter.vue";
 import { RouterView } from "vue-router";
+import { initializeTheme } from "@/composables/useTheme.js";
+
+// Apply theme on initial load
+initializeTheme();
 </script>

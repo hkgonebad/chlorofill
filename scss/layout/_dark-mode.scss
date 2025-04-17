@@ -29,10 +29,6 @@
         }
     }
 
-    .logo img {
-        filter: brightness(0) invert(1);
-    }
-
     // Add more overrides for specific components as needed
     // e.g., header background, footer background, link colors
     .topHeader {
@@ -51,7 +47,7 @@
         }
 
         .logo img {
-            filter: brightness(0) invert(1);
+            //  filter: brightness(0) invert(1);
         }
 
         /* Theme toggle specific styles for dark mode */
