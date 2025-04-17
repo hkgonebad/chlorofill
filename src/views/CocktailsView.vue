@@ -3,11 +3,40 @@
 		<div class="container py-4">
 			<h1 class="section-title">Explore Cocktails</h1>
 
-			<!-- Loading State -->
-			<div v-if="loading" class="text-center my-5">
-				<div class="spinner-border text-secondary" role="status">
-					<span class="visually-hidden">Loading...</span>
-				</div>
+			<!-- Skeleton Loading State -->
+			<div v-if="loading" class="placeholder-glow">
+				<!-- Skeleton for Alcoholic Types -->
+				<section class="mb-4 block">
+					<h2 class="section-title section-title-sm">
+						<span class="placeholder col-3"></span>
+					</h2>
+					<ul class="list-group">
+						<li class="list-group-item">
+							<span class="placeholder col-5"></span>
+						</li>
+						<li class="list-group-item">
+							<span class="placeholder col-4"></span>
+						</li>
+					</ul>
+				</section>
+
+				<!-- Skeleton for Glasses -->
+				<section class="mb-4 block">
+					<h2 class="section-title">
+						<span class="placeholder col-4"></span>
+					</h2>
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">
+							<span class="placeholder col-6"></span>
+						</li>
+						<li class="list-group-item">
+							<span class="placeholder col-5"></span>
+						</li>
+						<li class="list-group-item">
+							<span class="placeholder col-7"></span>
+						</li>
+					</ul>
+				</section>
 			</div>
 
 			<!-- Error State -->
@@ -16,70 +45,71 @@
 			<!-- Filter Lists -->
 			<div v-else>
 				<!-- Alcoholic Filter -->
-				<section class="mb-4 block">
-					<h2 class="section-title">By Type</h2>
-					<ul class="list-group list-group-flush">
-						<li
+				<section class="mb-2 block">
+					<h2 class="section-title section-title-sm">By Type</h2>
+					<div class="list-group">
+						<router-link
 							v-for="type in alcoholicTypes"
 							:key="type.strAlcoholic"
-							class="list-group-item list-group-item-action"
+							:to="{
+								name: 'CocktailList',
+								params: {
+									filterType: 'a',
+									filterValue: type.strAlcoholic,
+								},
+							}"
+							class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
 						>
-							<!-- Link to filtered list view by Alcoholic Type -->
-							<router-link
-								:to="{
-									name: 'CocktailList',
-									params: {
-										filterType: 'a',
-										filterValue: type.strAlcoholic,
-									},
-								}"
-								class="text-decoration-none"
-							>
-								{{ type.strAlcoholic }}
-							</router-link>
-						</li>
-					</ul>
+							{{ type.strAlcoholic }}
+							<i class="pi pi-chevron-right"></i>
+						</router-link>
+					</div>
 				</section>
 
 				<!-- Glass Filter -->
-				<section class="mb-4 block">
-					<h2 class="section-title">By Glass</h2>
-					<ul class="list-group list-group-flush">
-						<li
+				<section class="mb-2 block">
+					<h2 class="section-title section-title-sm">By Glass</h2>
+					<div class="list-group">
+						<router-link
 							v-for="glass in glasses"
 							:key="glass.strGlass"
-							class="list-group-item list-group-item-action"
+							:to="{
+								name: 'CocktailList',
+								params: {
+									filterType: 'g',
+									filterValue: glass.strGlass,
+								},
+							}"
+							class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
 						>
-							<!-- Link to filtered list view by Glass Type -->
-							<router-link
-								:to="{
-									name: 'CocktailList',
-									params: {
-										filterType: 'g',
-										filterValue: glass.strGlass,
-									},
-								}"
-								class="text-decoration-none"
-							>
-								{{ glass.strGlass }}
-							</router-link>
-						</li>
-					</ul>
+							{{ glass.strGlass }}
+							<i class="pi pi-chevron-right"></i>
+						</router-link>
+					</div>
 				</section>
 
 				<!-- Categories Filter (Optional - might be less common than alcoholic/glass) -->
-				<!--
-                <section class="mb-4 block">
-                    <h2 class="section-title">By Category</h2>
-                    <ul class="list-group list-group-flush">
-                        <li v-for="cat in categories" :key="cat.strCategory" class="list-group-item list-group-item-action">
-                            <router-link :to="{ name: 'Home' }" class="text-decoration-none">
-								{{ cat.strCategory }}
-							</router-link>
-                        </li>
-                    </ul>
-                </section>
-                -->
+
+				<section class="mb-4 block">
+					<h2 class="section-title section-title-sm">By Category</h2>
+					<div class="list-group">
+						<router-link
+							v-for="cat in categories"
+							:key="cat.strCategory"
+							:to="{
+								name: 'CocktailList',
+								params: {
+									filterType: 'c',
+									filterValue: cat.strCategory,
+								},
+							}"
+							class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+						>
+							{{ cat.strCategory }}
+							<i class="pi pi-chevron-right"></i>
+						</router-link>
+					</div>
+				</section>
 			</div>
 		</div>
 	</section>
@@ -91,7 +121,7 @@ import { RouterLink } from "vue-router";
 import { getCocktailFilterLists } from "@/services/cocktailApi.js";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 
-const loading = ref(false);
+const loading = ref(true);
 const error = ref(null);
 
 const categories = ref([]);
