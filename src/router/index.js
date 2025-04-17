@@ -16,6 +16,9 @@ const RecipeDetailView = () => import("../views/RecipeDetailView.vue");
 const AreasView = () => import("../views/AreasView.vue"); // <-- Import AreasView
 const AreaRecipesView = () => import("../views/AreaRecipesView.vue"); // <-- Import AreaRecipesView
 const FavoritesView = () => import("../views/FavoritesView.vue"); // <-- Import FavoritesView
+const CocktailsView = () => import("../views/CocktailsView.vue"); // <-- Import CocktailsView
+const CocktailListView = () => import("../views/CocktailListView.vue"); // <-- Import CocktailListView
+const CocktailDetailView = () => import("../views/CocktailDetailView.vue"); // <-- Import CocktailDetailView
 
 const routes = [
 	{
@@ -70,6 +73,26 @@ const routes = [
 		path: "/favorites",
 		name: "Favorites",
 		component: FavoritesView,
+	},
+	// Route for Cocktails listing/filters page
+	{
+		path: "/cocktails",
+		name: "Cocktails",
+		component: CocktailsView,
+	},
+	// Route for list of cocktails by filter
+	{
+		path: "/cocktails/filter/:filterType/:filterValue", // e.g., /cocktails/filter/a/Alcoholic
+		name: "CocktailList",
+		component: CocktailListView,
+		props: true, // Pass filterType and filterValue as props
+	},
+	// Route for individual cocktail details
+	{
+		path: "/cocktail/:id",
+		name: "CocktailDetail",
+		component: CocktailDetailView,
+		props: true, // Pass id as prop
 	},
 	// Add other routes as needed
 ];

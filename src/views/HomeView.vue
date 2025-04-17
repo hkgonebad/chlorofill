@@ -50,6 +50,51 @@
 			<p v-else>Could not load featured recipes.</p>
 		</section>
 
+		<!-- === Featured Cocktail Section === -->
+		<section class="cocktail-section mb-5">
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<h4 class="section-title">Featured Cocktail</h4>
+				<!-- Optional: Link to Cocktails view -->
+				<router-link
+					:to="{ name: 'Cocktails' }"
+					class="btn btn-sm btn-outline-secondary"
+					>Explore More</router-link
+				>
+			</div>
+			<!-- Loading State -->
+			<div
+				v-if="loadingCocktail"
+				class="row row-cols-1 g-4 placeholder-glow justify-content-center"
+			>
+				<div class="col" style="max-width: 400px">
+					<SkeletonCard />
+				</div>
+			</div>
+			<!-- Error State -->
+			<ErrorMessage v-else-if="errorCocktail" :message="errorCocktail" />
+			<!-- Cocktail Card Display -->
+			<div
+				v-else-if="randomCocktail"
+				class="row row-cols-1 g-4 justify-content-center"
+			>
+				<!-- Centering the single card -->
+				<div class="col" style="max-width: 400px">
+					<CocktailCard
+						:key="randomCocktail.idDrink"
+						:image-url="randomCocktail.strDrinkThumb"
+						:title="randomCocktail.strDrink"
+						:link-to="{
+							name: 'CocktailDetail',
+							params: { id: randomCocktail.idDrink },
+						}"
+					/>
+				</div>
+			</div>
+			<!-- No Cocktail Found -->
+			<p v-else>Could not load a featured cocktail.</p>
+		</section>
+		<!-- === End Featured Cocktail Section === -->
+
 		<section class="recipe-section mb-5">
 			<div class="d-flex justify-content-between align-items-center mb-3">
 				<h4 class="section-title">Categories</h4>
@@ -115,12 +160,14 @@
 import { ref, onMounted, watch } from "vue";
 import { RouterLink } from "vue-router";
 import ItemCard from "../components/ItemCard.vue";
+import CocktailCard from "../components/CocktailCard.vue"; // <-- Import CocktailCard
 // Import reusable components
 import ErrorMessage from "../components/ErrorMessage.vue";
 import CategoryCarousel from "../components/CategoryCarousel.vue";
 import RecipeSearch from "../components/RecipeSearch.vue";
 import SkeletonCard from "../components/SkeletonCard.vue";
 import { useFavorites } from "../composables/useFavorites"; // <-- Import useFavorites
+import { getRandomCocktail } from "@/services/cocktailApi.js"; // <-- Import cocktail API function
 
 const userName = ref(null); // Placeholder for username
 const { favoriteIds } = useFavorites(); // <-- Get favorite IDs
@@ -134,6 +181,12 @@ const errorFeatured = ref(null);
 const recommendedRecipes = ref([]);
 const loadingRecommended = ref(false);
 const errorRecommended = ref(null);
+
+// === Featured Cocktail State ===
+const randomCocktail = ref(null);
+const loadingCocktail = ref(false);
+const errorCocktail = ref(null);
+// === End Featured Cocktail State ===
 
 // Fetch featured recipes (e.g., from Dessert category)
 const fetchFeaturedRecipes = async () => {
@@ -161,6 +214,25 @@ const fetchFeaturedRecipes = async () => {
 		loadingFeatured.value = false;
 	}
 };
+
+// === Fetch Random Cocktail ===
+const fetchRandomCocktail = async () => {
+	loadingCocktail.value = true;
+	errorCocktail.value = null;
+	randomCocktail.value = null;
+	try {
+		randomCocktail.value = await getRandomCocktail();
+		if (!randomCocktail.value) {
+			throw new Error("No cocktail returned from API.");
+		}
+	} catch (e) {
+		console.error("Error fetching random cocktail:", e);
+		errorCocktail.value = `Failed to load featured cocktail: ${e.message}`;
+	} finally {
+		loadingCocktail.value = false;
+	}
+};
+// === End Fetch Random Cocktail ===
 
 // Fetch recommendations based on a random favorite
 const fetchRecommendations = async () => {
@@ -245,10 +317,18 @@ const fetchRecommendations = async () => {
 
 // Fetch when the component is mounted
 onMounted(async () => {
-	await fetchFeaturedRecipes(); // Wait for featured to load first
-	fetchRecommendations(); // Then fetch recommendations
+	// Fetch cocktail and featured recipes concurrently
+	Promise.all([fetchFeaturedRecipes(), fetchRandomCocktail()]).then(() => {
+		// Once both featured sections are loaded (or failed),
+		// fetch recommendations based on favorites (if any)
+		fetchRecommendations();
+	});
 });
 
 // Optional: Watch favoriteIds to refresh recommendations?
 // watch(favoriteIds, fetchRecommendations, { deep: true }); // Could cause extra calls
 </script>
+
+<style scoped>
+/* No scoped styles needed - use global layout files */
+</style>

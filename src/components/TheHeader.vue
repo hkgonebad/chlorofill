@@ -81,6 +81,15 @@
 									<router-link
 										class="nav-link"
 										active-class="active"
+										:to="{ name: 'Cocktails' }"
+										@click="closeOffcanvas"
+										>Cocktails</router-link
+									>
+								</li>
+								<li class="nav-item">
+									<router-link
+										class="nav-link"
+										active-class="active"
 										:to="{ name: 'Areas' }"
 										@click="closeOffcanvas"
 										>Browse by Area</router-link
