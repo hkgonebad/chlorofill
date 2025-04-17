@@ -214,5 +214,5 @@ watch(
 
 <style scoped>
 /* Styles should target common classes like .recipe-detail-view, .recipe-body, etc. */
-/* Add specific rules to scss/layout/_cocktail-detail.scss if needed */
+/* Add specific rules to scss/layout/_cocktail-detail.scss or _recipe-detail.scss if needed */
 </style>

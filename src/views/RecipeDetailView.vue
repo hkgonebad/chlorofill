@@ -310,30 +310,3 @@ watch(
 	}
 );
 </script>
-
-<style scoped>
-/* Add styles for detail placeholders */
-.image-header-placeholder {
-	width: 100%;
-	height: 30vh; /* Approximate height */
-	background-color: var(--bs-secondary-bg);
-}
-.back-button-placeholder,
-.favorite-button-placeholder {
-	display: inline-block;
-	width: 35px; /* Match button size */
-	height: 35px;
-	border-radius: 50%;
-	background-color: var(--bs-secondary-bg);
-}
-.ingredient-thumbnail-placeholder {
-	display: inline-block;
-	width: 35px; /* Match thumbnail size */
-	height: 35px;
-	border-radius: var(--bs-border-radius-sm);
-	background-color: var(--bs-secondary-bg);
-	vertical-align: middle;
-}
-
-/* Add any other specific placeholder styles if needed */
-</style>

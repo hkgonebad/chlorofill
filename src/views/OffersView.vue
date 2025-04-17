@@ -299,29 +299,3 @@ const cookbooks = ref([
 
 // --- END SAMPLE OFFER DATA ---
 </script>
-
-<style scoped lang="scss">
-.offer-section .card {
-	border: 1px solid var(--bs-border-color-translucent);
-}
-
-.card-img-wrapper {
-	position: relative; // Context for absolute positioning
-
-	.offer-badge {
-		position: absolute;
-		top: 0.75rem; // Adjust as needed
-		right: 0.75rem; // Adjust as needed
-		z-index: 1; // Ensure badge is above the image
-		font-size: 0.75em; // Slightly smaller badge text
-		padding: 0.3em 0.5em;
-	}
-}
-
-// Ensure buttons align at the bottom even if content height varies
-.card-body {
-	.btn {
-		margin-top: auto; // Pushes the button to the bottom of the flex container
-	}
-}
-</style>
