@@ -54,104 +54,78 @@
 									>
 								</li>
 
-								<!-- Recipes Dropdown -->
-								<li class="nav-item dropdown">
+								<!-- Recipes Section (No longer Dropdown) -->
+								<li class="nav-item">
+									<span
+										class="nav-link disabled text-uppercase fw-bold pe-none"
+										>Recipes</span
+									>
+								</li>
+								<li class="nav-item">
+									<router-link
+										class="nav-link ps-4"
+										to="/categories"
+										@click="closeOffcanvas"
+										>All Categories</router-link
+									>
+								</li>
+								<li class="nav-item">
+									<router-link
+										class="nav-link ps-4"
+										:to="{ name: 'Areas' }"
+										@click="closeOffcanvas"
+										>Browse by Area</router-link
+									>
+								</li>
+								<li class="nav-item">
 									<a
-										class="nav-link dropdown-toggle"
-										href="#"
-										role="button"
-										data-bs-toggle="dropdown"
-										aria-expanded="false"
-										>Recipes</a
+										@click.prevent="goToRandomRecipe"
+										class="nav-link ps-4"
+										:disabled="loadingRandom"
+										style="cursor: pointer"
+										data-bs-dismiss="offcanvas"
 									>
-									<ul
-										class="dropdown-menu"
-										aria-labelledby="offcanvasNavbarDropdown"
-									>
-										<li>
-											<router-link
-												class="dropdown-item"
-												to="/categories"
-												@click="closeOffcanvas"
-												>All Categories</router-link
-											>
-										</li>
-										<li>
-											<router-link
-												class="dropdown-item"
-												:to="{ name: 'Areas' }"
-												@click="closeOffcanvas"
-												>Browse by Area</router-link
-											>
-										</li>
-										<li><hr class="dropdown-divider" /></li>
-										<li>
-											<a
-												@click.prevent="
-													goToRandomRecipe
-												"
-												class="dropdown-item"
-												:disabled="loadingRandom"
-												style="cursor: pointer"
-												data-bs-dismiss="offcanvas"
-											>
-												<span
-													v-if="loadingRandom"
-													class="spinner-border spinner-border-sm me-1"
-													role="status"
-													aria-hidden="true"
-												></span>
-												Random Recipe
-											</a>
-										</li>
-									</ul>
+										<span
+											v-if="loadingRandom"
+											class="spinner-border spinner-border-sm me-1"
+											role="status"
+											aria-hidden="true"
+										></span>
+										Random Recipe
+									</a>
 								</li>
 
-								<!-- Cocktails Dropdown -->
-								<li class="nav-item dropdown">
+								<!-- Cocktails Section (No longer Dropdown) -->
+								<li class="nav-item">
+									<span
+										class="nav-link disabled text-uppercase fw-bold pe-none"
+										>Cocktails</span
+									>
+								</li>
+								<li class="nav-item">
+									<router-link
+										class="nav-link ps-4"
+										:to="{ name: 'Cocktails' }"
+										@click="closeOffcanvas"
+										>Browse Filters</router-link
+									>
+								</li>
+								<li class="nav-item">
 									<a
-										class="nav-link dropdown-toggle"
-										href="#"
-										role="button"
-										data-bs-toggle="dropdown"
-										aria-expanded="false"
-										>Cocktails</a
+										@click.prevent="goToRandomCocktail"
+										class="nav-link ps-4"
+										:disabled="loadingRandomCocktail"
+										style="cursor: pointer"
+										data-bs-dismiss="offcanvas"
 									>
-									<ul
-										class="dropdown-menu"
-										aria-labelledby="offcanvasNavbarDropdown"
-									>
-										<li>
-											<router-link
-												class="dropdown-item"
-												:to="{ name: 'Cocktails' }"
-												@click="closeOffcanvas"
-												>Browse Filters</router-link
-											>
-										</li>
-										<li><hr class="dropdown-divider" /></li>
-										<li>
-											<a
-												@click.prevent="
-													goToRandomCocktail
-												"
-												class="dropdown-item"
-												:disabled="
-													loadingRandomCocktail
-												"
-												style="cursor: pointer"
-												data-bs-dismiss="offcanvas"
-											>
-												<span
-													v-if="loadingRandomCocktail"
-													class="spinner-border spinner-border-sm me-1"
-													role="status"
-													aria-hidden="true"
-												></span>
-												Random Cocktail
-											</a>
-										</li>
-									</ul>
+										<span
+											v-if="loadingRandomCocktail"
+											class="spinner-border spinner-border-sm me-1"
+											role="status"
+											aria-hidden="true"
+										></span>
+										Random Cocktail
+									</a>
 								</li>
 
 								<li class="nav-item">
@@ -279,20 +253,21 @@ const route = useRoute();
 const loadingRandom = ref(false);
 const loadingRandomCocktail = ref(false);
 
-// Use the theme composable
-const { toggleTheme, isDarkMode } = useTheme();
-
-// Inject the toggle function from App.vue
+// Inject the search modal toggle function
 const toggleSearchModal = inject("toggleSearchModal", () => {
 	console.warn("toggleSearchModal function not provided in Header");
 });
 
-// Function to programmatically click the close button
+// Use the theme composable
+const { toggleTheme, isDarkMode } = useTheme();
+
+// Function to programmatically click the close button (Reverted to this method)
 const closeOffcanvas = () => {
 	const closeButton = document.querySelector("#offcanvasNavbar .btn-close");
 	if (closeButton) {
 		closeButton.click();
 	}
+	// console.log("Attempting to close offcanvas via button click");
 };
 
 const goToRandomRecipe = async () => {
