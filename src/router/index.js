@@ -19,6 +19,7 @@ const FavoritesView = () => import("../views/FavoritesView.vue"); // <-- Import 
 const CocktailsView = () => import("../views/CocktailsView.vue"); // <-- Import CocktailsView
 const CocktailListView = () => import("../views/CocktailListView.vue"); // <-- Import CocktailListView
 const CocktailDetailView = () => import("../views/CocktailDetailView.vue"); // <-- Import CocktailDetailView
+const BrowseView = () => import("../views/BrowseView.vue"); // <-- Import BrowseView
 
 const routes = [
 	{
@@ -93,6 +94,12 @@ const routes = [
 		name: "CocktailDetail",
 		component: CocktailDetailView,
 		props: true, // Pass id as prop
+	},
+	// Route for Browse view
+	{
+		path: "/browse",
+		name: "Browse",
+		component: BrowseView,
 	},
 	// Add other routes as needed
 ];

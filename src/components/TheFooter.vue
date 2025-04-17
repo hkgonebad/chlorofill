@@ -10,13 +10,13 @@
 			</router-link>
 
 			<router-link
-				:to="{ name: 'Categories' }"
+				:to="{ name: 'Browse' }"
 				class="nav-item"
 				active-class="active"
 			>
 				<!-- <i class="fas fa-th-large fa-fw"></i> -->
 				<i class="pi pi-th-large" style="font-size: 1.3rem"></i>
-				<span class="nav-text d-none d-sm-block">Categories</span>
+				<span class="nav-text d-none d-sm-block">Browse All</span>
 			</router-link>
 
 			<!-- Add Favorites Link -->
