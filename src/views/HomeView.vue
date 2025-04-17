@@ -108,7 +108,7 @@
 		</section>
 
 		<!-- Recommendations Section (Conditional) -->
-		<template v-if="favoriteIds.length > 0">
+		<template v-if="combinedFavoriteIds.length > 0">
 			<section class="recipe-section mb-5">
 				<div
 					class="d-flex justify-content-between align-items-center mb-3"
@@ -129,25 +129,40 @@
 					v-else-if="errorRecommended"
 					:message="errorRecommended"
 				/>
-				<!-- Recipe Grid -->
+				<!-- Combined Grid -->
 				<div
-					v-else-if="recommendedRecipes.length > 0"
+					v-else-if="recommendedItems.length > 0"
 					class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
 				>
-					<ItemCard
-						v-for="recipe in recommendedRecipes"
-						:key="recipe.idMeal"
-						:image-url="recipe.strMealThumb"
-						:title="recipe.strMeal"
-						:link-to="{
-							name: 'RecipeDetail',
-							params: { id: recipe.idMeal },
-						}"
-					/>
+					<template
+						v-for="item in recommendedItems"
+						:key="item.type + '-' + item.id"
+					>
+						<!-- Meal Card -->
+						<ItemCard
+							v-if="item.type === 'meal'"
+							:image-url="item.strMealThumb"
+							:title="item.strMeal"
+							:link-to="{
+								name: 'RecipeDetail',
+								params: { id: item.idMeal },
+							}"
+						/>
+						<!-- Cocktail Card -->
+						<CocktailCard
+							v-else-if="item.type === 'cocktail'"
+							:image-url="item.strDrinkThumb"
+							:title="item.strDrink"
+							:link-to="{
+								name: 'CocktailDetail',
+								params: { id: item.idDrink },
+							}"
+						/>
+					</template>
 				</div>
 				<!-- No Recommendations Found -->
 				<p v-else class="text-muted">
-					Could not load recommendations based on your favorites.
+					Could not load recommendations at this time.
 				</p>
 			</section>
 		</template>
@@ -157,7 +172,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { RouterLink } from "vue-router";
 import ItemCard from "../components/ItemCard.vue";
 import CocktailCard from "../components/CocktailCard.vue"; // <-- Import CocktailCard
@@ -166,11 +181,14 @@ import ErrorMessage from "../components/ErrorMessage.vue";
 import CategoryCarousel from "../components/CategoryCarousel.vue";
 import RecipeSearch from "../components/RecipeSearch.vue";
 import SkeletonCard from "../components/SkeletonCard.vue";
-import { useFavorites } from "../composables/useFavorites"; // <-- Import useFavorites
+import { useFavorites } from "../composables/useFavorites";
+import { useCocktailFavorites } from "../composables/useCocktailFavorites.js"; // <-- Import cocktail favorites
 import { getRandomCocktail } from "@/services/cocktailApi.js"; // <-- Import cocktail API function
+import { getMealsByCategory, getMealDetailsById } from "@/services/mealApi.js"; // <-- Import meal service functions
 
 const userName = ref(null); // Placeholder for username
-const { favoriteIds } = useFavorites(); // <-- Get favorite IDs
+const { favoriteIds: mealFavoriteIds } = useFavorites();
+const { favoriteCocktailIds } = useCocktailFavorites(); // <-- Use cocktail favorites
 
 // Featured Recipes State
 const featuredRecipes = ref([]);
@@ -178,7 +196,7 @@ const loadingFeatured = ref(false);
 const errorFeatured = ref(null);
 
 // Recommendations State
-const recommendedRecipes = ref([]);
+const recommendedItems = ref([]); // Holds combined meals & cocktails
 const loadingRecommended = ref(false);
 const errorRecommended = ref(null);
 
@@ -188,23 +206,23 @@ const loadingCocktail = ref(false);
 const errorCocktail = ref(null);
 // === End Featured Cocktail State ===
 
+// Combine meal and cocktail IDs for triggering recommendation fetch
+const combinedFavoriteIds = computed(() => [
+	...mealFavoriteIds.value,
+	...favoriteCocktailIds.value,
+]);
+
 // Fetch featured recipes (e.g., from Dessert category)
 const fetchFeaturedRecipes = async () => {
 	loadingFeatured.value = true;
 	errorFeatured.value = null;
 	featuredRecipes.value = [];
-	const category = "Dessert"; // Or choose another category
+	const category = "Dessert";
 	try {
-		const response = await fetch(
-			`https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`
-		);
-		if (!response.ok)
-			throw new Error(`HTTP error! status: ${response.status}`);
-		const data = await response.json();
-		if (data.meals) {
-			featuredRecipes.value = data.meals.slice(0, 6); // Limit to e.g., 6 items
-		} else {
-			featuredRecipes.value = [];
+		// Use service function
+		const meals = await getMealsByCategory(category);
+		featuredRecipes.value = meals.slice(0, 6); // Limit to e.g., 6 items
+		if (featuredRecipes.value.length === 0) {
 			console.warn(`No meals found for featured category: ${category}`);
 		}
 	} catch (e) {
@@ -234,82 +252,86 @@ const fetchRandomCocktail = async () => {
 };
 // === End Fetch Random Cocktail ===
 
-// Fetch recommendations based on a random favorite
+// Fetch recommendations
 const fetchRecommendations = async () => {
-	if (favoriteIds.value.length === 0) {
-		console.log("No favorites found, skipping recommendations.");
-		return; // Skip if no favorites
+	// Only fetch if there are meal favorites (current logic base)
+	if (mealFavoriteIds.value.length === 0) {
+		console.log("No meal favorites found, skipping recommendations.");
+		recommendedItems.value = []; // Ensure list is empty
+		return;
 	}
 
 	loadingRecommended.value = true;
 	errorRecommended.value = null;
-	recommendedRecipes.value = [];
-	console.log("Fetching recommendations based on favorites...");
+	recommendedItems.value = []; // Clear previous recommendations
+	console.log("Fetching recommendations based on meal favorites...");
+
+	let fetchedMeals = [];
+	let fetchedCocktails = [];
 
 	try {
-		// 1. Pick a random favorite ID
+		// --- Fetch Meal Recommendations (existing logic) ---
 		const randomIndex = Math.floor(
-			Math.random() * favoriteIds.value.length
+			Math.random() * mealFavoriteIds.value.length
 		);
-		const randomFavId = favoriteIds.value[randomIndex];
-		console.log(`Recommendation base: random favorite ID ${randomFavId}`);
-
-		// 2. Fetch details of the random favorite to get its category
-		const detailResponse = await fetch(
-			`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${randomFavId}`
-		);
-		if (!detailResponse.ok)
-			throw new Error(
-				`Failed to fetch details for favorite ${randomFavId}`
-			);
-		const detailData = await detailResponse.json();
-
-		if (!detailData.meals || detailData.meals.length === 0) {
-			throw new Error(
-				`Could not find details for favorite ${randomFavId}`
-			);
-		}
-
-		const sourceCategory = detailData.meals[0].strCategory;
-		if (!sourceCategory) {
-			throw new Error(
-				`Favorite ${randomFavId} does not have a category.`
-			);
-		}
-		console.log(`Recommendation base: category '${sourceCategory}'`);
-
-		// 3. Fetch recipes from that category
-		const recommendResponse = await fetch(
-			`https://www.themealdb.com/api/json/v1/1/filter.php?c=${encodeURIComponent(
-				sourceCategory
-			)}`
-		);
-		if (!recommendResponse.ok)
-			throw new Error(
-				`Failed to fetch recommendations for category ${sourceCategory}`
-			);
-		const recommendData = await recommendResponse.json();
-
-		if (recommendData.meals) {
-			// 4. Filter out already featured recipes and the source favorite itself
+		const randomFavId = mealFavoriteIds.value[randomIndex];
+		const detailData = await getMealDetailsById(randomFavId);
+		if (detailData && detailData.strCategory) {
+			const sourceCategory = detailData.strCategory;
+			const recommendData = await getMealsByCategory(sourceCategory);
 			const featuredIds = featuredRecipes.value.map((r) => r.idMeal);
-			const filteredRecommendations = recommendData.meals.filter(
+			const filteredMeals = recommendData.filter(
 				(r) =>
 					!featuredIds.includes(r.idMeal) && r.idMeal !== randomFavId
 			);
-
-			// 5. Take a slice (e.g., first 6)
-			recommendedRecipes.value = filteredRecommendations.slice(0, 6);
-			console.log("Recommendations fetched:", recommendedRecipes.value);
+			fetchedMeals = filteredMeals
+				.slice(0, 4)
+				.map((meal) => ({ ...meal, type: "meal" })); // Limit meals, add type
+			console.log("Recommended Meals Fetched:", fetchedMeals);
 		} else {
-			recommendedRecipes.value = [];
 			console.warn(
-				`No meals found for recommendation category: ${sourceCategory}`
+				`Could not get category for favorite meal ${randomFavId} or no category found.`
 			);
 		}
+
+		// --- Fetch Random Cocktails (Option B implementation) ---
+		try {
+			// Fetch 1 or 2 random cocktails
+			const cocktail1 = await getRandomCocktail();
+			const cocktail2 = await getRandomCocktail();
+			if (cocktail1)
+				fetchedCocktails.push({ ...cocktail1, type: "cocktail" });
+			// Avoid duplicates if API returns same random cocktail twice
+			if (cocktail2 && cocktail2.idDrink !== cocktail1?.idDrink) {
+				fetchedCocktails.push({ ...cocktail2, type: "cocktail" });
+			}
+			console.log("Recommended Cocktails Fetched:", fetchedCocktails);
+		} catch (cocktailError) {
+			console.error(
+				"Could not fetch recommended cocktails:",
+				cocktailError
+			);
+			// Optionally set a partial error message, but don't overwrite meal error
+			if (!errorRecommended.value) {
+				errorRecommended.value =
+					"Could not load cocktail recommendations.";
+			}
+		}
+
+		// Combine and assign
+		recommendedItems.value = [...fetchedMeals, ...fetchedCocktails];
+		// Optional: Shuffle combined list?
+		// recommendedItems.value.sort(() => Math.random() - 0.5);
+
+		if (recommendedItems.value.length === 0 && !errorRecommended.value) {
+			console.warn("No recommendations could be generated.");
+		}
 	} catch (e) {
-		console.error("Error fetching recommendations:", e);
+		// Catch errors from meal fetching part
+		console.error("Error fetching meal recommendations:", e);
 		errorRecommended.value = `Failed to load recommendations: ${e.message}`;
+		// Still try to fetch cocktails even if meals fail?
+		// For simplicity, we stop here if meal part fails, but could add cocktail fetch in finally.
 	} finally {
 		loadingRecommended.value = false;
 	}
@@ -317,16 +339,16 @@ const fetchRecommendations = async () => {
 
 // Fetch when the component is mounted
 onMounted(async () => {
-	// Fetch cocktail and featured recipes concurrently
+	// Fetch essentials concurrently
 	Promise.all([fetchFeaturedRecipes(), fetchRandomCocktail()]).then(() => {
-		// Once both featured sections are loaded (or failed),
-		// fetch recommendations based on favorites (if any)
+		// Once featured sections are loaded (or failed),
+		// fetch recommendations based on favorites (if any meal favs exist)
 		fetchRecommendations();
 	});
 });
 
-// Optional: Watch favoriteIds to refresh recommendations?
-// watch(favoriteIds, fetchRecommendations, { deep: true }); // Could cause extra calls
+// Watch combined favorites (optional - maybe too noisy?)
+// watch(combinedFavoriteIds, fetchRecommendations, { deep: true });
 </script>
 
 <style scoped>
