@@ -177,13 +177,21 @@
 					/>
 				</router-link>
 				<div class="extras d-flex align-items-center">
-					<!-- Conditionally render Search Input -->
-					<RecipeSearch v-if="route.name !== 'Home'" class="me-2" />
+					<!-- Search Icon Button (Not on Home) -->
+					<button
+						v-if="route.name !== 'Home'"
+						@click="openSearchModal"
+						class="btn btn-sm btn-outline-secondary me-2"
+						aria-label="Open search modal"
+						title="Search Recipes & Cocktails"
+					>
+						<i class="pi pi-search"></i>
+					</button>
 
 					<!-- Dark Mode Toggle Button -->
 					<button
 						@click="toggleTheme"
-						class="btn btn-sm btn-outline-secondary p-1 me-2 theme-toggle-btn"
+						class="btn btn-sm btn-outline-secondary me-2 theme-toggle-btn"
 						:aria-label="
 							isDarkMode
 								? 'Activate light mode'
@@ -255,9 +263,8 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import { useRouter, RouterLink, useRoute } from "vue-router";
-import RecipeSearch from "./RecipeSearch.vue";
 import { getRandomCocktail } from "@/services/cocktailApi.js";
 import { getRandomMeal } from "@/services/mealApi.js";
 import { useTheme } from "@/composables/useTheme.js";
@@ -273,6 +280,11 @@ const loadingRandomCocktail = ref(false);
 
 // Use the theme composable
 const { toggleTheme, isDarkMode } = useTheme();
+
+// Inject the toggle function from App.vue
+const toggleSearchModal = inject("toggleSearchModal", () => {
+	console.warn("toggleSearchModal function not provided in Header");
+});
 
 // Function to programmatically click the close button
 const closeOffcanvas = () => {
@@ -328,5 +340,10 @@ const goToRandomCocktail = async () => {
 		loadingRandomCocktail.value = false;
 		// console.log("goToRandomCocktail END");
 	}
+};
+
+// Function to call the injected toggle
+const openSearchModal = () => {
+	toggleSearchModal();
 };
 </script>

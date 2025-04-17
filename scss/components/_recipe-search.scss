@@ -54,3 +54,24 @@
         }
     }
 }
+
+.search-modal {
+    --bs-modal-bg: rgba(255, 255, 255, 0.85); // Light
+
+    @media (prefers-color-scheme: dark) {
+        --bs-modal-bg: rgba(33, 37, 41, 0.85); // Dark (Bootstrap's $gray-900 with opacity)
+    }
+
+    .modal-header {
+        border-bottom: none;
+    }
+
+    .modal-content {}
+
+    .modal-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}
