@@ -6,7 +6,7 @@ const currentTheme = ref("light"); // Default to light before initialization
 // Function to apply the theme to the DOM and save preference
 const applyTheme = (theme) => {
 	if (theme !== "light" && theme !== "dark") {
-		console.warn(`Invalid theme value: ${theme}. Defaulting to light.`);
+		// console.warn(`Invalid theme value: ${theme}. Defaulting to light.`);
 		theme = "light";
 	}
 
@@ -14,7 +14,7 @@ const applyTheme = (theme) => {
 	try {
 		localStorage.setItem(LOCAL_STORAGE_KEY, theme);
 		currentTheme.value = theme;
-		console.log(`Theme applied and saved: ${theme}`);
+		// console.log(`Theme applied and saved: ${theme}`);
 	} catch (e) {
 		console.error("Failed to save theme preference to localStorage:", e);
 	}
@@ -27,7 +27,7 @@ export const initializeTheme = () => {
 		const savedTheme = localStorage.getItem(LOCAL_STORAGE_KEY);
 		if (savedTheme === "light" || savedTheme === "dark") {
 			initialTheme = savedTheme;
-			console.log(`Loaded theme from localStorage: ${initialTheme}`);
+			// console.log(`Loaded theme from localStorage: ${initialTheme}`);
 		} else {
 			// No valid saved theme, check system preference
 			if (
@@ -35,10 +35,10 @@ export const initializeTheme = () => {
 				window.matchMedia("(prefers-color-scheme: dark)").matches
 			) {
 				initialTheme = "dark";
-				console.log("Using system preference: dark");
+				// console.log("Using system preference: dark");
 			} else {
 				initialTheme = "light"; // Default light if system is light or preference cannot be determined
-				console.log("Using system preference: light (or default)");
+				// console.log("Using system preference: light (or default)");
 			}
 		}
 	} catch (e) {
