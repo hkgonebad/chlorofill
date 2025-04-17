@@ -54,6 +54,8 @@
 										>About Us</router-link
 									>
 								</li>
+
+								<!-- Recipes Dropdown -->
 								<li class="nav-item dropdown">
 									<a
 										class="nav-link dropdown-toggle"
@@ -61,7 +63,7 @@
 										role="button"
 										data-bs-toggle="dropdown"
 										aria-expanded="false"
-										>Category</a
+										>Recipes</a
 									>
 									<ul
 										class="dropdown-menu"
@@ -75,26 +77,84 @@
 												>All Categories</router-link
 											>
 										</li>
+										<li>
+											<router-link
+												class="dropdown-item"
+												:to="{ name: 'Areas' }"
+												@click="closeOffcanvas"
+												>Browse by Area</router-link
+											>
+										</li>
+										<li><hr class="dropdown-divider" /></li>
+										<li>
+											<a
+												@click.prevent="
+													goToRandomRecipe
+												"
+												class="dropdown-item"
+												:disabled="loadingRandom"
+												style="cursor: pointer"
+												data-bs-dismiss="offcanvas"
+											>
+												<span
+													v-if="loadingRandom"
+													class="spinner-border spinner-border-sm me-1"
+													role="status"
+													aria-hidden="true"
+												></span>
+												Random Recipe
+											</a>
+										</li>
 									</ul>
 								</li>
-								<li class="nav-item">
-									<router-link
-										class="nav-link"
-										active-class="active"
-										:to="{ name: 'Cocktails' }"
-										@click="closeOffcanvas"
-										>Cocktails</router-link
+
+								<!-- Cocktails Dropdown -->
+								<li class="nav-item dropdown">
+									<a
+										class="nav-link dropdown-toggle"
+										href="#"
+										role="button"
+										data-bs-toggle="dropdown"
+										aria-expanded="false"
+										>Cocktails</a
 									>
-								</li>
-								<li class="nav-item">
-									<router-link
-										class="nav-link"
-										active-class="active"
-										:to="{ name: 'Areas' }"
-										@click="closeOffcanvas"
-										>Browse by Area</router-link
+									<ul
+										class="dropdown-menu"
+										aria-labelledby="offcanvasNavbarDropdown"
 									>
+										<li>
+											<router-link
+												class="dropdown-item"
+												:to="{ name: 'Cocktails' }"
+												@click="closeOffcanvas"
+												>Browse Filters</router-link
+											>
+										</li>
+										<li><hr class="dropdown-divider" /></li>
+										<li>
+											<a
+												@click.prevent="
+													goToRandomCocktail
+												"
+												class="dropdown-item"
+												:disabled="
+													loadingRandomCocktail
+												"
+												style="cursor: pointer"
+												data-bs-dismiss="offcanvas"
+											>
+												<span
+													v-if="loadingRandomCocktail"
+													class="spinner-border spinner-border-sm me-1"
+													role="status"
+													aria-hidden="true"
+												></span>
+												Random Cocktail
+											</a>
+										</li>
+									</ul>
 								</li>
+
 								<li class="nav-item">
 									<router-link
 										class="nav-link"
@@ -103,24 +163,6 @@
 										@click="closeOffcanvas"
 										>Offers</router-link
 									>
-								</li>
-								<!-- Random Recipe Button keeps data-bs-dismiss -->
-								<li class="nav-item">
-									<a
-										@click.prevent="goToRandomRecipe"
-										class="nav-link"
-										:disabled="loadingRandom"
-										style="cursor: pointer"
-										data-bs-dismiss="offcanvas"
-									>
-										<span
-											v-if="loadingRandom"
-											class="spinner-border spinner-border-sm"
-											role="status"
-											aria-hidden="true"
-										></span>
-										Random Recipe
-									</a>
 								</li>
 							</ul>
 						</div>
@@ -157,10 +199,13 @@
 import { ref } from "vue";
 import { useRouter, RouterLink, useRoute } from "vue-router";
 import RecipeSearch from "./RecipeSearch.vue";
+import { getRandomCocktail } from "@/services/cocktailApi.js";
+import { getRandomMeal } from "@/services/mealApi.js";
 
 const router = useRouter();
 const route = useRoute();
 const loadingRandom = ref(false);
+const loadingRandomCocktail = ref(false);
 
 // Function to programmatically click the close button
 const closeOffcanvas = () => {
@@ -174,19 +219,15 @@ const goToRandomRecipe = async () => {
 	loadingRandom.value = true;
 	console.log("goToRandomRecipe START");
 	try {
-		const response = await fetch(
-			`https://www.themealdb.com/api/json/v1/1/random.php`
-		);
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		const data = await response.json();
-		if (data.meals && data.meals.length > 0) {
-			const mealId = data.meals[0].idMeal;
-			console.log(`goToRandomRecipe: Navigating to recipe ${mealId}...`);
-			router.push({ name: "RecipeDetail", params: { id: mealId } });
+		const meal = await getRandomMeal();
+
+		if (meal && meal.idMeal) {
+			console.log(
+				`goToRandomRecipe: Navigating to recipe ${meal.idMeal}...`
+			);
+			router.push({ name: "RecipeDetail", params: { id: meal.idMeal } });
 		} else {
-			throw new Error("No random meal found.");
+			throw new Error("No random meal found or meal has no ID.");
 		}
 	} catch (error) {
 		console.error("Error fetching random recipe:", error);
@@ -194,6 +235,31 @@ const goToRandomRecipe = async () => {
 	} finally {
 		loadingRandom.value = false;
 		console.log("goToRandomRecipe END");
+	}
+};
+
+const goToRandomCocktail = async () => {
+	loadingRandomCocktail.value = true;
+	console.log("goToRandomCocktail START");
+	try {
+		const cocktail = await getRandomCocktail();
+		if (cocktail && cocktail.idDrink) {
+			console.log(
+				`goToRandomCocktail: Navigating to cocktail ${cocktail.idDrink}...`
+			);
+			router.push({
+				name: "CocktailDetail",
+				params: { id: cocktail.idDrink },
+			});
+		} else {
+			throw new Error("No random cocktail found or cocktail has no ID.");
+		}
+	} catch (error) {
+		console.error("Error fetching random cocktail:", error);
+		alert("Failed to load a random cocktail. Please try again.");
+	} finally {
+		loadingRandomCocktail.value = false;
+		console.log("goToRandomCocktail END");
 	}
 };
 
