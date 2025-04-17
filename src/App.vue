@@ -55,11 +55,15 @@ useHead(
 		];
 
 		// Safely access route meta with optional chaining and fallback
-		const routeTitle = route?.meta?.title || "ChloroFill";
+		const routeTitle =
+			route?.meta?.title || "ChloroFill 🍴🍹 - A Vue Recipe";
+		const isHome = route?.name === "Home";
 
 		return {
-			title: routeTitle,
-			titleTemplate: "%s | ChloroFill 🍴🍹 - A Vue Recipe",
+			title: isHome ? routeTitle : routeTitle,
+			titleTemplate: isHome
+				? "%s"
+				: "%s | ChloroFill 🍴🍹 - A Vue Recipe",
 			htmlAttrs: {
 				lang: "en",
 				amp: false,

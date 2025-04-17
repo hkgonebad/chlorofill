@@ -27,7 +27,7 @@ const routes = [
 		path: "/",
 		name: "Home",
 		component: HomeView,
-		meta: { title: "Home" },
+		meta: { title: "" },
 	},
 	{
 		path: "/about",
