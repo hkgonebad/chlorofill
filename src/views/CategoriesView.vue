@@ -52,6 +52,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { RouterLink } from "vue-router"; // Import RouterLink if using it in the template
+// Import API service
+import { getCategories } from "@/services/mealApi.js"; // <-- Import from service
 // Import reusable components
 import ItemCard from "../components/ItemCard.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
@@ -61,34 +63,21 @@ const categories = ref([]); // Holds the array of category objects
 const loading = ref(false);
 const error = ref(null);
 
-const fetchCategories = async () => {
+// No longer need the local fetchCategories function
+// const fetchCategories = async () => { ... };
+
+// Fetch categories when the component is mounted
+onMounted(async () => {
 	loading.value = true;
 	error.value = null;
-	categories.value = [];
 	try {
-		const response = await fetch(
-			"https://www.themealdb.com/api/json/v1/1/categories.php"
-		);
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		const data = await response.json();
-		if (data.categories) {
-			categories.value = data.categories;
-		} else {
-			throw new Error("No category data received from API.");
-		}
+		categories.value = await getCategories(); // <-- Use the imported service function
 	} catch (e) {
-		console.error("Error fetching categories:", e);
-		error.value = `Failed to load categories: ${e.message}`;
+		console.error("Error in CategoriesView:", e); // Log the error caught from the service
+		error.value = e.message || "An unexpected error occurred."; // Use the error message from the service
 	} finally {
 		loading.value = false;
 	}
-};
-
-// Fetch categories when the component is mounted
-onMounted(() => {
-	fetchCategories();
 });
 </script>
 
