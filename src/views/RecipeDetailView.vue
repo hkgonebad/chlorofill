@@ -253,7 +253,7 @@ const toggleFavorite = () => {
 
 // Function to fetch full recipe details by ID using service
 const fetchRecipeDetails = async (recipeId) => {
-	console.log(`Fetching details for recipe ID: ${recipeId}`);
+	// console.log(`Fetching details for recipe ID: ${recipeId}`);
 	loading.value = true;
 	error.value = null;
 	recipeDetails.value = null;

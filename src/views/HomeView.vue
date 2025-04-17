@@ -353,7 +353,7 @@ const fetchRecommendations = async () => {
 	loadingRecommended.value = true;
 	errorRecommended.value = null;
 	recommendedItems.value = []; // Clear previous recommendations
-	console.log("Fetching recommendations based on meal favorites...");
+	// console.log("Fetching recommendations based on meal favorites...");
 
 	let fetchedMeals = [];
 	let fetchedCocktails = [];
@@ -376,7 +376,7 @@ const fetchRecommendations = async () => {
 			fetchedMeals = filteredMeals
 				.slice(0, 4)
 				.map((meal) => ({ ...meal, type: "meal" })); // Limit meals, add type
-			console.log("Recommended Meals Fetched:", fetchedMeals);
+			// console.log("Recommended Meals Fetched:", fetchedMeals);
 		} else {
 			console.warn(
 				`Could not get category for favorite meal ${randomFavId} or no category found.`
@@ -394,7 +394,7 @@ const fetchRecommendations = async () => {
 			if (cocktail2 && cocktail2.idDrink !== cocktail1?.idDrink) {
 				fetchedCocktails.push({ ...cocktail2, type: "cocktail" });
 			}
-			console.log("Recommended Cocktails Fetched:", fetchedCocktails);
+			// console.log("Recommended Cocktails Fetched:", fetchedCocktails);
 		} catch (cocktailError) {
 			console.error(
 				"Could not fetch recommended cocktails:",

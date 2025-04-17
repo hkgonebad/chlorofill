@@ -29,7 +29,7 @@ const isSearchModalVisible = ref(false);
 // Function to toggle the modal visibility
 const toggleSearchModal = () => {
 	isSearchModalVisible.value = !isSearchModalVisible.value;
-	console.log("Search Modal Toggled:", isSearchModalVisible.value);
+	// console.log("Search Modal Toggled:", isSearchModalVisible.value);
 };
 
 // Provide the state and the toggle function to descendants

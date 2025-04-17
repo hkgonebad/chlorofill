@@ -290,14 +290,14 @@ const closeOffcanvas = () => {
 
 const goToRandomRecipe = async () => {
 	loadingRandom.value = true;
-	console.log("goToRandomRecipe START");
+	// console.log("goToRandomRecipe START");
 	try {
 		const meal = await getRandomMeal();
 
 		if (meal && meal.idMeal) {
-			console.log(
-				`goToRandomRecipe: Navigating to recipe ${meal.idMeal}...`
-			);
+			// console.log(
+			// 	`goToRandomRecipe: Navigating to recipe ${meal.idMeal}...`
+			// );
 			router.push({ name: "RecipeDetail", params: { id: meal.idMeal } });
 		} else {
 			throw new Error("No random meal found or meal has no ID.");
@@ -307,19 +307,19 @@ const goToRandomRecipe = async () => {
 		alert("Failed to load a random recipe. Please try again.");
 	} finally {
 		loadingRandom.value = false;
-		console.log("goToRandomRecipe END");
+		// console.log("goToRandomRecipe END");
 	}
 };
 
 const goToRandomCocktail = async () => {
 	loadingRandomCocktail.value = true;
-	console.log("goToRandomCocktail START");
+	// console.log("goToRandomCocktail START");
 	try {
 		const cocktail = await getRandomCocktail();
 		if (cocktail && cocktail.idDrink) {
-			console.log(
-				`goToRandomCocktail: Navigating to cocktail ${cocktail.idDrink}...`
-			);
+			// console.log(
+			// 	`goToRandomCocktail: Navigating to cocktail ${cocktail.idDrink}...`
+			// );
 			router.push({
 				name: "CocktailDetail",
 				params: { id: cocktail.idDrink },

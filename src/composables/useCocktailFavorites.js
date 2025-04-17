@@ -43,20 +43,20 @@ export function useCocktailFavorites() {
 		if (!cocktailId || favoriteCocktailIds.value.includes(cocktailId))
 			return;
 		favoriteCocktailIds.value.push(cocktailId);
-		console.log(
-			`Cocktail favorite added: ${cocktailId}`,
-			favoriteCocktailIds.value
-		);
+		// console.log(
+		// 	`Cocktail favorite added: ${cocktailId}`,
+		// 	favoriteCocktailIds.value
+		// );
 	};
 
 	const removeFavorite = (cocktailId) => {
 		favoriteCocktailIds.value = favoriteCocktailIds.value.filter(
 			(id) => id !== cocktailId
 		);
-		console.log(
-			`Cocktail favorite removed: ${cocktailId}`,
-			favoriteCocktailIds.value
-		);
+		// console.log(
+		// 	`Cocktail favorite removed: ${cocktailId}`,
+		// 	favoriteCocktailIds.value
+		// );
 	};
 
 	// Returns a computed ref that is true if the ID is favorited
