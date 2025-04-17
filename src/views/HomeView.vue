@@ -1,169 +1,195 @@
 <template>
-	<div class="home-view container py-4">
-		<div class="welcome-header mb-4">
-			<p class="text-muted mb-1">Hello, {{ userName || "User" }}</p>
-			<!-- Add user name later if implementing auth -->
-			<h2>What would you like<br />to cook today?</h2>
-			<!-- Add Search Bar component later -->
-			<RecipeSearch class="mt-3 mb-4" />
-		</div>
+	<div class="home-view py-4">
+		<section class="hero">
+			<div class="container">
+				<div class="welcome-header mb-4 text-md-center">
+					<p class="text-muted mb-1">Hello, {{ userGreeting }}</p>
+					<!-- Add user name later if implementing auth -->
+					<h2>What would you like<br />to cook today?</h2>
+
+					<!-- Search -->
+					<RecipeSearch class="mt-3 mb-4" />
+				</div>
+			</div>
+		</section>
 
 		<section class="recipe-section mb-5">
-			<div class="d-flex justify-content-between align-items-center mb-3">
-				<h4 class="section-title">Featured Desserts</h4>
-				<!-- Optional: Link to Desserts category -->
-				<router-link
-					:to="{
-						name: 'CategoryRecipes',
-						params: { categoryName: 'Dessert' },
-					}"
-					class="btn btn-sm btn-outline-secondary"
-					>See all</router-link
+			<div class="container">
+				<div
+					class="d-flex justify-content-between align-items-center mb-3"
 				>
-			</div>
-			<!-- Loading State with Skeleton Cards -->
-			<div
-				v-if="loadingFeatured"
-				class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 placeholder-glow"
-			>
-				<SkeletonCard v-for="n in 6" :key="'sk-' + n" />
-			</div>
-			<!-- Error State -->
-			<ErrorMessage v-else-if="errorFeatured" :message="errorFeatured" />
-			<!-- Recipe Grid -->
-			<div
-				v-else-if="featuredRecipes.length > 0"
-				class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
-			>
-				<ItemCard
-					v-for="recipe in featuredRecipes"
-					:key="recipe.idMeal"
-					:image-url="recipe.strMealThumb"
-					:title="recipe.strMeal"
-					:link-to="{
-						name: 'RecipeDetail',
-						params: { id: recipe.idMeal },
-					}"
+					<h4 class="section-title">Featured Desserts</h4>
+					<!-- Optional: Link to Desserts category -->
+					<router-link
+						:to="{
+							name: 'CategoryRecipes',
+							params: { categoryName: 'Dessert' },
+						}"
+						class="btn btn-sm btn-outline-secondary"
+						>See all</router-link
+					>
+				</div>
+
+				<!-- Loading State with Skeleton Cards -->
+				<div
+					v-if="loadingFeatured"
+					class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 placeholder-glow"
+				>
+					<SkeletonCard v-for="n in 6" :key="'sk-' + n" />
+				</div>
+				<!-- Error State -->
+				<ErrorMessage
+					v-else-if="errorFeatured"
+					:message="errorFeatured"
 				/>
+				<!-- Recipe Grid -->
+				<div
+					v-else-if="featuredRecipes.length > 0"
+					class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
+				>
+					<ItemCard
+						v-for="recipe in featuredRecipes"
+						:key="recipe.idMeal"
+						:image-url="recipe.strMealThumb"
+						:title="recipe.strMeal"
+						:link-to="{
+							name: 'RecipeDetail',
+							params: { id: recipe.idMeal },
+						}"
+					/>
+				</div>
+				<!-- No Recipes Found -->
+				<p v-else>Could not load featured recipes.</p>
 			</div>
-			<!-- No Recipes Found -->
-			<p v-else>Could not load featured recipes.</p>
 		</section>
 
 		<!-- === Featured Cocktail Section === -->
 		<section class="cocktail-section mb-5">
-			<div class="d-flex justify-content-between align-items-center mb-3">
-				<h4 class="section-title">Featured Cocktail</h4>
-				<!-- Optional: Link to Cocktails view -->
-				<router-link
-					:to="{ name: 'Cocktails' }"
-					class="btn btn-sm btn-outline-secondary"
-					>Explore More</router-link
+			<div class="container">
+				<div
+					class="d-flex justify-content-between align-items-center mb-3"
 				>
-			</div>
-			<!-- Loading State -->
-			<div
-				v-if="loadingCocktail"
-				class="row row-cols-1 g-4 placeholder-glow justify-content-center"
-			>
-				<div class="col" style="max-width: 400px">
-					<SkeletonCard />
+					<h4 class="section-title">Featured Cocktail</h4>
+					<!-- Optional: Link to Cocktails view -->
+					<router-link
+						:to="{ name: 'Cocktails' }"
+						class="btn btn-sm btn-outline-secondary"
+						>Explore More</router-link
+					>
 				</div>
-			</div>
-			<!-- Error State -->
-			<ErrorMessage v-else-if="errorCocktail" :message="errorCocktail" />
-			<!-- Cocktail Card Display -->
-			<div
-				v-else-if="randomCocktail"
-				class="row row-cols-1 g-4 justify-content-center"
-			>
-				<!-- Centering the single card -->
-				<div class="col" style="max-width: 400px">
-					<CocktailCard
-						:key="randomCocktail.idDrink"
-						:image-url="randomCocktail.strDrinkThumb"
-						:title="randomCocktail.strDrink"
-						:link-to="{
-							name: 'CocktailDetail',
-							params: { id: randomCocktail.idDrink },
-						}"
-					/>
+				<!-- Loading State -->
+				<div
+					v-if="loadingCocktail"
+					class="row row-cols-1 g-4 placeholder-glow justify-content-center"
+				>
+					<div class="col" style="max-width: 400px">
+						<SkeletonCard />
+					</div>
 				</div>
+				<!-- Error State -->
+				<ErrorMessage
+					v-else-if="errorCocktail"
+					:message="errorCocktail"
+				/>
+				<!-- Cocktail Card Display -->
+				<div
+					v-else-if="randomCocktail"
+					class="row row-cols-1 g-4 justify-content-center"
+				>
+					<!-- Centering the single card -->
+					<div class="col" style="max-width: 400px">
+						<CocktailCard
+							:key="randomCocktail.idDrink"
+							:image-url="randomCocktail.strDrinkThumb"
+							:title="randomCocktail.strDrink"
+							:link-to="{
+								name: 'CocktailDetail',
+								params: { id: randomCocktail.idDrink },
+							}"
+						/>
+					</div>
+				</div>
+				<!-- No Cocktail Found -->
+				<p v-else>Could not load a featured cocktail.</p>
 			</div>
-			<!-- No Cocktail Found -->
-			<p v-else>Could not load a featured cocktail.</p>
 		</section>
 		<!-- === End Featured Cocktail Section === -->
 
 		<section class="recipe-section mb-5">
-			<div class="d-flex justify-content-between align-items-center mb-3">
-				<h4 class="section-title">Categories</h4>
-				<router-link
-					:to="{ name: 'Categories' }"
-					class="btn btn-sm btn-outline-secondary"
-					>See all</router-link
+			<div class="container">
+				<div
+					class="d-flex justify-content-between align-items-center mb-3"
 				>
+					<h4 class="section-title">Categories</h4>
+					<router-link
+						:to="{ name: 'Categories' }"
+						class="btn btn-sm btn-outline-secondary"
+						>See all</router-link
+					>
+				</div>
+				<CategoryCarousel />
 			</div>
-			<CategoryCarousel />
 		</section>
 
 		<!-- Recommendations Section (Conditional) -->
 		<template v-if="combinedFavoriteIds.length > 0">
 			<section class="recipe-section mb-5">
-				<div
-					class="d-flex justify-content-between align-items-center mb-3"
-				>
-					<h4 class="section-title">Recommendations For You</h4>
-					<!-- Optional: Link to the source category/area? -->
-					<!-- <a href="#" class="btn btn-sm btn-outline-secondary">See all</a> -->
-				</div>
-				<!-- Loading State -->
-				<div
-					v-if="loadingRecommended"
-					class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 placeholder-glow"
-				>
-					<SkeletonCard v-for="n in 6" :key="'sk-rec-' + n" />
-				</div>
-				<!-- Error State -->
-				<ErrorMessage
-					v-else-if="errorRecommended"
-					:message="errorRecommended"
-				/>
-				<!-- Combined Grid -->
-				<div
-					v-else-if="recommendedItems.length > 0"
-					class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
-				>
-					<template
-						v-for="item in recommendedItems"
-						:key="item.type + '-' + item.id"
+				<div class="container">
+					<div
+						class="d-flex justify-content-between align-items-center mb-3"
 					>
-						<!-- Meal Card -->
-						<ItemCard
-							v-if="item.type === 'meal'"
-							:image-url="item.strMealThumb"
-							:title="item.strMeal"
-							:link-to="{
-								name: 'RecipeDetail',
-								params: { id: item.idMeal },
-							}"
-						/>
-						<!-- Cocktail Card -->
-						<CocktailCard
-							v-else-if="item.type === 'cocktail'"
-							:image-url="item.strDrinkThumb"
-							:title="item.strDrink"
-							:link-to="{
-								name: 'CocktailDetail',
-								params: { id: item.idDrink },
-							}"
-						/>
-					</template>
+						<h4 class="section-title">Recommendations For You</h4>
+						<!-- Optional: Link to the source category/area? -->
+						<!-- <a href="#" class="btn btn-sm btn-outline-secondary">See all</a> -->
+					</div>
+					<!-- Loading State -->
+					<div
+						v-if="loadingRecommended"
+						class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 placeholder-glow"
+					>
+						<SkeletonCard v-for="n in 6" :key="'sk-rec-' + n" />
+					</div>
+					<!-- Error State -->
+					<ErrorMessage
+						v-else-if="errorRecommended"
+						:message="errorRecommended"
+					/>
+					<!-- Combined Grid -->
+					<div
+						v-else-if="recommendedItems.length > 0"
+						class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
+					>
+						<template
+							v-for="item in recommendedItems"
+							:key="item.type + '-' + item.id"
+						>
+							<!-- Meal Card -->
+							<ItemCard
+								v-if="item.type === 'meal'"
+								:image-url="item.strMealThumb"
+								:title="item.strMeal"
+								:link-to="{
+									name: 'RecipeDetail',
+									params: { id: item.idMeal },
+								}"
+							/>
+							<!-- Cocktail Card -->
+							<CocktailCard
+								v-else-if="item.type === 'cocktail'"
+								:image-url="item.strDrinkThumb"
+								:title="item.strDrink"
+								:link-to="{
+									name: 'CocktailDetail',
+									params: { id: item.idDrink },
+								}"
+							/>
+						</template>
+					</div>
+					<!-- No Recommendations Found -->
+					<p v-else class="text-muted">
+						Could not load recommendations at this time.
+					</p>
 				</div>
-				<!-- No Recommendations Found -->
-				<p v-else class="text-muted">
-					Could not load recommendations at this time.
-				</p>
 			</section>
 		</template>
 
@@ -187,6 +213,7 @@ import { getRandomCocktail } from "@/services/cocktailApi.js"; // <-- Import coc
 import { getMealsByCategory, getMealDetailsById } from "@/services/mealApi.js"; // <-- Import meal service functions
 
 const userName = ref(null); // Placeholder for username
+const userGreeting = ref(""); // Placeholder for user greeting, say "Good Morning" or "Good Afternoon" or "Good Evening" based on the current time
 const { favoriteIds: mealFavoriteIds } = useFavorites();
 const { favoriteCocktailIds } = useCocktailFavorites(); // <-- Use cocktail favorites
 
@@ -211,6 +238,20 @@ const combinedFavoriteIds = computed(() => [
 	...mealFavoriteIds.value,
 	...favoriteCocktailIds.value,
 ]);
+
+// Fetch user greeting based on current time
+const fetchUserGreeting = async () => {
+	const currentTime = new Date();
+	const hours = currentTime.getHours();
+
+	if (hours < 12) {
+		userGreeting.value = "Good Morning";
+	} else if (hours < 18) {
+		userGreeting.value = "Good Afternoon";
+	} else {
+		userGreeting.value = "Good Evening";
+	}
+};
 
 // Fetch featured recipes (e.g., from Dessert category)
 const fetchFeaturedRecipes = async () => {
@@ -345,6 +386,7 @@ onMounted(async () => {
 		// fetch recommendations based on favorites (if any meal favs exist)
 		fetchRecommendations();
 	});
+	fetchUserGreeting();
 });
 
 // Watch combined favorites (optional - maybe too noisy?)
