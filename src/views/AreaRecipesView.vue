@@ -51,6 +51,7 @@ import ItemCard from "../components/ItemCard.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
 import SkeletonCard from "../components/SkeletonCard.vue";
 import BackButton from "@/components/BackButton.vue";
+import { getMealsByArea } from "@/services/mealApi.js";
 
 const router = useRouter();
 
@@ -71,19 +72,8 @@ const fetchRecipesByArea = async (area) => {
 	error.value = null;
 	recipes.value = [];
 	try {
-		const response = await fetch(
-			`https://www.themealdb.com/api/json/v1/1/filter.php?a=${encodeURIComponent(
-				area
-			)}`
-		);
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		const data = await response.json();
-		if (data.meals) {
-			recipes.value = data.meals;
-		} else {
-			recipes.value = [];
+		recipes.value = await getMealsByArea(area);
+		if (recipes.value.length === 0) {
 			console.log(`No meals found for area: ${area}`);
 		}
 	} catch (e) {
