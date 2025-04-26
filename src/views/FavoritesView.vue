@@ -7,7 +7,7 @@
 		<!-- Loading State -->
 		<div
 			v-if="loading"
-			class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 placeholder-glow"
+			class="row row-cols-2 row-cols-md-4 g-4 placeholder-glow"
 		>
 			<!-- Adapt skeleton count based on total favorites -->
 			<SkeletonCard
@@ -21,7 +21,7 @@
 		<!-- Combined List -->
 		<div
 			v-else-if="allFavoritesDetails.length > 0"
-			class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
+			class="row row-cols-2 row-cols-md-4 g-4"
 		>
 			<template
 				v-for="item in allFavoritesDetails"

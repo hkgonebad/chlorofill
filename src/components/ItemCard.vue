@@ -1,14 +1,16 @@
 <template>
 	<div class="col">
-		<div class="card item-card h-100 text-start shadow-sm">
+		<div
+			class="card item-card h-100 text-start shadow-sm"
+			@click="navigateToDetail"
+			style="cursor: pointer"
+		>
 			<div class="card-image-wrapper position-relative">
-				<router-link :to="linkTo" class="card-link-wrapper">
-					<img
-						:src="imageUrl"
-						class="card-img-top item-thumb"
-						:alt="title"
-					/>
-				</router-link>
+				<img
+					:src="imageUrl"
+					class="card-img-top item-thumb"
+					:alt="title"
+				/>
 				<div
 					v-if="showActions"
 					class="card-actions-overlay position-absolute top-0 end-0 p-2"
@@ -61,7 +63,7 @@
 
 <script setup>
 import { computed, ref } from "vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import ShareButtons from "./ShareButtons.vue";
 
 const props = defineProps({
@@ -103,6 +105,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["toggle-favorite", "share-item"]);
+const router = useRouter();
 
 // --- Event Handlers ---
 const toggleFavorite = () => {
@@ -131,6 +134,13 @@ const shareItem = () => {
 		// text: props.subtitle, // Optional: Add subtitle or other text if needed
 		url: fullUrl,
 	});
+};
+
+// --- Navigation Handler ---
+const navigateToDetail = () => {
+	if (props.linkTo) {
+		router.push(props.linkTo);
+	}
 };
 </script>
 

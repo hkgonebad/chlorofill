@@ -12,7 +12,7 @@
 			<!-- Loading State -->
 			<div
 				v-if="loading"
-				class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 placeholder-glow"
+				class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 placeholder-glow"
 			>
 				<SkeletonCard v-for="n in 8" :key="'sk-' + n" />
 				<!-- Show ~8 skeletons -->

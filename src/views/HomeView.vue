@@ -148,9 +148,9 @@
 					<!-- Loading State -->
 					<div
 						v-if="loadingRecommended"
-						class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 placeholder-glow"
+						class="row row-cols-2 row-cols-md-4 g-4 placeholder-glow"
 					>
-						<SkeletonCard v-for="n in 6" :key="'sk-rec-' + n" />
+						<SkeletonCard v-for="n in 4" :key="'sk-rec-' + n" />
 					</div>
 					<!-- Error State -->
 					<ErrorMessage
