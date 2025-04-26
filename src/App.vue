@@ -8,6 +8,13 @@
 		<TheFooter />
 		<!-- Render the search modal, binding its visibility -->
 		<FullScreenSearchModal v-model:visible="isSearchModalVisible" />
+		<!-- Render the global Share Modal -->
+		<ShareModal
+			v-model:visible="isShareModalVisible"
+			:title="shareModalTitle"
+			:share-url="shareModalUrl"
+			:share-text="shareModalText"
+		/>
 	</div>
 </template>
 
@@ -17,8 +24,9 @@ import TheFooter from "./components/TheFooter.vue";
 import { RouterView, useRoute } from "vue-router";
 import { initializeTheme } from "@/composables/useTheme.js";
 import FullScreenSearchModal from "@/components/FullScreenSearchModal.vue";
-import { ref, provide, computed } from "vue";
+import { ref, provide, computed, readonly } from "vue";
 import { useHead } from "@vueuse/head";
+import ShareModal from "@/components/ShareModal.vue";
 
 // Apply theme on initial load
 initializeTheme();
@@ -33,8 +41,29 @@ const toggleSearchModal = () => {
 };
 
 // Provide the state and the toggle function to descendants
-provide("isSearchModalVisible", isSearchModalVisible);
+provide("isSearchModalVisible", readonly(isSearchModalVisible));
 provide("toggleSearchModal", toggleSearchModal);
+
+// === Global Share Modal State ===
+const isShareModalVisible = ref(false);
+const shareModalTitle = ref("");
+const shareModalUrl = ref("");
+const shareModalText = ref("");
+
+// Function to open the share modal
+const openShareModal = (payload) => {
+	// console.log("Opening share modal with payload:", payload);
+	shareModalTitle.value = payload.title ? `Share: ${payload.title}` : "Share";
+	shareModalUrl.value = payload.url || "";
+	shareModalText.value =
+		payload.text || `Check out this link: ${payload.url}`;
+	isShareModalVisible.value = true;
+};
+
+// Provide share modal state (readonly) and open function
+provide("isShareModalVisible", readonly(isShareModalVisible));
+provide("openShareModal", openShareModal);
+// === End Global Share Modal State ===
 
 // --- Meta tags integration ---
 const route = useRoute();
@@ -69,3 +98,19 @@ useHead(
 	})
 );
 </script>
+
+<style lang="scss">
+/* Global styles can be imported here or managed via main.scss */
+
+/* Example: Ensure main content area pushes footer down */
+.main-content {
+	min-height: calc(
+		100vh - 100px - 50px
+	); /* Adjust based on header/footer height */
+	display: flex;
+	flex-direction: column;
+}
+
+/* Ensure router-view takes available space if needed */
+/* .router-view-wrapper { flex-grow: 1; } */
+</style>

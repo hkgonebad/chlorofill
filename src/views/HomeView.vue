@@ -53,6 +53,11 @@
 							name: 'RecipeDetail',
 							params: { id: recipe.idMeal },
 						}"
+						:item-id="recipe.idMeal"
+						item-type="meal"
+						:is-favorite="isFavoriteMeal(recipe.idMeal)"
+						@toggle-favorite="handleToggleFavorite"
+						@share-item="handleShareItem"
 					/>
 				</div>
 				<!-- No Recipes Found -->
@@ -60,7 +65,7 @@
 			</div>
 		</section>
 
-		<!-- === Featured Cocktail Section === -->
+		<!-- === Featured Cocktail Section (Using ItemCard) === -->
 		<section class="cocktail-section mb-5">
 			<div class="container">
 				<div
@@ -86,12 +91,12 @@
 					v-else-if="errorCocktails"
 					:message="errorCocktails"
 				/>
-				<!-- Cocktail Cards Display -->
+				<!-- Cocktail Cards Display (Using ItemCard) -->
 				<div
 					v-else-if="featuredCocktails.length > 0"
 					class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
 				>
-					<CocktailCard
+					<ItemCard
 						v-for="cocktail in featuredCocktails"
 						:key="cocktail.idDrink"
 						:image-url="cocktail.strDrinkThumb"
@@ -100,6 +105,11 @@
 							name: 'CocktailDetail',
 							params: { id: cocktail.idDrink },
 						}"
+						:item-id="cocktail.idDrink"
+						item-type="cocktail"
+						:is-favorite="isFavoriteCocktail(cocktail.idDrink)"
+						@toggle-favorite="handleToggleFavorite"
+						@share-item="handleShareItem"
 					/>
 				</div>
 				<!-- No Cocktails Found -->
@@ -124,7 +134,7 @@
 			</div>
 		</section>
 
-		<!-- Recommendations Section (Conditional) -->
+		<!-- Recommendations Section (Conditional & Using ItemCard) -->
 		<template v-if="combinedFavoriteIds.length > 0">
 			<section class="recipe-section mb-5">
 				<div class="container">
@@ -154,27 +164,49 @@
 					>
 						<template
 							v-for="item in recommendedItems"
-							:key="item.type + '-' + item.id"
+							:key="
+								item.type + '-' + (item.idMeal || item.idDrink)
+							"
 						>
-							<!-- Meal Card -->
 							<ItemCard
-								v-if="item.type === 'meal'"
-								:image-url="item.strMealThumb"
-								:title="item.strMeal"
-								:link-to="{
-									name: 'RecipeDetail',
-									params: { id: item.idMeal },
-								}"
-							/>
-							<!-- Cocktail Card -->
-							<CocktailCard
-								v-else-if="item.type === 'cocktail'"
-								:image-url="item.strDrinkThumb"
-								:title="item.strDrink"
-								:link-to="{
-									name: 'CocktailDetail',
-									params: { id: item.idDrink },
-								}"
+								v-if="
+									(item.type === 'meal' && item.idMeal) ||
+									(item.type === 'cocktail' && item.idDrink)
+								"
+								:image-url="
+									item.type === 'meal'
+										? item.strMealThumb
+										: item.strDrinkThumb
+								"
+								:title="
+									item.type === 'meal'
+										? item.strMeal
+										: item.strDrink
+								"
+								:link-to="
+									item.type === 'meal'
+										? {
+												name: 'RecipeDetail',
+												params: { id: item.idMeal },
+										  }
+										: {
+												name: 'CocktailDetail',
+												params: { id: item.idDrink },
+										  }
+								"
+								:item-id="
+									item.type === 'meal'
+										? item.idMeal
+										: item.idDrink
+								"
+								:item-type="item.type"
+								:is-favorite="
+									item.type === 'meal'
+										? isFavoriteMeal(item.idMeal)
+										: isFavoriteCocktail(item.idDrink)
+								"
+								@toggle-favorite="handleToggleFavorite"
+								@share-item="handleShareItem"
 							/>
 						</template>
 					</div>
@@ -185,34 +217,44 @@
 				</div>
 			</section>
 		</template>
-
-		<!-- More sections will be added later -->
 	</div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, inject } from "vue";
 import { RouterLink } from "vue-router";
 import ItemCard from "../components/ItemCard.vue";
-import CocktailCard from "../components/CocktailCard.vue"; // Import CocktailCard
-// Import reusable components
 import ErrorMessage from "../components/ErrorMessage.vue";
 import CategoryCarousel from "../components/CategoryCarousel.vue";
 import RecipeSearch from "../components/RecipeSearch.vue";
 import SkeletonCard from "../components/SkeletonCard.vue";
+import ShareButtons from "../components/ShareButtons.vue";
 import { useFavorites } from "../composables/useFavorites";
-import { useCocktailFavorites } from "../composables/useCocktailFavorites.js"; // Import cocktail favorites
-import { getRandomCocktail } from "@/services/cocktailApi.js"; // Import cocktail API function
+import { useCocktailFavorites } from "../composables/useCocktailFavorites.js";
+import { getRandomCocktail } from "@/services/cocktailApi.js";
 import {
 	getMealsByCategory,
 	getMealDetailsById,
 	getRandomMeal,
-} from "@/services/mealApi.js"; // Import meal service functions including getRandomMeal
+} from "@/services/mealApi.js";
+
+// Inject the global openShareModal function
+const openShareModal = inject("openShareModal");
 
 //const userName = ref(null); // Username
-const userGreeting = ref(""); // User greeting, say "Good Morning" or "Good Afternoon" or "Good Evening" based on the current time
-const { favoriteIds: mealFavoriteIds } = useFavorites();
-const { favoriteCocktailIds } = useCocktailFavorites(); // Use cocktail favorites
+const userGreeting = ref("");
+const {
+	favoriteIds: mealFavoriteIds,
+	addFavorite: addMealFavorite,
+	removeFavorite: removeMealFavorite,
+	isFavorite: isFavoriteMeal,
+} = useFavorites();
+const {
+	favoriteCocktailIds,
+	addFavorite: addCocktailFavorite,
+	removeFavorite: removeCocktailFavorite,
+	isFavorite: isFavoriteCocktail,
+} = useCocktailFavorites();
 
 // Featured Recipes State
 const featuredRecipes = ref([]);
@@ -439,6 +481,39 @@ onMounted(async () => {
 
 // Watch combined favorites (optional - maybe too noisy?)
 // watch(combinedFavoriteIds, fetchRecommendations, { deep: true });
+
+// --- Event Handlers ---
+const handleToggleFavorite = ({ id, type }) => {
+	if (type === "meal") {
+		if (isFavoriteMeal(id)) {
+			removeMealFavorite(id);
+		} else {
+			addMealFavorite(id);
+		}
+	} else if (type === "cocktail") {
+		if (isFavoriteCocktail(id)) {
+			removeCocktailFavorite(id);
+		} else {
+			addCocktailFavorite(id);
+		}
+	}
+};
+
+// Update share handler to call the injected function
+const handleShareItem = ({ title, url }) => {
+	if (openShareModal) {
+		openShareModal({ title, url, text: `Check out this recipe: ${title}` }); // Pass payload
+	} else {
+		console.error("openShareModal function not injected in HomeView");
+	}
+};
+
+// Watch combined favorites to refetch recommendations
+watch(combinedFavoriteIds, (newVal, oldVal) => {
+	if (newVal.length > 0 && newVal.length !== oldVal.length) {
+		fetchRecommendations();
+	}
+});
 </script>
 
 <style scoped>

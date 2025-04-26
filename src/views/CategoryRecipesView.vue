@@ -34,6 +34,9 @@
 						name: 'RecipeDetail',
 						params: { id: recipe.idMeal },
 					}"
+					:item-id="recipe.idMeal"
+					item-type="meal"
+					:is-favorite="isFavorite(recipe.idMeal)"
 				/>
 				<!-- Subtitle is not available in filter.php result -->
 				<!-- Button uses the default slot content -->
@@ -56,6 +59,7 @@ import ItemCard from "../components/ItemCard.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
 import SkeletonCard from "../components/SkeletonCard.vue";
 import BackButton from "@/components/BackButton.vue";
+import { useFavorites } from "../composables/useFavorites.js";
 
 // Define props received from the router
 const props = defineProps({
@@ -68,6 +72,8 @@ const props = defineProps({
 const recipes = ref([]);
 const loading = ref(false);
 const error = ref(null);
+
+const { isFavorite } = useFavorites();
 
 const fetchRecipesByCategory = async (category) => {
 	console.log(`Fetching recipes for category: ${category}`);

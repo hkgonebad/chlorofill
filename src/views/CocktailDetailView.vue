@@ -64,7 +64,7 @@
 			</div>
 
 			<div class="container recipe-body px-4 py-2">
-				<!-- Header Row with Back Button, Title, and Favorite Button -->
+				<!-- Header Row -->
 				<div class="d-flex align-items-center mb-4 view-header">
 					<BackButton
 						class="btn btn-light btn-sm rounded-circle me-3 back-button-icon"
@@ -72,10 +72,19 @@
 					<h2 class="mb-0 flex-grow-1 section-title">
 						{{ cocktail.strDrink }}
 					</h2>
+					<!-- Share Icon Button -->
+					<button
+						@click="openShareModal"
+						class="btn btn-sm btn-light rounded-circle ms-3 action-icon"
+						title="Share Cocktail"
+						aria-label="Share Cocktail"
+					>
+						<i class="pi pi-share-alt"></i>
+					</button>
 					<!-- Favorite Button -->
 					<button
 						@click="toggleFavorite"
-						class="btn btn-outline-danger btn-sm rounded-circle ms-3 favorite-button"
+						class="btn btn-outline-danger btn-sm rounded-circle ms-2 favorite-button"
 						:class="{ active: isCurrentFavorite }"
 						:aria-label="
 							isCurrentFavorite
@@ -167,13 +176,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getCocktailDetailsById } from "@/services/cocktailApi.js";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import BackButton from "@/components/BackButton.vue";
 import { getAmazonSearchUrl } from "@/utils/affiliateLinks.js";
 import { useCocktailFavorites } from "@/composables/useCocktailFavorites.js";
+import ShareButtons from "@/components/ShareButtons.vue";
 import { useHead } from "@vueuse/head";
 
 const props = defineProps({
@@ -184,7 +194,7 @@ const props = defineProps({
 });
 
 const route = useRoute();
-const router = useRouter(); // Initialize router
+const router = useRouter();
 const loading = ref(false);
 const error = ref(null);
 const cocktail = ref(null);
@@ -255,59 +265,109 @@ const ingredientsList = computed(() => {
 	return list;
 });
 
-// --- Dynamic Meta Tags ---
+// --- Computed values for Share and Meta ---
+const shareText = computed(() => {
+	return cocktail.value?.strInstructions
+		? cocktail.value.strInstructions.substring(0, 160) + "..."
+		: `Learn how to make the ${
+				cocktail.value?.strDrink || "this cocktail"
+		  }.`;
+});
+
+const pageUrl = computed(() => {
+	// Use canonical URL if available and cocktail exists, otherwise fallback
+	return cocktail.value?.idDrink
+		? `${window.location.origin}/cocktail/${cocktail.value.idDrink}`
+		: window.location.href;
+});
+
+// --- Meta Tags using @vueuse/head ---
 useHead(
 	computed(() => {
-		if (!cocktail.value) {
-			return { title: "Cocktail Details" }; // Default while loading or if error
+		const details = cocktail.value;
+		if (!details) {
+			// Default tags while loading or if error
+			return {
+				title: "Cocktail Details - ChloroFill",
+				meta: [
+					{
+						name: "description",
+						content: "Loading cocktail details...",
+					},
+					// Add default OG/Twitter tags if desired
+					{
+						property: "og:title",
+						content: "Cocktail Details - ChloroFill",
+					},
+					{
+						property: "og:description",
+						content: "Loading cocktail details...",
+					},
+					// maybe a default og:image?
+					// { property: 'og:image', content: '/img/default-og-image.png' },
+					{ name: "twitter:card", content: "summary" },
+				],
+			};
 		}
-		const description = cocktail.value.strInstructions
-			? cocktail.value.strInstructions.substring(0, 160) + "..."
-			: `Details for ${cocktail.value.strDrink}`;
 
-		// Construct the canonical URL - adjust if your base URL is different or comes from env vars
-		const canonicalUrl = `${window.location.origin}/cocktail/${cocktail.value.idDrink}`;
+		// Dynamic tags based on fetched details
+		const title = `${details.strDrink} - ChloroFill Cocktail`;
+		// Use computed shareText
+		const description = shareText.value;
+		const imageUrl = details.strDrinkThumb
+			? `${details.strDrinkThumb}/preview`
+			: "/img/default-og-image.png"; // Ensure you have this fallback image
+		// Use computed pageUrl
+		const canonicalUrl = pageUrl.value;
 
 		return {
-			title: cocktail.value.strDrink,
+			title: title,
 			meta: [
-				{
-					name: "description",
-					content: description,
-				},
-				// Open Graph Tags
-				{
-					property: "og:title",
-					content: cocktail.value.strDrink,
-				},
-				{
-					property: "og:description",
-					content: description,
-				},
-				{
-					property: "og:image",
-					content: cocktail.value.strDrinkThumb, // Use the cocktail thumbnail
-				},
-				{
-					property: "og:type",
-					content: "article", // Or 'website' if more appropriate
-				},
-				{
-					property: "og:url",
-					content: canonicalUrl,
-				},
-				// Add other relevant meta tags like twitter cards if needed
+				// General Meta
+				{ name: "description", content: description }, // Use computed description
+				// Open Graph
+				{ property: "og:title", content: title },
+				{ property: "og:description", content: description }, // Use computed description
+				{ property: "og:image", content: imageUrl },
+				{ property: "og:url", content: canonicalUrl }, // Use computed canonicalUrl
+				{ property: "og:type", content: "article" },
+				{ property: "og:site_name", content: "ChloroFill" },
+				// Twitter Card
+				{ name: "twitter:card", content: "summary_large_image" },
+				{ name: "twitter:title", content: title },
+				{ name: "twitter:description", content: description }, // Use computed description
+				{ name: "twitter:image", content: imageUrl },
+				// Add other relevant meta tags like article:tag for category/alcoholic type if desired
+				// { property: 'article:tag', content: details.strCategory },
+				// { property: 'article:tag', content: details.strAlcoholic },
+				// ... map tags if available details.strTags ? details.strTags.split(',') : [] ...
 			],
 			link: [
-				{
-					rel: "canonical",
-					href: canonicalUrl,
-				},
+				{ rel: "canonical", href: canonicalUrl }, // Use computed canonicalUrl
+				// Add other link types like alternates if needed
 			],
 		};
 	})
 );
 // --- End Meta Tags ---
+
+// Inject the global openShareModal function
+const openShareModalFunc = inject("openShareModal");
+
+// Update share handler to call the injected function
+const openShareModal = () => {
+	if (openShareModalFunc && cocktail.value) {
+		openShareModalFunc({
+			title: cocktail.value.strDrink,
+			url: pageUrl.value, // Use existing computed url
+			text: shareText.value, // Use existing computed text
+		});
+	} else {
+		console.error(
+			"openShareModal function not injected or cocktail details missing"
+		);
+	}
+};
 
 // Fetch on initial mount
 onMounted(() => {

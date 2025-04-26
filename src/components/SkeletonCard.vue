@@ -2,8 +2,18 @@
 	<div class="col">
 		<div class="card h-100 border-0 item-card-skeleton">
 			<!-- Image Placeholder -->
-			<div class="placeholder-glow card-img-top-placeholder">
+			<div
+				class="placeholder-glow card-img-top-placeholder position-relative"
+			>
 				<span class="placeholder w-100 h-100"></span>
+				<!-- Overlay Action Placeholders -->
+				<div
+					class="card-actions-overlay position-absolute top-0 end-0 p-2"
+					style="pointer-events: none"
+				>
+					<span class="skeleton-action-icon me-1"></span>
+					<span class="skeleton-action-icon"></span>
+				</div>
 			</div>
 			<div class="card-body">
 				<!-- Title Placeholder -->
@@ -36,6 +46,7 @@
 	justify-content: center;
 	border-radius: var(--bs-card-inner-border-radius)
 		var(--bs-card-inner-border-radius) 0 0;
+	position: relative;
 }
 
 .card-img-top-placeholder .placeholder {
@@ -48,4 +59,17 @@
 
 /* Ensure consistent height with real cards if needed */
 /* .card.item-card-skeleton { ... } */
+
+.card-actions-overlay {
+	z-index: 10;
+}
+.skeleton-action-icon {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: var(--bs-secondary-bg, #e9ecef);
+	opacity: 0.7;
+	margin-bottom: 2px;
+}
 </style>
