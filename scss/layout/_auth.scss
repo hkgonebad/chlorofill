@@ -1,0 +1,60 @@
+/* SCSS for Auth Pages (Login/Signup) */
+
+// Use variables from _variables.scss if needed
+// @import 'variables'; 
+
+.auth-layout-content {
+    // This class would wrap the form inside LoginView/SignupView
+    background-color: var(--bs-body-bg);
+    padding: 2rem;
+    border-radius: var(--bs-border-radius-lg);
+    box-shadow: var(--bs-box-shadow);
+    max-width: 420px;
+    width: 100%;
+    margin: auto; // Center horizontally
+}
+
+.auth-logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
+    width: auto;
+    height: 40px;
+}
+
+.auth-form {
+    // Specific form styles if needed
+}
+
+/* Floating labels adjustments might be needed if default Bootstrap isn't sufficient */
+/*
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    // Custom styles
+}
+.form-floating > label {
+    // Custom styles
+}
+*/
+
+/* Link styles */
+.auth-links {
+    margin-top: 1.5rem;
+    font-size: 0.9em;
+    color: var(--bs-secondary-color);
+
+    a {
+        color: var(--bs-primary);
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+/* Dark mode adjustments for the auth content wrapper */
+[data-bs-theme="dark"] .auth-layout-content {
+    // box-shadow: var(--bs-box-shadow-dark); // Add if you define a dark shadow
+    background-color: var(--bs-tertiary-bg);
+}
