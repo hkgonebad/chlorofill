@@ -1,6 +1,27 @@
 // Base URL for TheCocktailDB API (using test key '1')
 const API_BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1";
 
+// --- Simple In-Memory Cache ---
+const cache = new Map();
+const CACHE_TTL = 60 * 60 * 1000; // Cache Time-To-Live: 1 hour in milliseconds
+
+function setCache(key, data) {
+	const expires = Date.now() + CACHE_TTL;
+	cache.set(key, { data, expires });
+}
+
+function getCache(key) {
+	const entry = cache.get(key);
+	if (!entry) return null;
+	if (Date.now() > entry.expires) {
+		cache.delete(key);
+		return null;
+	}
+	console.log(`Cache hit for: ${key}`);
+	return entry.data;
+}
+// --- End Cache ---
+
 /**
  * Fetches various filter lists (categories, glasses, ingredients, alcoholic types).
  * @returns {Promise<Object>} A promise resolving to an object with keys: categories, glasses, ingredients, alcoholicTypes.
@@ -53,8 +74,10 @@ export const getCocktailFilterLists = async () => {
  * @throws {Error} If the fetch fails.
  */
 export const getRandomCocktail = async () => {
+	// Generally, don't cache random results unless you want the same random one for a TTL period
+	const url = `${API_BASE_URL}/random.php`;
 	try {
-		const response = await fetch(`${API_BASE_URL}/random.php`);
+		const response = await fetch(url);
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
@@ -113,6 +136,10 @@ export const getCocktailDetailsById = async (id) => {
 	if (!id) {
 		throw new Error("Cocktail ID is required.");
 	}
+	const cacheKey = `cocktailDetail_${id}`;
+	const cachedData = getCache(cacheKey);
+	if (cachedData) return cachedData;
+
 	const url = `${API_BASE_URL}/lookup.php?i=${id}`;
 
 	try {
@@ -122,7 +149,10 @@ export const getCocktailDetailsById = async (id) => {
 		}
 		const data = await response.json();
 		// Lookup returns { drinks: [ cocktailObject ] } or { drinks: null }
-		return data.drinks && data.drinks.length > 0 ? data.drinks[0] : null;
+		const cocktailData =
+			data.drinks && data.drinks.length > 0 ? data.drinks[0] : null;
+		setCache(cacheKey, cocktailData); // Cache the result (even if null)
+		return cocktailData;
 	} catch (error) {
 		console.error(`Error fetching cocktail details for ID ${id}:`, error);
 		throw new Error(`Failed to load cocktail details: ${error.message}`);
@@ -137,18 +167,19 @@ export const getCocktailDetailsById = async (id) => {
  */
 export const searchCocktailsByName = async (query) => {
 	if (!query || query.trim().length === 0) {
-		return []; // Return empty if query is empty
+		return [];
 	}
 	const encodedQuery = encodeURIComponent(query.trim());
 	const url = `${API_BASE_URL}/search.php?s=${encodedQuery}`;
 
+	// Caching search results can be complex due to varying queries,
+	// skipping cache here for simplicity but could be added with query as key.
 	try {
 		const response = await fetch(url);
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 		const data = await response.json();
-		// Search returns { drinks: [...] } or { drinks: null }
 		return data.drinks || [];
 	} catch (error) {
 		console.error(`Error searching cocktails for "${query}":`, error);
