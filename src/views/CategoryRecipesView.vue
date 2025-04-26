@@ -23,7 +23,7 @@
 			<!-- Recipe List -->
 			<div
 				v-else-if="recipes.length > 0"
-				class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
+				class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
 			>
 				<ItemCard
 					v-for="recipe in recipes"

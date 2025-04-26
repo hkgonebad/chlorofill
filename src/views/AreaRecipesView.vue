@@ -22,7 +22,7 @@
 		<!-- Recipe List -->
 		<div
 			v-else-if="recipes.length > 0"
-			class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
+			class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
 		>
 			<ItemCard
 				v-for="recipe in recipes"
@@ -33,6 +33,11 @@
 					name: 'RecipeDetail',
 					params: { id: recipe.idMeal },
 				}"
+				:item-id="recipe.idMeal"
+				item-type="meal"
+				:is-favorite="isFavoriteMeal(recipe.idMeal)"
+				@toggle-favorite="handleToggleFavorite"
+				@share-item="handleShareItem"
 			/>
 		</div>
 		<!-- No Recipes Found State -->
@@ -45,13 +50,24 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, inject } from "vue";
 import { useRouter } from "vue-router";
 import ItemCard from "../components/ItemCard.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
 import SkeletonCard from "../components/SkeletonCard.vue";
 import BackButton from "@/components/BackButton.vue";
 import { getMealsByArea } from "@/services/mealApi.js";
+import { useFavorites } from "../composables/useFavorites.js";
+
+// Inject the global openShareModal function
+const openShareModal = inject("openShareModal");
+
+// Use favorites composable
+const {
+	addFavorite,
+	removeFavorite,
+	isFavorite: isFavoriteMeal,
+} = useFavorites();
 
 const router = useRouter();
 
@@ -81,6 +97,28 @@ const fetchRecipesByArea = async (area) => {
 		error.value = `Failed to load recipes: ${e.message}`;
 	} finally {
 		loading.value = false;
+	}
+};
+
+// --- Event Handlers (Added) ---
+const handleToggleFavorite = ({ id, type }) => {
+	// Only handle meals in this view
+	if (type === "meal") {
+		if (isFavoriteMeal(id)) {
+			removeFavorite(id);
+		} else {
+			addFavorite(id);
+		}
+	}
+};
+
+const handleShareItem = ({ title, url }) => {
+	if (openShareModal) {
+		openShareModal({ title, url, text: `Check out this recipe: ${title}` });
+	} else {
+		console.error(
+			"openShareModal function not injected in AreaRecipesView"
+		);
 	}
 };
 

@@ -1,10 +1,10 @@
 <template>
-	<header>
-		<div class="topHeader fixed-top">
+	<header class="sticky-top">
+		<div class="topHeader">
 			<div class="container">
 				<nav class="navbar navbar-light">
 					<button
-						class="navbar-toggler btn-outline-secondary rounded-circle"
+						class="navbar-toggler btn-outline-secondary rounded-circle me-2"
 						type="button"
 						data-bs-toggle="offcanvas"
 						data-bs-target="#offcanvasNavbar"

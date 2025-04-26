@@ -30,9 +30,9 @@
 				<!-- Loading State with Skeleton Cards -->
 				<div
 					v-if="loadingFeatured"
-					class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 placeholder-glow"
+					class="row row-cols-2 row-cols-md-4 g-4 placeholder-glow"
 				>
-					<SkeletonCard v-for="n in 6" :key="'sk-' + n" />
+					<SkeletonCard v-for="n in 4" :key="'sk-' + n" />
 				</div>
 				<!-- Error State -->
 				<ErrorMessage
@@ -42,7 +42,7 @@
 				<!-- Recipe Grid -->
 				<div
 					v-else-if="featuredRecipes.length > 0"
-					class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
+					class="row row-cols-2 row-cols-md-4 g-4"
 				>
 					<ItemCard
 						v-for="recipe in featuredRecipes"
@@ -82,9 +82,9 @@
 				<!-- Loading State -->
 				<div
 					v-if="loadingCocktails"
-					class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 placeholder-glow"
+					class="row row-cols-2 row-cols-md-4 g-4 placeholder-glow"
 				>
-					<SkeletonCard v-for="n in 3" :key="'sk-cocktail-' + n" />
+					<SkeletonCard v-for="n in 4" :key="'sk-cocktail-' + n" />
 				</div>
 				<!-- Error State -->
 				<ErrorMessage
@@ -94,7 +94,7 @@
 				<!-- Cocktail Cards Display (Using ItemCard) -->
 				<div
 					v-else-if="featuredCocktails.length > 0"
-					class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
+					class="row row-cols-2 row-cols-md-4 g-4"
 				>
 					<ItemCard
 						v-for="cocktail in featuredCocktails"
@@ -160,7 +160,7 @@
 					<!-- Combined Grid -->
 					<div
 						v-else-if="recommendedItems.length > 0"
-						class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
+						class="row row-cols-2 row-cols-md-4 g-4"
 					>
 						<template
 							v-for="item in recommendedItems"
@@ -299,30 +299,21 @@ const fetchFeaturedRecipes = async () => {
 	featuredRecipes.value = [];
 
 	try {
-		// Fetch 6 random meals
+		// Fetch 4 random meals
 		const randomMeals = [];
-		for (let i = 0; i < 6; i++) {
+		for (let i = 0; i < 4; i++) {
 			const meal = await getRandomMeal();
 			if (meal) {
-				// Check if this meal is already in our list to avoid duplicates
 				const isDuplicate = randomMeals.some(
 					(m) => m.idMeal === meal.idMeal
 				);
 				if (!isDuplicate) {
 					randomMeals.push(meal);
 				} else {
-					// If duplicate, try one more time
-					const retryMeal = await getRandomMeal();
-					if (
-						retryMeal &&
-						!randomMeals.some((m) => m.idMeal === retryMeal.idMeal)
-					) {
-						randomMeals.push(retryMeal);
-					}
+					i--; // Decrement to try again if duplicate
 				}
 			}
 		}
-
 		featuredRecipes.value = randomMeals;
 
 		if (featuredRecipes.value.length === 0) {
@@ -343,32 +334,21 @@ const fetchFeaturedCocktails = async () => {
 	featuredCocktails.value = [];
 
 	try {
-		// Fetch 3 random cocktails
+		// Fetch 4 random cocktails
 		const randomCocktails = [];
-		for (let i = 0; i < 3; i++) {
+		for (let i = 0; i < 4; i++) {
 			const cocktail = await getRandomCocktail();
 			if (cocktail) {
-				// Check if this cocktail is already in our list to avoid duplicates
 				const isDuplicate = randomCocktails.some(
 					(c) => c.idDrink === cocktail.idDrink
 				);
 				if (!isDuplicate) {
 					randomCocktails.push(cocktail);
 				} else {
-					// If duplicate, try one more time
-					const retryCocktail = await getRandomCocktail();
-					if (
-						retryCocktail &&
-						!randomCocktails.some(
-							(c) => c.idDrink === retryCocktail.idDrink
-						)
-					) {
-						randomCocktails.push(retryCocktail);
-					}
+					i--; // Decrement to try again
 				}
 			}
 		}
-
 		featuredCocktails.value = randomCocktails;
 
 		if (featuredCocktails.value.length === 0) {
@@ -411,13 +391,16 @@ const fetchRecommendations = async () => {
 			const sourceCategory = detailData.strCategory;
 			const recommendData = await getMealsByCategory(sourceCategory);
 			const featuredIds = featuredRecipes.value.map((r) => r.idMeal);
-			const filteredMeals = recommendData.filter(
-				(r) =>
-					!featuredIds.includes(r.idMeal) && r.idMeal !== randomFavId
-			);
-			fetchedMeals = filteredMeals
+			const filteredMeals = recommendData
+				.filter(
+					(r) =>
+						r.idMeal &&
+						!featuredIds.includes(r.idMeal) &&
+						r.idMeal !== randomFavId
+				)
 				.slice(0, 4)
-				.map((meal) => ({ ...meal, type: "meal" })); // Limit meals, add type
+				.map((meal) => ({ ...meal, type: "meal" }));
+			fetchedMeals = filteredMeals;
 			// console.log("Recommended Meals Fetched:", fetchedMeals);
 		} else {
 			console.warn(
@@ -430,10 +413,15 @@ const fetchRecommendations = async () => {
 			// Fetch 1 or 2 random cocktails
 			const cocktail1 = await getRandomCocktail();
 			const cocktail2 = await getRandomCocktail();
-			if (cocktail1)
+			if (cocktail1 && cocktail1.idDrink) {
 				fetchedCocktails.push({ ...cocktail1, type: "cocktail" });
-			// Avoid duplicates if API returns same random cocktail twice
-			if (cocktail2 && cocktail2.idDrink !== cocktail1?.idDrink) {
+			}
+			// Avoid duplicates if API returns same random cocktail twice AND check idDrink
+			if (
+				cocktail2 &&
+				cocktail2.idDrink &&
+				cocktail2.idDrink !== cocktail1?.idDrink
+			) {
 				fetchedCocktails.push({ ...cocktail2, type: "cocktail" });
 			}
 			// console.log("Recommended Cocktails Fetched:", fetchedCocktails);
@@ -449,8 +437,10 @@ const fetchRecommendations = async () => {
 			}
 		}
 
-		// Combine and assign
-		recommendedItems.value = [...fetchedMeals, ...fetchedCocktails];
+		// Combine and assign (only include valid items)
+		recommendedItems.value = [...fetchedMeals, ...fetchedCocktails].filter(
+			(item) => item.idMeal || item.idDrink
+		);
 		// Optional: Shuffle combined list?
 		// recommendedItems.value.sort(() => Math.random() - 0.5);
 

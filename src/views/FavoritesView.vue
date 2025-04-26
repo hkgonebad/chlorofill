@@ -21,31 +21,36 @@
 		<!-- Combined List -->
 		<div
 			v-else-if="allFavoritesDetails.length > 0"
-			class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
+			class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
 		>
 			<template
 				v-for="item in allFavoritesDetails"
 				:key="item.type + '-' + item.id"
 			>
-				<!-- Meal Card -->
 				<ItemCard
-					v-if="item.type === 'meal'"
-					:image-url="item.strMealThumb"
-					:title="item.strMeal"
-					:link-to="{
-						name: 'RecipeDetail',
-						params: { id: item.idMeal },
-					}"
-				/>
-				<!-- Cocktail Card -->
-				<CocktailCard
-					v-else-if="item.type === 'cocktail'"
-					:image-url="item.strDrinkThumb"
-					:title="item.strDrink"
-					:link-to="{
-						name: 'CocktailDetail',
-						params: { id: item.idDrink },
-					}"
+					v-if="item.idMeal || item.idDrink"
+					:image-url="
+						item.type === 'meal'
+							? item.strMealThumb
+							: item.strDrinkThumb
+					"
+					:title="item.type === 'meal' ? item.strMeal : item.strDrink"
+					:link-to="
+						item.type === 'meal'
+							? {
+									name: 'RecipeDetail',
+									params: { id: item.idMeal },
+							  }
+							: {
+									name: 'CocktailDetail',
+									params: { id: item.idDrink },
+							  }
+					"
+					:item-id="item.type === 'meal' ? item.idMeal : item.idDrink"
+					:item-type="item.type"
+					:is-favorite="true"
+					@toggle-favorite="handleToggleFavorite"
+					@share-item="handleShareItem"
 				/>
 			</template>
 		</div>
@@ -63,19 +68,24 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, inject } from "vue";
 import { RouterLink } from "vue-router";
 import { useFavorites } from "../composables/useFavorites";
-import { useCocktailFavorites } from "../composables/useCocktailFavorites.js"; // <-- Import cocktail favorites
-import { getMealDetailsById } from "@/services/mealApi.js"; // <-- Need meal detail function
-import { getCocktailDetailsById } from "@/services/cocktailApi.js"; // <-- Need cocktail detail function
+import { useCocktailFavorites } from "../composables/useCocktailFavorites.js";
+import { getMealDetailsById } from "@/services/mealApi.js";
+import { getCocktailDetailsById } from "@/services/cocktailApi.js";
 import ItemCard from "../components/ItemCard.vue";
-import CocktailCard from "../components/CocktailCard.vue"; // <-- Import cocktail card
 import ErrorMessage from "../components/ErrorMessage.vue";
 import SkeletonCard from "../components/SkeletonCard.vue";
 
-const { favoriteIds: mealFavoriteIds } = useFavorites();
-const { favoriteCocktailIds } = useCocktailFavorites(); // <-- Use cocktail favorites
+// Use full composables for add/remove
+const { favoriteIds: mealFavoriteIds, removeFavorite: removeMealFavorite } =
+	useFavorites();
+const { favoriteCocktailIds, removeFavorite: removeCocktailFavorite } =
+	useCocktailFavorites();
+
+// Inject the global openShareModal function
+const openShareModal = inject("openShareModal");
 
 const allFavoritesDetails = ref([]);
 const loading = ref(false);
@@ -182,6 +192,29 @@ watch(
 	},
 	{ deep: true }
 );
+
+// --- Event Handlers (Added/Modified) ---
+const handleToggleFavorite = ({ id, type }) => {
+	// In favorites view, toggle always means remove
+	if (type === "meal") {
+		removeMealFavorite(id);
+	} else if (type === "cocktail") {
+		removeCocktailFavorite(id);
+	}
+	// Refetching is handled by the watch on combinedFavoriteIds
+};
+
+const handleShareItem = ({ title, url }) => {
+	if (openShareModal) {
+		openShareModal({
+			title,
+			url,
+			text: `Check out this favorite: ${title}`,
+		});
+	} else {
+		console.error("openShareModal function not injected in FavoritesView");
+	}
+};
 </script>
 
 <style scoped>

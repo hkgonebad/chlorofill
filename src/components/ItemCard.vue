@@ -1,6 +1,6 @@
 <template>
 	<div class="col">
-		<div class="card item-card h-100 text-center shadow-sm">
+		<div class="card item-card h-100 text-start shadow-sm">
 			<div class="card-image-wrapper position-relative">
 				<router-link :to="linkTo" class="card-link-wrapper">
 					<img
@@ -46,25 +46,14 @@
 					</button>
 				</div>
 			</div>
-			<div class="card-body d-flex flex-column justify-content-between">
-				<h5 class="card-title">{{ title }}</h5>
+			<div class="card-body d-flex flex-column">
+				<h5 class="card-title mb-1">{{ title }}</h5>
 				<p
-					v-if="subtitle"
-					class="card-text small text-muted flex-grow-1"
+					v-if="descriptionText"
+					class="card-description small text-muted mb-0"
 				>
-					{{ truncatedSubtitle }}
+					{{ descriptionText }}
 				</p>
-				<!-- Optional slot for buttons or extra info -->
-				<div class="mt-auto">
-					<slot name="actions">
-						<!-- Default action if slot not provided -->
-						<router-link
-							:to="linkTo"
-							class="btn btn-sm btn-outline-primary"
-							>View Details</router-link
-						>
-					</slot>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -84,7 +73,7 @@ const props = defineProps({
 		type: String,
 		required: true,
 	},
-	subtitle: {
+	descriptionText: {
 		type: String,
 		default: "",
 	},
@@ -92,10 +81,6 @@ const props = defineProps({
 		// Can be a string path or a route object
 		type: [String, Object],
 		required: true,
-	},
-	subtitleLength: {
-		type: Number,
-		default: 100, // Max length for subtitle before truncating
 	},
 	// New props for actions
 	itemId: {
@@ -118,14 +103,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["toggle-favorite", "share-item"]);
-
-// Truncate subtitle if it exceeds the specified length
-const truncatedSubtitle = computed(() => {
-	if (props.subtitle && props.subtitle.length > props.subtitleLength) {
-		return props.subtitle.substring(0, props.subtitleLength) + "...";
-	}
-	return props.subtitle;
-});
 
 // --- Event Handlers ---
 const toggleFavorite = () => {
@@ -203,7 +180,25 @@ const shareItem = () => {
 
 /* Ensure card body content doesn't overlap if actions are complex */
 .card-body {
+	padding: 0.75rem; /* Adjust padding if needed */
 	position: relative;
-	z-index: 1; /* Ensure body content is below overlay */
+	z-index: 1;
+}
+
+.card-title {
+	font-size: 0.9rem;
+	font-weight: 600;
+}
+
+.card-description {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 0.8rem;
+	line-height: 1.4;
+	/* min-height needed to prevent layout shift if description is short/missing? */
+	min-height: calc(2 * 0.8rem * 1.4); /* lines * font-size * line-height */
 }
 </style>
