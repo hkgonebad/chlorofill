@@ -1,11 +1,12 @@
 <template>
 	<div id="app-wrapper">
-		<TheHeader />
-		<main>
+		<!-- Conditionally render header and footer -->
+		<TheHeader v-if="!isAuthRoute" />
+		<main :class="{ 'auth-content': isAuthRoute }">
 			<!-- Router view will render the current page component -->
 			<router-view />
 		</main>
-		<TheFooter />
+		<TheFooter v-if="!isAuthRoute" />
 		<!-- Render the search modal, binding its visibility -->
 		<FullScreenSearchModal v-model:visible="isSearchModalVisible" />
 		<!-- Render the global Share Modal -->
@@ -30,6 +31,14 @@ import ShareModal from "@/components/ShareModal.vue";
 
 // Apply theme on initial load
 initializeTheme();
+
+const route = useRoute();
+
+// Computed property to check if the current route is an auth route
+const isAuthRoute = computed(() => {
+	// Check if the route's meta field indicates it's an auth layout
+	return route.meta?.layout === "AuthLayout";
+});
 
 // State for search modal visibility
 const isSearchModalVisible = ref(false);
@@ -66,9 +75,6 @@ provide("openShareModal", openShareModal);
 // === End Global Share Modal State ===
 
 // --- Meta tags integration ---
-const route = useRoute();
-
-// Use @vueuse/head for meta management
 useHead(
 	computed(() => {
 		const baseMeta = [
@@ -103,12 +109,21 @@ useHead(
 /* Global styles can be imported here or managed via main.scss */
 
 /* Example: Ensure main content area pushes footer down */
-.main-content {
+main:not(.auth-content) {
+	/* Apply min-height only when header/footer are present */
 	min-height: calc(
-		100vh - 100px - 50px
-	); /* Adjust based on header/footer height */
+		100vh - var(--header-height, 60px) - var(--footer-height, 50px)
+	);
+	/* Define --header-height and --footer-height in your variables or here */
+}
+
+/* Styles specific to the auth layout can go here or in a dedicated file */
+main.auth-content {
 	display: flex;
-	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	/* The styling from AuthLayout.vue will handle the form container */
 }
 
 /* Ensure router-view takes available space if needed */
