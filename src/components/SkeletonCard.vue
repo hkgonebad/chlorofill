@@ -1,22 +1,30 @@
 <template>
 	<div class="col">
-		<div class="card h-100 border-0 item-card-skeleton">
+		<div class="card h-100 border-0 item-card-skeleton text-start">
 			<!-- Image Placeholder -->
-			<div class="placeholder-glow card-img-top-placeholder">
+			<div
+				class="placeholder-glow card-img-top-placeholder position-relative"
+			>
 				<span class="placeholder w-100 h-100"></span>
+				<!-- Overlay Action Placeholders -->
+				<div
+					class="card-actions-overlay position-absolute top-0 end-0 p-2"
+					style="pointer-events: none"
+				>
+					<span class="skeleton-action-icon me-1"></span>
+					<span class="skeleton-action-icon"></span>
+				</div>
 			</div>
-			<div class="card-body">
+			<div class="card-body" style="padding: 0.75rem">
 				<!-- Title Placeholder -->
-				<h5 class="card-title placeholder-glow">
+				<h5 class="card-title placeholder-glow mb-1">
 					<span class="placeholder col-8"></span>
 				</h5>
-				<!-- Optional Subtitle/Text Placeholder -->
-				<p class="card-text placeholder-glow">
-					<span class="placeholder col-6"></span>
-					<span class="placeholder col-4"></span>
+				<!-- Description Placeholder (1-2 lines) -->
+				<p class="card-text placeholder-glow mb-0">
+					<span class="placeholder col-10"></span>
+					<span class="placeholder col-5"></span>
 				</p>
-				<!-- Button Placeholder -->
-				<span class="btn btn-primary disabled placeholder col-4"></span>
 			</div>
 		</div>
 	</div>
@@ -36,6 +44,7 @@
 	justify-content: center;
 	border-radius: var(--bs-card-inner-border-radius)
 		var(--bs-card-inner-border-radius) 0 0;
+	position: relative;
 }
 
 .card-img-top-placeholder .placeholder {
@@ -48,4 +57,17 @@
 
 /* Ensure consistent height with real cards if needed */
 /* .card.item-card-skeleton { ... } */
+
+.card-actions-overlay {
+	z-index: 10;
+}
+.skeleton-action-icon {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: var(--bs-secondary-bg, #e9ecef);
+	opacity: 0.7;
+	margin-bottom: 2px;
+}
 </style>

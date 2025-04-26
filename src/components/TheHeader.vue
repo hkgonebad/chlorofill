@@ -1,10 +1,10 @@
 <template>
-	<header>
-		<div class="topHeader fixed-top">
+	<header class="sticky-top">
+		<div class="topHeader">
 			<div class="container">
 				<nav class="navbar navbar-light">
 					<button
-						class="navbar-toggler"
+						class="navbar-toggler btn-outline-secondary rounded-circle me-2"
 						type="button"
 						data-bs-toggle="offcanvas"
 						data-bs-target="#offcanvasNavbar"
@@ -172,7 +172,7 @@
 					<!-- Dark Mode Toggle Button -->
 					<button
 						@click="toggleTheme"
-						class="btn btn-sm btn-outline-secondary me-2 theme-toggle-btn"
+						class="btn btn-sm btn-outline-secondary me-2 theme-toggle-btn rounded-circle"
 						:aria-label="
 							isDarkMode
 								? 'Activate light mode'
@@ -240,7 +240,7 @@
 					<button
 						v-if="route.name !== 'Home'"
 						@click="openSearchModal"
-						class="btn btn-sm btn-outline-secondary me-2"
+						class="btn btn-sm btn-outline-secondary me-2 rounded-circle"
 						aria-label="Open search modal"
 						title="Search Recipes & Cocktails"
 					>

@@ -135,6 +135,5 @@ dist
 .bun
 bun.lockb 
 
-.rules.md
+/.cursor/
 /rules.md
-rules.md
