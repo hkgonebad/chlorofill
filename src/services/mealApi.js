@@ -1,5 +1,7 @@
-// Base URL for TheMealDB API
-const API_BASE_URL = "https://www.themealdb.com/api/json/v1/1";
+// Base URL for TheMealDB API - Use the proxy path in development
+const API_BASE_URL = import.meta.env.DEV
+	? "/api/themealdb"
+	: "https://www.themealdb.com/api/json/v1/1";
 
 // --- Simple In-Memory Cache ---
 const cache = new Map();
@@ -49,7 +51,6 @@ export const getCategories = async () => {
 		}
 	} catch (error) {
 		console.error("Error fetching categories:", error);
-		// Re-throw the error to be caught by the calling component
 		throw new Error(`Failed to load categories: ${error.message}`);
 	}
 };
