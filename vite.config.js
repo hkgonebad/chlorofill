@@ -11,7 +11,8 @@ export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd(), "");
 
 	// Define base path based on mode
-	const base = mode === "production" ? "/chlorofill/" : "/";
+	// For Vercel deployment (or standard root deployment), base should usually be '/'
+	const base = "/";
 
 	return {
 		base: base,
