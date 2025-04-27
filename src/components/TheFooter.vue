@@ -39,10 +39,31 @@
 				<span class="nav-text d-none d-sm-block">Offers</span>
 			</router-link>
 
-			<router-link to="/about" class="nav-item" active-class="active">
-				<!-- <i class="fas fa-user fa-fw"></i> -->
-				<i class="pi pi-user" style="font-size: 1.3rem"></i>
-				<span class="nav-text d-none d-sm-block">About</span>
+			<!-- Conditional Profile/Login Link -->
+			<router-link
+				:to="user ? { name: 'Profile' } : { name: 'Login' }"
+				class="nav-item"
+				active-class="active"
+				:event="authLoading ? '' : 'click'"
+				:class="{ disabled: authLoading }"
+				:aria-disabled="authLoading"
+				aria-label="User profile or login"
+			>
+				<span v-if="authLoading">
+					<i
+						class="pi pi-spin pi-spinner"
+						style="font-size: 1.3rem"
+					></i>
+					<span class="nav-text d-none d-sm-block">Loading...</span>
+				</span>
+				<span v-else-if="user">
+					<i class="pi pi-user" style="font-size: 1.3rem"></i>
+					<span class="nav-text d-none d-sm-block">Profile</span>
+				</span>
+				<span v-else>
+					<i class="pi pi-sign-in" style="font-size: 1.3rem"></i>
+					<span class="nav-text d-none d-sm-block">Login</span>
+				</span>
 			</router-link>
 
 			<!-- Move dark mode toggle elsewhere (e.g., header or settings page) -->
@@ -53,4 +74,12 @@
 
 <script setup>
 import { RouterLink } from "vue-router";
+import { useAuthUser } from "@/composables/useAuthUser";
+
+// Get auth state
+const { user, loading: authLoading } = useAuthUser();
 </script>
+
+<style scoped>
+/* Styles are in _footer.scss */
+</style>

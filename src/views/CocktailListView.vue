@@ -9,7 +9,7 @@
 		<!-- Loading State -->
 		<div
 			v-if="loading"
-			class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 placeholder-glow"
+			class="row row-cols-2 row-cols-sm-2 row-cols-md-4 g-4 placeholder-glow"
 		>
 			<SkeletonCard v-for="n in 8" :key="'sk-' + n" />
 		</div>
@@ -23,11 +23,8 @@
 		</div>
 
 		<!-- Cocktails Grid -->
-		<div
-			v-else
-			class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
-		>
-			<CocktailCard
+		<div v-else class="row row-cols-2 row-cols-sm-2 row-cols-md-4 g-4">
+			<ItemCard
 				v-for="cocktail in cocktails"
 				:key="cocktail.idDrink"
 				:image-url="cocktail.strDrinkThumb"
@@ -36,19 +33,25 @@
 					name: 'CocktailDetail',
 					params: { id: cocktail.idDrink },
 				}"
+				:item-id="cocktail.idDrink"
+				item-type="cocktail"
+				:is-favorite="isFavoriteCocktail(cocktail.idDrink)"
+				@toggle-favorite="handleToggleFavorite"
+				@share-item="handleShareItem"
 			/>
 		</div>
 	</div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, inject } from "vue";
 import { useRoute, RouterLink } from "vue-router";
 import { getCocktailsByFilter } from "@/services/cocktailApi.js";
-import CocktailCard from "@/components/CocktailCard.vue";
+import ItemCard from "@/components/ItemCard.vue";
 import ErrorMessage from "@/components/ErrorMessage.vue";
 import SkeletonCard from "@/components/SkeletonCard.vue";
 import BackButton from "@/components/BackButton.vue";
+import { useCocktailFavorites } from "@/composables/useCocktailFavorites.js";
 
 const props = defineProps({
 	filterType: {
@@ -65,6 +68,16 @@ const route = useRoute();
 const loading = ref(false);
 const error = ref(null);
 const cocktails = ref([]);
+
+// Inject the global openShareModal function
+const openShareModal = inject("openShareModal");
+
+// Use cocktail favorites composable
+const {
+	addFavorite,
+	removeFavorite,
+	isFavorite: isFavoriteCocktail,
+} = useCocktailFavorites();
 
 const fetchCocktails = async (type, value) => {
 	loading.value = true;
@@ -113,6 +126,31 @@ watch(
 		}
 	}
 );
+
+// --- Event Handlers (Added) ---
+const handleToggleFavorite = ({ id, type }) => {
+	if (type === "cocktail") {
+		if (isFavoriteCocktail(id)) {
+			removeFavorite(id);
+		} else {
+			addFavorite(id);
+		}
+	}
+};
+
+const handleShareItem = ({ title, url }) => {
+	if (openShareModal) {
+		openShareModal({
+			title,
+			url,
+			text: `Check out this cocktail: ${title}`,
+		});
+	} else {
+		console.error(
+			"openShareModal function not injected in CocktailListView"
+		);
+	}
+};
 </script>
 
 <style scoped>

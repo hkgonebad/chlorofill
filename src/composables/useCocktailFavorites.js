@@ -60,10 +60,9 @@ export function useCocktailFavorites() {
 	};
 
 	// Returns a computed ref that is true if the ID is favorited
-	const isFavorite = (cocktailId) =>
-		computed(() => {
-			return favoriteCocktailIds.value.includes(cocktailId);
-		});
+	const isFavorite = (cocktailId) => {
+		return favoriteCocktailIds.value.includes(cocktailId);
+	};
 
 	return {
 		favoriteCocktailIds, // Read-only access to the list (via .value)

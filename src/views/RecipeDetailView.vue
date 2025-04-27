@@ -77,10 +77,19 @@
 					<h2 class="mb-0 flex-grow-1 section-title">
 						{{ recipeDetails.strMeal }}
 					</h2>
+					<!-- Share Icon Button -->
+					<button
+						@click="openShareModal"
+						class="btn btn-sm btn-light rounded-circle ms-3 action-icon"
+						title="Share Recipe"
+						aria-label="Share Recipe"
+					>
+						<i class="pi pi-share-alt"></i>
+					</button>
 					<!-- Favorite Button -->
 					<button
 						@click="toggleFavorite"
-						class="btn btn-outline-danger btn-sm rounded-circle ms-3 favorite-button"
+						class="btn btn-outline-danger btn-sm rounded-circle ms-2 favorite-button"
 						:class="{ active: isCurrentFavorite }"
 						:aria-label="
 							isCurrentFavorite
@@ -198,17 +207,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted, watch, computed, inject } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import ErrorMessage from "../components/ErrorMessage.vue";
 import { useFavorites } from "../composables/useFavorites";
 import BackButton from "@/components/BackButton.vue";
 import { getAmazonSearchUrl } from "@/utils/affiliateLinks.js";
 import { getMealDetailsById } from "@/services/mealApi.js";
 import { useHead } from "@vueuse/head";
+import ShareButtons from "../components/ShareButtons.vue";
 
-// Initialize router for back button
-// const router = useRouter(); // No longer needed if BackButton handles it
+const route = useRoute();
+const router = useRouter();
+const recipeDetails = ref(null);
+const loading = ref(true);
+const error = ref(null);
 
 // Define props received from the router
 const props = defineProps({
@@ -219,15 +232,14 @@ const props = defineProps({
 	},
 });
 
-const recipeDetails = ref(null);
-const loading = ref(false);
-const error = ref(null);
-
 // --- Composables ---
-const { addFavorite, removeFavorite, isFavorite } = useFavorites();
+const { favorites, addFavorite, removeFavorite, isFavorite } = useFavorites();
 
 // --- Reactive State ---
 const isCurrentFavorite = isFavorite(props.id);
+
+// Inject the global openShareModal function
+const openShareModalFunc = inject("openShareModal");
 
 // --- START INGREDIENT IMAGE LOGIC ---
 const getIngredientImageUrl = (ingredientName) => {
@@ -291,59 +303,104 @@ const ingredientsList = computed(() => {
 	return list;
 });
 
-// --- Dynamic Meta Tags ---
+// --- Computed values for Share and Meta ---
+const shareText = computed(() => {
+	return recipeDetails.value?.strInstructions
+		? recipeDetails.value.strInstructions.substring(0, 160) + "..."
+		: `Learn how to make ${recipeDetails.value?.strMeal || "this recipe"}.`;
+});
+
+const pageUrl = computed(() => {
+	// Use canonical URL if available and recipeDetails exists, otherwise fallback
+	return recipeDetails.value?.idMeal
+		? `${window.location.origin}/recipe/${recipeDetails.value.idMeal}`
+		: window.location.href;
+});
+
+// --- Meta Tags using @vueuse/head ---
 useHead(
 	computed(() => {
-		if (!recipeDetails.value) {
-			return { title: "Recipe Details" }; // Default while loading or if error
+		const details = recipeDetails.value;
+		if (!details) {
+			// Default tags while loading or if error
+			return {
+				title: "Recipe Details - ChloroFill",
+				meta: [
+					{
+						name: "description",
+						content: "Loading recipe details...",
+					},
+					// Add default OG/Twitter tags if desired
+					{
+						property: "og:title",
+						content: "Recipe Details - ChloroFill",
+					},
+					{
+						property: "og:description",
+						content: "Loading recipe details...",
+					},
+					// maybe a default og:image?
+					// { property: 'og:image', content: '/img/default-og-image.png' },
+					{ name: "twitter:card", content: "summary" },
+				],
+			};
 		}
-		const description = recipeDetails.value.strInstructions
-			? recipeDetails.value.strInstructions.substring(0, 160) + "..."
-			: `Details for ${recipeDetails.value.strMeal}`;
 
-		// Construct the canonical URL - adjust if your base URL is different or comes from env vars
-		const canonicalUrl = `${window.location.origin}/recipe/${recipeDetails.value.idMeal}`;
+		// Dynamic tags based on fetched details
+		const title = `${details.strMeal} - ChloroFill Recipe`;
+		const description = details.strInstructions
+			? details.strInstructions.substring(0, 160) + "..."
+			: `Learn how to make ${details.strMeal}. Get the full recipe on ChloroFill.`;
+		const imageUrl = details.strMealThumb
+			? `${details.strMealThumb}/preview`
+			: "/img/default-og-image.png"; // Ensure you have this fallback image
+		const canonicalUrl = `${window.location.origin}/recipe/${details.idMeal}`; // Use the constructed canonical URL
 
 		return {
-			title: recipeDetails.value.strMeal,
+			title: title,
 			meta: [
-				{
-					name: "description",
-					content: description,
-				},
-				// Open Graph Tags
-				{
-					property: "og:title",
-					content: recipeDetails.value.strMeal,
-				},
-				{
-					property: "og:description",
-					content: description,
-				},
-				{
-					property: "og:image",
-					content: recipeDetails.value.strMealThumb, // Use the meal thumbnail
-				},
-				{
-					property: "og:type",
-					content: "article", // Or 'website' if more appropriate
-				},
-				{
-					property: "og:url",
-					content: canonicalUrl,
-				},
-				// Add other relevant meta tags like twitter cards if needed
+				// General Meta
+				{ name: "description", content: shareText.value },
+				// Open Graph
+				{ property: "og:title", content: title },
+				{ property: "og:description", content: shareText.value },
+				{ property: "og:image", content: imageUrl },
+				{ property: "og:url", content: pageUrl.value },
+				{ property: "og:type", content: "article" },
+				{ property: "og:site_name", content: "ChloroFill" },
+				// Twitter Card
+				{ name: "twitter:card", content: "summary_large_image" },
+				{ name: "twitter:title", content: title },
+				{ name: "twitter:description", content: shareText.value },
+				{ name: "twitter:image", content: imageUrl },
+				// Add other relevant meta tags like article:published_time if available
+				// { property: 'article:tag', content: details.strCategory },
+				// { property: 'article:tag', content: details.strArea },
+				// ... map tags if available details.strTags ? details.strTags.split(',') : [] ...
 			],
 			link: [
-				{
-					rel: "canonical",
-					href: canonicalUrl,
-				},
+				{ rel: "canonical", href: pageUrl.value },
+				// Add other link types like alternates if needed
 			],
 		};
 	})
 );
 // --- End Meta Tags ---
+
+// Update share handler to call the injected function
+const openShareModal = () => {
+	if (openShareModalFunc && recipeDetails.value) {
+		openShareModalFunc({
+			title: recipeDetails.value.strMeal,
+			url: pageUrl.value, // Use existing computed url
+			text: shareText.value, // Use existing computed text
+		});
+	} else {
+		console.error(
+			"openShareModal function not injected or recipe details missing"
+		);
+	}
+};
 
 // Fetch details when the component mounts
 onMounted(() => {

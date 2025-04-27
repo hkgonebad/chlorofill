@@ -65,12 +65,9 @@ const removeFavorite = (recipeId) => {
 
 // --- Computed property to check if an item is a favorite ---
 const isFavorite = (recipeId) => {
-	// Using computed for potential reactivity if recipeId could change reactively,
-	// but here it's used more like a simple check function.
-	// If recipeId is passed as a ref/prop, computed would be better.
-	return computed(() => favoriteIds.value.includes(recipeId));
-	// Alternatively, a simple function if recipeId is always a static value when checked:
-	// return favoriteIds.value.includes(recipeId);
+	// Directly return the boolean check. Vue's reactivity system
+	// ensures components using this will update when favoriteIds changes.
+	return favoriteIds.value.includes(recipeId);
 };
 
 // --- Export the public API of the composable ---

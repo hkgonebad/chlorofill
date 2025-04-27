@@ -1,10 +1,10 @@
 <template>
-	<header>
-		<div class="topHeader fixed-top">
+	<header class="sticky-top">
+		<div class="topHeader">
 			<div class="container">
 				<nav class="navbar navbar-light">
 					<button
-						class="navbar-toggler"
+						class="navbar-toggler btn-outline-secondary rounded-circle me-2"
 						type="button"
 						data-bs-toggle="offcanvas"
 						data-bs-target="#offcanvasNavbar"
@@ -31,6 +31,7 @@
 								class="btn-close text-reset"
 								data-bs-dismiss="offcanvas"
 								aria-label="Close"
+								ref="closeButtonRef"
 							></button>
 						</div>
 						<div class="offcanvas-body">
@@ -155,6 +156,74 @@
 										Offers</router-link
 									>
 								</li>
+
+								<li class="nav-item mt-3 pt-3 border-top">
+									<router-link
+										class="nav-link"
+										to="/favorites"
+										@click="closeOffcanvas"
+									>
+										<i class="pi pi-heart"></i>
+										My Favorites</router-link
+									>
+								</li>
+
+								<!-- Auth Links (Conditional) -->
+								<li
+									v-if="!user && !authLoading"
+									class="nav-item mt-3 pt-3 border-top"
+								>
+									<router-link
+										class="nav-link"
+										to="/login"
+										@click="closeOffcanvas"
+									>
+										<i class="pi pi-sign-in"></i>
+										Login</router-link
+									>
+								</li>
+								<li
+									v-if="!user && !authLoading"
+									class="nav-item"
+								>
+									<router-link
+										class="nav-link"
+										to="/signup"
+										@click="closeOffcanvas"
+									>
+										<i class="pi pi-user-plus"></i>
+										Sign Up</router-link
+									>
+								</li>
+
+								<!-- User Info & Logout (Conditional) -->
+								<li
+									v-if="user"
+									class="nav-item mt-3 pt-3 border-top"
+								>
+									<span class="nav-link disabled pe-none">
+										<i class="pi pi-user"></i>
+										Signed in as:
+										{{ profile?.username || user.email }}
+									</span>
+								</li>
+								<li v-if="user" class="nav-item">
+									<a
+										href="#"
+										@click.prevent="handleLogout"
+										class="nav-link text-danger"
+										:disabled="logoutLoading"
+									>
+										<span
+											v-if="logoutLoading"
+											class="spinner-border spinner-border-sm me-1"
+											role="status"
+											aria-hidden="true"
+										></span>
+										<i class="pi pi-sign-out"></i>
+										Logout</a
+									>
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -172,7 +241,7 @@
 					<!-- Dark Mode Toggle Button -->
 					<button
 						@click="toggleTheme"
-						class="btn btn-sm btn-outline-secondary me-2 theme-toggle-btn"
+						class="btn btn-sm btn-outline-secondary me-2 theme-toggle-btn rounded-circle"
 						:aria-label="
 							isDarkMode
 								? 'Activate light mode'
@@ -240,15 +309,58 @@
 					<button
 						v-if="route.name !== 'Home'"
 						@click="openSearchModal"
-						class="btn btn-sm btn-outline-secondary me-2"
+						class="btn btn-sm btn-outline-secondary me-2 rounded-circle"
 						aria-label="Open search modal"
 						title="Search Recipes & Cocktails"
 					>
 						<i class="pi pi-search"></i>
 					</button>
 
-					<!-- Placeholder for Search/Profile Icon -->
-					<!-- <a href="#" class="btn p-1"><i class="fas fa-search"></i></a> -->
+					<!-- Favorites Link -->
+					<router-link
+						:to="{ name: 'Favorites' }"
+						class="btn btn-sm btn-outline-secondary me-2 rounded-circle"
+						aria-label="View Favorites"
+						title="View Favorites"
+					>
+						<i class="pi pi-heart"></i>
+					</router-link>
+
+					<!-- User/Auth Button (Conditional) -->
+					<template v-if="authLoading">
+						<button
+							class="btn btn-sm btn-outline-secondary rounded-circle"
+							disabled
+						>
+							<span
+								class="spinner-border spinner-border-sm"
+								role="status"
+								aria-hidden="true"
+							></span>
+						</button>
+					</template>
+					<template v-else-if="user">
+						<!-- Simple Logout for now, can be dropdown later -->
+						<button
+							@click="handleLogout"
+							class="btn btn-sm btn-outline-danger rounded-circle"
+							:disabled="logoutLoading"
+							title="Logout"
+							aria-label="Logout"
+						>
+							<i class="pi pi-sign-out"></i>
+						</button>
+					</template>
+					<template v-else>
+						<router-link
+							:to="{ name: 'Login' }"
+							class="btn btn-sm btn-outline-secondary rounded-circle"
+							title="Login or Sign Up"
+							aria-label="Login or Sign Up"
+						>
+							<i class="pi pi-user"></i>
+						</router-link>
+					</template>
 				</div>
 			</div>
 		</div>
@@ -256,20 +368,30 @@
 </template>
 
 <script setup>
-import { ref, inject } from "vue";
+import { ref, inject, computed } from "vue";
 import { useRouter, RouterLink, useRoute } from "vue-router";
 import { getRandomCocktail } from "@/services/cocktailApi.js";
 import { getRandomMeal } from "@/services/mealApi.js";
 import { useTheme } from "@/composables/useTheme.js";
+import { Offcanvas } from "bootstrap";
 
 import cfLogoLight from "/img/cf-logo-light.png";
 import cfLogoDark from "/img/cf-logo-dark.png";
 import cfLogoAlt from "/img/cf-logo-alt.png";
 
+import { useAuthUser } from "@/composables/useAuthUser";
+import { supabase } from "@/supabaseClient";
+import { useToast } from "vue-toastification";
+
 const router = useRouter();
 const route = useRoute();
 const loadingRandom = ref(false);
 const loadingRandomCocktail = ref(false);
+const toast = useToast();
+
+// Auth state
+const { user, profile, loading: authLoading } = useAuthUser();
+const logoutLoading = ref(false);
 
 // Inject the search modal toggle function
 const toggleSearchModal = inject("toggleSearchModal", () => {
@@ -280,10 +402,10 @@ const toggleSearchModal = inject("toggleSearchModal", () => {
 const { toggleTheme, isDarkMode } = useTheme();
 
 // Function to programmatically click the close button (Reverted to this method)
+const closeButtonRef = ref(null);
 const closeOffcanvas = () => {
-	const closeButton = document.querySelector("#offcanvasNavbar .btn-close");
-	if (closeButton) {
-		closeButton.click();
+	if (closeButtonRef.value) {
+		closeButtonRef.value.click();
 	}
 	// console.log("Attempting to close offcanvas via button click");
 };
@@ -339,5 +461,22 @@ const goToRandomCocktail = async () => {
 // Function to call the injected toggle
 const openSearchModal = () => {
 	toggleSearchModal();
+};
+
+// Logout Handler
+const handleLogout = async () => {
+	logoutLoading.value = true;
+	try {
+		const { error } = await supabase.auth.signOut();
+		if (error) throw error;
+		toast.info("You have been logged out.");
+		closeOffcanvas(); // Close offcanvas if open
+		router.push({ name: "Home" }); // Redirect to home after logout
+	} catch (error) {
+		console.error("Logout error:", error.message);
+		toast.error(error.message || "Failed to log out.");
+	} finally {
+		logoutLoading.value = false;
+	}
 };
 </script>

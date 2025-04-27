@@ -1,13 +1,21 @@
 <template>
 	<div id="app-wrapper">
-		<TheHeader />
-		<main>
+		<!-- Conditionally render header and footer -->
+		<TheHeader v-if="!isAuthRoute" />
+		<main :class="{ 'auth-content': isAuthRoute }">
 			<!-- Router view will render the current page component -->
 			<router-view />
 		</main>
-		<TheFooter />
+		<TheFooter v-if="!isAuthRoute" />
 		<!-- Render the search modal, binding its visibility -->
 		<FullScreenSearchModal v-model:visible="isSearchModalVisible" />
+		<!-- Render the global Share Modal -->
+		<ShareModal
+			v-model:visible="isShareModalVisible"
+			:title="shareModalTitle"
+			:share-url="shareModalUrl"
+			:share-text="shareModalText"
+		/>
 	</div>
 </template>
 
@@ -17,11 +25,20 @@ import TheFooter from "./components/TheFooter.vue";
 import { RouterView, useRoute } from "vue-router";
 import { initializeTheme } from "@/composables/useTheme.js";
 import FullScreenSearchModal from "@/components/FullScreenSearchModal.vue";
-import { ref, provide, computed } from "vue";
+import { ref, provide, computed, readonly } from "vue";
 import { useHead } from "@vueuse/head";
+import ShareModal from "@/components/ShareModal.vue";
 
 // Apply theme on initial load
 initializeTheme();
+
+const route = useRoute();
+
+// Computed property to check if the current route is an auth route
+const isAuthRoute = computed(() => {
+	// Check if the route's meta field indicates it's an auth layout
+	return route.meta?.layout === "AuthLayout";
+});
 
 // State for search modal visibility
 const isSearchModalVisible = ref(false);
@@ -33,13 +50,31 @@ const toggleSearchModal = () => {
 };
 
 // Provide the state and the toggle function to descendants
-provide("isSearchModalVisible", isSearchModalVisible);
+provide("isSearchModalVisible", readonly(isSearchModalVisible));
 provide("toggleSearchModal", toggleSearchModal);
 
-// --- Meta tags integration ---
-const route = useRoute();
+// === Global Share Modal State ===
+const isShareModalVisible = ref(false);
+const shareModalTitle = ref("");
+const shareModalUrl = ref("");
+const shareModalText = ref("");
 
-// Use @vueuse/head for meta management
+// Function to open the share modal
+const openShareModal = (payload) => {
+	// console.log("Opening share modal with payload:", payload);
+	shareModalTitle.value = payload.title ? `Share: ${payload.title}` : "Share";
+	shareModalUrl.value = payload.url || "";
+	shareModalText.value =
+		payload.text || `Check out this link: ${payload.url}`;
+	isShareModalVisible.value = true;
+};
+
+// Provide share modal state (readonly) and open function
+provide("isShareModalVisible", readonly(isShareModalVisible));
+provide("openShareModal", openShareModal);
+// === End Global Share Modal State ===
+
+// --- Meta tags integration ---
 useHead(
 	computed(() => {
 		const baseMeta = [
@@ -73,3 +108,28 @@ useHead(
 	})
 );
 </script>
+
+<style lang="scss">
+/* Global styles can be imported here or managed via main.scss */
+
+/* Example: Ensure main content area pushes footer down */
+main:not(.auth-content) {
+	/* Apply min-height only when header/footer are present */
+	min-height: calc(
+		100vh - var(--header-height, 60px) - var(--footer-height, 50px)
+	);
+	/* Define --header-height and --footer-height in your variables or here */
+}
+
+/* Styles specific to the auth layout can go here or in a dedicated file */
+main.auth-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	/* The styling from AuthLayout.vue will handle the form container */
+}
+
+/* Ensure router-view takes available space if needed */
+/* .router-view-wrapper { flex-grow: 1; } */
+</style>
