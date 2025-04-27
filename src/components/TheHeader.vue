@@ -480,7 +480,3 @@ const handleLogout = async () => {
 	}
 };
 </script>
-
-<style lang="scss" scoped>
-// all styles go to src/scss/layout/_header.scss
-</style>
