@@ -1,33 +1,110 @@
 <template>
-	<section class="not-found-view block py-5 text-center">
+	<section class="notFoundView block py-5 text-center">
 		<div class="container">
-			<h1 class="display-1 mb-3">404</h1>
-			<h2>Oops! Page Not Found</h2>
-			<p class="lead my-4">
-				The page you are looking for might have been removed, had its
-				name changed, or is temporarily unavailable.
+			<div class="mb-4">
+				<!-- Fun SVG: Chef hat and spilled cocktail -->
+				<svg
+					width="120"
+					height="120"
+					viewBox="0 0 120 120"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<!-- Chef Hat -->
+					<ellipse
+						cx="60"
+						cy="50"
+						rx="35"
+						ry="20"
+						fill="currentColor"
+						stroke="#bbb"
+						stroke-width="3"
+					/>
+					<ellipse
+						cx="60"
+						cy="60"
+						rx="28"
+						ry="12"
+						fill="currentColor"
+						stroke="#bbb"
+						stroke-width="2"
+					/>
+					<rect
+						x="38"
+						y="60"
+						width="44"
+						height="18"
+						rx="8"
+						fill="currentColor"
+						stroke="#bbb"
+						stroke-width="2"
+					/>
+					<!-- Spilled Cocktail Glass -->
+					<rect
+						x="85"
+						y="85"
+						width="10"
+						height="28"
+						rx="5"
+						transform="rotate(-30 85 85)"
+						fill="#e0e0e0"
+					/>
+					<ellipse
+						cx="95"
+						cy="105"
+						rx="10"
+						ry="4"
+						transform="rotate(-30 95 105)"
+						fill="#b3e0ff"
+					/>
+					<ellipse
+						cx="95"
+						cy="110"
+						rx="7"
+						ry="2.5"
+						transform="rotate(-30 95 110)"
+						fill="#ffb3c6"
+					/>
+				</svg>
+			</div>
+			<h1 class="display-1 mb-2">404</h1>
+			<h2 class="mb-3">Recipe Not Found!</h2>
+			<p class="lead mb-4">
+				Looks like this dish or drink is missing from our cookbook.<br />
+				Maybe it got overcooked, shaken, or stirred away!
 			</p>
-			<router-link to="/" class="btn btn-primary">
-				Go to Homepage
-			</router-link>
+			<div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
+				<router-link to="/" class="btn btn-primary">Home</router-link>
+				<router-link to="/categories" class="btn btn-outline-secondary"
+					>Browse Recipes</router-link
+				>
+				<router-link to="/cocktails" class="btn btn-outline-info"
+					>Browse Cocktails</router-link
+				>
+				<button
+					@click="openSearchModal"
+					class="btn btn-outline-success"
+				>
+					Search
+				</button>
+			</div>
+			<p class="text-muted small mt-3">
+				If you think this is a mistake, let us know and we'll whip up
+				something special!
+			</p>
 		</div>
 	</section>
 </template>
 
 <script setup>
-// No specific logic needed for the 404 page
-</script>
+import { inject } from "vue";
 
-<style scoped>
-.not-found-view {
-	min-height: 60vh; /* Ensure it takes up some vertical space */
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-.display-1 {
-	font-size: 8rem;
-	font-weight: bold;
-	color: var(--bs-secondary-color);
-}
-</style>
+// Inject the search modal toggle function
+const toggleSearchModal = inject("toggleSearchModal", () => {
+	console.warn("toggleSearchModal function not provided in Header");
+});
+
+const openSearchModal = () => {
+	toggleSearchModal();
+};
+</script>
