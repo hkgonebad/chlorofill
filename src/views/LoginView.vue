@@ -1,14 +1,13 @@
 <template>
-	<div class="auth-layout-content">
+	<div class="authLayoutContent">
 		<img
 			src="/img/cf-logo-alt.png"
 			alt="ChloroFill Logo"
-			width="72"
-			class="auth-logo mb-4"
+			class="authLogo mb-4"
 		/>
 		<h1 class="h3 mb-3 fw-normal text-center">Please sign in</h1>
 
-		<form @submit.prevent="handleLogin" class="auth-form">
+		<form @submit.prevent="handleLogin" class="authForm">
 			<div class="form-floating mb-3">
 				<input
 					type="email"
@@ -60,7 +59,7 @@
 		<div class="my-3 text-center text-muted">OR</div>
 
 		<!-- Magic Link Form -->
-		<form @submit.prevent="handleMagicLink" class="auth-form">
+		<form @submit.prevent="handleMagicLink" class="authForm">
 			<div class="form-floating mb-3">
 				<input
 					type="email"
@@ -88,7 +87,7 @@
 			</button>
 		</form>
 
-		<p class="auth-links text-center">
+		<p class="authLinks text-center">
 			Don't have an account?
 			<router-link :to="{ name: 'Signup' }">Sign up</router-link>
 		</p>
@@ -96,7 +95,7 @@
 		<!-- <p class="auth-links text-center">
             <a href="#">Forgot password?</a>
         </p> -->
-		<p class="auth-links text-center mt-4">
+		<p class="authLinks text-center mt-4">
 			<router-link :to="{ name: 'Home' }"
 				><i class="pi pi-arrow-left me-1"></i> Back to Home</router-link
 			>
