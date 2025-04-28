@@ -363,9 +363,8 @@ import { useRouter, RouterLink, useRoute } from "vue-router";
 import { getRandomCocktail } from "@/services/cocktailApi.js";
 import { getRandomMeal } from "@/services/mealApi.js";
 import { useTheme } from "@/composables/useTheme.js";
-import { Offcanvas } from "bootstrap";
 
-import cfLogoLight from "/img/cf-logo-light.png";
+// import cfLogoLight from "/img/cf-logo-light.png";
 import cfLogoDark from "/img/cf-logo-dark.png";
 import cfLogoAlt from "/img/cf-logo-alt.png";
 
