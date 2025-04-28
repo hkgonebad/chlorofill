@@ -316,16 +316,6 @@
 						<i class="pi pi-search"></i>
 					</button>
 
-					<!-- Favorites Link -->
-					<router-link
-						:to="{ name: 'Favorites' }"
-						class="btn btn-sm btn-outline-secondary me-2 rounded-circle"
-						aria-label="View Favorites"
-						title="View Favorites"
-					>
-						<i class="pi pi-heart"></i>
-					</router-link>
-
 					<!-- User/Auth Button (Conditional) -->
 					<template v-if="authLoading">
 						<button
