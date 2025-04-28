@@ -37,6 +37,8 @@
 					:item-id="recipe.idMeal"
 					item-type="meal"
 					:is-favorite="isFavorite(recipe.idMeal)"
+					@toggle-favorite="handleToggleFavorite"
+					@share-item="handleShare"
 				/>
 				<!-- Subtitle is not available in filter.php result -->
 				<!-- Button uses the default slot content -->
@@ -52,7 +54,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, inject } from "vue";
 import { RouterLink } from "vue-router";
 // Import reusable components
 import ItemCard from "../components/ItemCard.vue";
@@ -60,6 +62,9 @@ import ErrorMessage from "../components/ErrorMessage.vue";
 import SkeletonCard from "../components/SkeletonCard.vue";
 import BackButton from "@/components/BackButton.vue";
 import { useFavorites } from "../composables/useFavorites.js";
+
+// Inject the function provided by App.vue
+const openShareModal = inject("openShareModal");
 
 // Define props received from the router
 const props = defineProps({
@@ -73,10 +78,32 @@ const recipes = ref([]);
 const loading = ref(false);
 const error = ref(null);
 
-const { isFavorite } = useFavorites();
+// Get favorite functions
+const { isFavorite, addFavorite, removeFavorite } = useFavorites();
+
+// Handler for toggling favorite status
+const handleToggleFavorite = (payload) => {
+	// Check if the item is currently a favorite and call the appropriate action
+	if (isFavorite(payload.id)) {
+		removeFavorite(payload.id);
+	} else {
+		addFavorite(payload.id);
+	}
+};
+
+// Handler for sharing - Uses injected function to open the global modal
+const handleShare = (payload) => {
+	if (openShareModal) {
+		openShareModal(payload); // Pass the payload (title, url) from ItemCard
+	} else {
+		console.error("Share modal function not provided/injected.");
+		// Fallback or error handling if inject fails
+		alert(`Sharing (fallback): ${payload.title}\nURL: ${payload.url}`);
+	}
+};
 
 const fetchRecipesByCategory = async (category) => {
-	console.log(`Fetching recipes for category: ${category}`);
+	// console.log(`Fetching recipes for category: ${category}`);
 	loading.value = true;
 	error.value = null;
 	recipes.value = [];
@@ -97,7 +124,7 @@ const fetchRecipesByCategory = async (category) => {
 		} else {
 			// Handle case where category might exist but have no listed meals
 			recipes.value = [];
-			console.log(`No meals found for category: ${category}`);
+			// console.log(`No meals found for category: ${category}`);
 		}
 	} catch (e) {
 		console.error("Error fetching recipes by category:", e);

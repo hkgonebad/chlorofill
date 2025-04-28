@@ -85,11 +85,20 @@ onMounted(() => {
 watch(
 	() => props.visible,
 	(newValue) => {
-		if (bsModal.value) {
+		if (bsModal.value && modalRef.value) {
 			if (newValue) {
+				modalRef.value.removeAttribute("aria-hidden"); // remove hidden when opening
 				bsModal.value.show();
 			} else {
+				if (
+					modalRef.value &&
+					document.activeElement &&
+					modalRef.value.contains(document.activeElement)
+				) {
+					document.activeElement.blur();
+				}
 				bsModal.value.hide();
+				modalRef.value.setAttribute("aria-hidden", "true"); // set hidden when closing
 			}
 		}
 	}
@@ -106,9 +115,3 @@ onBeforeUnmount(() => {
 	bsModal.value?.dispose();
 });
 </script>
-
-<style scoped>
-.modal-body {
-	padding: 1.5rem;
-}
-</style>

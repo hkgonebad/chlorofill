@@ -110,7 +110,6 @@ const router = useRouter();
 // --- Event Handlers ---
 const toggleFavorite = () => {
 	if (!props.itemId || !props.itemType) {
-		console.warn("ItemCard: itemId or itemType missing for toggleFavorite");
 		return;
 	}
 	emit("toggle-favorite", { id: props.itemId, type: props.itemType });
@@ -118,7 +117,6 @@ const toggleFavorite = () => {
 
 const shareItem = () => {
 	if (!props.itemId || !props.itemType) {
-		console.warn("ItemCard: itemId or itemType missing for shareItem");
 		return;
 	}
 	// Construct the canonical URL for sharing
