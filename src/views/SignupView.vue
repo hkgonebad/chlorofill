@@ -1,14 +1,13 @@
 <template>
-	<div class="auth-layout-content">
+	<div class="authLayoutContent">
 		<img
 			src="/img/cf-logo-alt.png"
 			alt="ChloroFill Logo"
-			width="72"
-			class="auth-logo mb-4"
+			class="authLogo mb-4"
 		/>
 		<h1 class="h3 mb-3 fw-normal text-center">Create your account</h1>
 
-		<form @submit.prevent="handleSignup" class="auth-form">
+		<form @submit.prevent="handleSignup" class="authForm">
 			<!-- Optional: Add username input if desired -->
 			<div class="form-floating mb-3">
 				<input
@@ -65,11 +64,11 @@
 			</button>
 		</form>
 
-		<p class="auth-links text-center">
+		<p class="authLinks text-center">
 			Already have an account?
 			<router-link :to="{ name: 'Login' }">Sign in</router-link>
 		</p>
-		<p class="auth-links text-center mt-4">
+		<p class="authLinks text-center mt-4">
 			<router-link :to="{ name: 'Home' }"
 				><i class="pi pi-arrow-left me-1"></i> Back to Home</router-link
 			>
