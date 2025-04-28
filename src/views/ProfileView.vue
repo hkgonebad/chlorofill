@@ -8,148 +8,301 @@
 			</div>
 		</div>
 
-		<div v-else-if="user && profileData" class="card">
-			<div class="card-body">
-				<div class="row">
-					<div class="col-md-4 text-center mb-3 mb-md-0">
-						<img
-							:src="
-								profileData.avatar_url ||
-								'/img/avatar-placeholder.png'
-							"
-							alt="User Avatar"
-							class="img-thumbnail rounded-circle profile-avatar mb-2"
-							width="150"
-							height="150"
-						/>
-						<div class="mt-2">
-							<label
-								for="avatarUpload"
-								class="btn btn-sm btn-outline-secondary"
-							>
-								{{
-									avatarUploading
-										? "Uploading..."
-										: "Change Avatar"
-								}}
-							</label>
-							<input
-								type="file"
-								id="avatarUpload"
-								accept="image/png, image/jpeg, image/gif"
-								@change="handleAvatarUpload"
-								:disabled="avatarUploading"
-								hidden
-							/>
-							<div class="form-text">Max 1MB (JPG, PNG, GIF)</div>
-						</div>
-						<div
-							v-if="avatarUploading"
-							class="progress mt-2"
-							style="height: 5px"
-						>
-							<div
-								class="progress-bar"
-								role="progressbar"
-								:style="{ width: uploadProgress + '%' }"
-								:aria-valuenow="uploadProgress"
-								aria-valuemin="0"
-								aria-valuemax="100"
-							></div>
+		<div v-else-if="user && profileData" class="row g-4">
+			<!-- User Info & Avatar Card -->
+			<div class="col-lg-7">
+				<div class="card h-100">
+					<div class="card-body">
+						<h5 class="card-title mb-4">Account Information</h5>
+						<div class="row">
+							<div class="col-md-4 text-center mb-3 mb-md-0">
+								<img
+									:src="
+										profileData.avatar_url ||
+										'/img/avatar-placeholder.png'
+									"
+									alt="User Avatar"
+									class="img-thumbnail rounded-circle profile-avatar mb-2"
+									width="150"
+									height="150"
+								/>
+								<div class="mt-2">
+									<label
+										for="avatarUpload"
+										class="btn btn-sm btn-outline-secondary"
+									>
+										{{
+											avatarUploading
+												? "Uploading..."
+												: "Change Avatar"
+										}}
+									</label>
+									<input
+										type="file"
+										id="avatarUpload"
+										accept="image/png, image/jpeg, image/gif"
+										@change="handleAvatarUpload"
+										:disabled="
+											avatarUploading ||
+											updateLoading ||
+											passwordChangeLoading
+										"
+										hidden
+									/>
+									<div class="form-text">
+										Max 1MB (JPG, PNG, GIF)
+									</div>
+								</div>
+								<div
+									v-if="avatarUploading"
+									class="progress mt-2"
+									style="height: 5px"
+								>
+									<div
+										class="progress-bar"
+										role="progressbar"
+										:style="{ width: uploadProgress + '%' }"
+										:aria-valuenow="uploadProgress"
+										aria-valuemin="0"
+										aria-valuemax="100"
+									></div>
+								</div>
+							</div>
+							<div class="col-md-8">
+								<!-- Profile Update Form -->
+								<form @submit.prevent="handleUpdateProfile">
+									<div class="mb-3">
+										<label for="email" class="form-label"
+											>Email</label
+										>
+										<input
+											type="email"
+											id="email"
+											class="form-control"
+											:value="user.email"
+											disabled
+											readonly
+										/>
+									</div>
+									<div class="mb-3">
+										<label for="username" class="form-label"
+											>Username</label
+										>
+										<input
+											type="text"
+											id="username"
+											class="form-control"
+											v-model="profileData.username"
+											required
+											minlength="3"
+											:disabled="
+												updateLoading ||
+												avatarUploading ||
+												passwordChangeLoading
+											"
+										/>
+									</div>
+									<div class="mb-3">
+										<label for="fullName" class="form-label"
+											>Full Name</label
+										>
+										<input
+											type="text"
+											id="fullName"
+											class="form-control"
+											v-model="profileData.full_name"
+											:disabled="
+												updateLoading ||
+												avatarUploading ||
+												passwordChangeLoading
+											"
+										/>
+										<div class="form-text">Optional</div>
+									</div>
+
+									<button
+										type="submit"
+										class="btn btn-primary me-2"
+										:disabled="
+											updateLoading ||
+											avatarUploading ||
+											passwordChangeLoading ||
+											!isProfileChanged
+										"
+									>
+										<span
+											v-if="updateLoading"
+											class="spinner-border spinner-border-sm me-1"
+											role="status"
+											aria-hidden="true"
+										></span>
+										{{
+											updateLoading
+												? "Saving..."
+												: "Save Changes"
+										}}
+									</button>
+									<button
+										type="button"
+										@click="resetForm"
+										class="btn btn-secondary me-2"
+										:disabled="
+											updateLoading ||
+											avatarUploading ||
+											passwordChangeLoading ||
+											!isProfileChanged
+										"
+									>
+										Cancel
+									</button>
+								</form>
+							</div>
 						</div>
 					</div>
-					<div class="col-md-8">
-						<h5 class="card-title">User Information</h5>
-						<form @submit.prevent="handleUpdateProfile">
-							<div class="mb-3">
-								<label for="email" class="form-label"
-									>Email</label
-								>
-								<input
-									type="email"
-									id="email"
-									class="form-control"
-									:value="user.email"
-									disabled
-									readonly
-								/>
-							</div>
-							<div class="mb-3">
-								<label for="username" class="form-label"
-									>Username</label
-								>
-								<input
-									type="text"
-									id="username"
-									class="form-control"
-									v-model="profileData.username"
-									required
-									minlength="3"
-									:disabled="updateLoading || avatarUploading"
-								/>
-							</div>
-							<div class="mb-3">
-								<label for="fullName" class="form-label"
-									>Full Name</label
-								>
-								<input
-									type="text"
-									id="fullName"
-									class="form-control"
-									v-model="profileData.full_name"
-									:disabled="updateLoading || avatarUploading"
-								/>
-								<div class="form-text">Optional</div>
-							</div>
+				</div>
+			</div>
 
+			<!-- Other Settings Column -->
+			<div class="col-lg-5">
+				<!-- Security Card -->
+				<div class="card mb-4">
+					<div class="card-body">
+						<h5 class="card-title mb-3">Security</h5>
+
+						<!-- Change Password Form -->
+						<form
+							@submit.prevent="handleChangePassword"
+							class="mb-4"
+						>
+							<h6>Change Password</h6>
+							<div class="mb-3">
+								<label for="newPassword" class="form-label"
+									>New Password</label
+								>
+								<input
+									type="password"
+									id="newPassword"
+									class="form-control"
+									v-model="newPassword"
+									required
+									minlength="6"
+									placeholder="Enter new password (min 6 chars)"
+									:disabled="
+										passwordChangeLoading ||
+										updateLoading ||
+										avatarUploading
+									"
+								/>
+							</div>
+							<div class="mb-3">
+								<label for="confirmPassword" class="form-label"
+									>Confirm New Password</label
+								>
+								<input
+									type="password"
+									id="confirmPassword"
+									class="form-control"
+									v-model="confirmPassword"
+									required
+									placeholder="Confirm new password"
+									:disabled="
+										passwordChangeLoading ||
+										updateLoading ||
+										avatarUploading
+									"
+								/>
+							</div>
 							<button
 								type="submit"
-								class="btn btn-primary me-2"
+								class="btn btn-warning"
 								:disabled="
+									passwordChangeLoading ||
 									updateLoading ||
 									avatarUploading ||
-									!isProfileChanged
+									!newPassword ||
+									!confirmPassword
 								"
 							>
 								<span
-									v-if="updateLoading"
+									v-if="passwordChangeLoading"
 									class="spinner-border spinner-border-sm me-1"
 									role="status"
 									aria-hidden="true"
 								></span>
 								{{
-									updateLoading ? "Saving..." : "Save Changes"
+									passwordChangeLoading
+										? "Updating..."
+										: "Update Password"
 								}}
-							</button>
-							<button
-								type="button"
-								@click="resetForm"
-								class="btn btn-secondary me-2"
-								:disabled="
-									updateLoading ||
-									avatarUploading ||
-									!isProfileChanged
-								"
-							>
-								Cancel
 							</button>
 						</form>
 
-						<hr class="my-4" />
+						<hr />
 
-						<button
-							@click="handleLogout"
-							class="btn btn-danger"
-							:disabled="logoutLoading || avatarUploading"
-						>
-							<span
-								v-if="logoutLoading"
-								class="spinner-border spinner-border-sm me-1"
-								role="status"
-								aria-hidden="true"
-							></span>
-							Logout
-						</button>
+						<!-- Account Deletion -->
+						<div class="mt-3">
+							<h6>Delete Account</h6>
+							<p class="text-muted small">
+								Deleting your account is permanent and cannot be
+								undone. All your data, including profile
+								information and any submitted recipes, will be
+								lost.
+							</p>
+							<button class="btn btn-danger" disabled>
+								Delete My Account (Coming Soon)
+							</button>
+							<p class="text-muted small mt-2">
+								*Secure account deletion requires confirmation
+								and backend logic.*
+							</p>
+						</div>
+
+						<hr class="my-4" />
+						<!-- Logout Button -->
+						<div class="text-center">
+							<button
+								@click="handleLogout"
+								class="btn btn-outline-danger"
+								:disabled="
+									logoutLoading ||
+									avatarUploading ||
+									updateLoading ||
+									passwordChangeLoading
+								"
+							>
+								<span
+									v-if="logoutLoading"
+									class="spinner-border spinner-border-sm me-1"
+									role="status"
+									aria-hidden="true"
+								></span>
+								Logout
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- My Content Card -->
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title mb-3">My Content</h5>
+						<p class="text-muted small">
+							Manage your submitted recipes.
+						</p>
+						<div class="d-grid gap-2">
+							<router-link
+								to="/profile/my-recipes"
+								class="btn btn-outline-primary"
+							>
+								View My Recipes (Coming Soon)
+							</router-link>
+							<router-link
+								to="/profile/create-recipe"
+								class="btn btn-outline-success"
+							>
+								Create New Recipe (Coming Soon)
+							</router-link>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -179,6 +332,11 @@ const updateLoading = ref(false);
 const avatarUploading = ref(false);
 const uploadProgress = ref(0);
 
+// Refs for password change
+const newPassword = ref("");
+const confirmPassword = ref("");
+const passwordChangeLoading = ref(false);
+
 // Local reactive state for the form, initialized once profile loads
 const profileData = ref({ username: "", full_name: "", avatar_url: "" });
 
@@ -196,8 +354,8 @@ onMounted(() => {
 				};
 			}
 		},
-		{ immediate: true }
-	); // immediate: true to run on mount if profile is already loaded
+		{ immediate: true } // immediate: true to run on mount if profile is already loaded
+	);
 });
 
 // Computed property to check if form data differs from original profile
@@ -320,6 +478,39 @@ const handleUpdateProfile = async () => {
 	}
 };
 
+// Handle Password Change
+const handleChangePassword = async () => {
+	if (!newPassword.value || !confirmPassword.value) {
+		toast.error("Please enter and confirm your new password.");
+		return;
+	}
+	if (newPassword.value !== confirmPassword.value) {
+		toast.error("New passwords do not match.");
+		return;
+	}
+	if (newPassword.value.length < 6) {
+		toast.error("Password must be at least 6 characters long.");
+		return;
+	}
+
+	passwordChangeLoading.value = true;
+	try {
+		const { error } = await supabase.auth.updateUser({
+			password: newPassword.value,
+		});
+		if (error) throw error;
+
+		toast.success("Password updated successfully!");
+		newPassword.value = ""; // Clear fields
+		confirmPassword.value = "";
+	} catch (error) {
+		console.error("Password update error:", error.message);
+		toast.error(error.message || "Failed to update password");
+	} finally {
+		passwordChangeLoading.value = false;
+	}
+};
+
 const handleLogout = async () => {
 	logoutLoading.value = true;
 	try {
@@ -334,15 +525,13 @@ const handleLogout = async () => {
 		logoutLoading.value = false;
 	}
 };
-
-// Maybe add logic here later to update profile
 </script>
 
 <style scoped>
 /* Add specific profile styles if needed */
 .card {
-	max-width: 600px;
-	margin: auto;
+	/* max-width: 600px; remove this */
+	/* margin: auto; remove this */
 }
 .profile-avatar {
 	object-fit: cover; /* Ensure avatar covers the area nicely */
