@@ -8,10 +8,10 @@
     background-color: var(--bs-body-bg);
     padding: 2rem;
     border-radius: var(--bs-border-radius-lg);
-    box-shadow: var(--bs-box-shadow);
+    box-shadow: var(--bs-box-shadow-sm);
     max-width: 420px;
     width: 100%;
-    margin: 3rem auto; // Add some top/bottom margin too
+    margin: 5rem auto 3rem auto;
 }
 
 .authLogo {
