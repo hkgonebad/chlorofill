@@ -316,16 +316,6 @@
 						<i class="pi pi-search"></i>
 					</button>
 
-					<!-- Favorites Link -->
-					<router-link
-						:to="{ name: 'Favorites' }"
-						class="btn btn-sm btn-outline-secondary me-2 rounded-circle"
-						aria-label="View Favorites"
-						title="View Favorites"
-					>
-						<i class="pi pi-heart"></i>
-					</router-link>
-
 					<!-- User/Auth Button (Conditional) -->
 					<template v-if="authLoading">
 						<button
@@ -373,9 +363,8 @@ import { useRouter, RouterLink, useRoute } from "vue-router";
 import { getRandomCocktail } from "@/services/cocktailApi.js";
 import { getRandomMeal } from "@/services/mealApi.js";
 import { useTheme } from "@/composables/useTheme.js";
-import { Offcanvas } from "bootstrap";
 
-import cfLogoLight from "/img/cf-logo-light.png";
+// import cfLogoLight from "/img/cf-logo-light.png";
 import cfLogoDark from "/img/cf-logo-dark.png";
 import cfLogoAlt from "/img/cf-logo-alt.png";
 
