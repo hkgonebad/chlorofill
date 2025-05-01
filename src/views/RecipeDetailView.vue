@@ -324,24 +324,28 @@ useHead(
 		if (!details) {
 			// Default tags while loading or if error
 			return {
-				title: "Recipe Details - ChloroFill",
+				title: "Loading Recipe - ChloroFill",
 				meta: [
 					{
 						name: "description",
 						content: "Loading recipe details...",
 					},
-					// Add default OG/Twitter tags if desired
 					{
 						property: "og:title",
-						content: "Recipe Details - ChloroFill",
+						content: "Loading Recipe - ChloroFill",
 					},
 					{
 						property: "og:description",
 						content: "Loading recipe details...",
 					},
-					// maybe a default og:image?
-					// { property: 'og:image', content: '/img/default-og-image.png' },
-					{ name: "twitter:card", content: "summary" },
+					{
+						property: "og:image",
+						content: "/img/og-default.jpg",
+					},
+					{
+						name: "twitter:card",
+						content: "summary",
+					},
 				],
 			};
 		}
@@ -353,35 +357,25 @@ useHead(
 			: `Learn how to make ${details.strMeal}. Get the full recipe on ChloroFill.`;
 		const imageUrl = details.strMealThumb
 			? `${details.strMealThumb}/preview`
-			: "/img/default-og-image.png"; // Ensure you have this fallback image
-		const canonicalUrl = `${window.location.origin}/recipe/${details.idMeal}`; // Use the constructed canonical URL
+			: "/img/og-default.jpg";
+		const canonicalUrl = `${window.location.origin}/recipe/${details.idMeal}`;
 
 		return {
-			title: title,
+			title,
 			meta: [
-				// General Meta
-				{ name: "description", content: shareText.value },
-				// Open Graph
+				{ name: "description", content: description },
 				{ property: "og:title", content: title },
-				{ property: "og:description", content: shareText.value },
+				{ property: "og:description", content: description },
 				{ property: "og:image", content: imageUrl },
-				{ property: "og:url", content: pageUrl.value },
+				{ property: "og:url", content: canonicalUrl },
 				{ property: "og:type", content: "article" },
 				{ property: "og:site_name", content: "ChloroFill" },
-				// Twitter Card
 				{ name: "twitter:card", content: "summary_large_image" },
 				{ name: "twitter:title", content: title },
-				{ name: "twitter:description", content: shareText.value },
+				{ name: "twitter:description", content: description },
 				{ name: "twitter:image", content: imageUrl },
-				// Add other relevant meta tags like article:published_time if available
-				// { property: 'article:tag', content: details.strCategory },
-				// { property: 'article:tag', content: details.strArea },
-				// ... map tags if available details.strTags ? details.strTags.split(',') : [] ...
 			],
-			link: [
-				{ rel: "canonical", href: pageUrl.value },
-				// Add other link types like alternates if needed
-			],
+			link: [{ rel: "canonical", href: canonicalUrl }],
 		};
 	})
 );

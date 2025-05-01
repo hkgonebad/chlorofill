@@ -48,7 +48,7 @@ const routes = [
 				name: "Home",
 				component: HomeView,
 				meta: {
-					title: "Home",
+					title: defaultMetaTags.title,
 					metaTags: [
 						{
 							name: "description",
@@ -225,8 +225,9 @@ router.beforeEach((to, from, next) => {
 		.reverse()
 		.find((r) => r.meta && r.meta.metaTags);
 
+	// Set default title if none found
 	if (nearestWithTitle) {
-		document.title = `${nearestWithTitle.meta.title} - ChloroFill`;
+		document.title = nearestWithTitle.meta.title;
 	} else {
 		document.title = defaultMetaTags.title;
 	}
@@ -238,7 +239,34 @@ router.beforeEach((to, from, next) => {
 
 	// Add default meta tags if no specific ones are defined
 	if (!nearestWithMeta) {
-		defaultMetaTags.metaTags?.forEach((tagDef) => {
+		const tags = [
+			{
+				name: "description",
+				content: defaultMetaTags.description,
+			},
+			{
+				property: "og:title",
+				content: defaultMetaTags.title,
+			},
+			{
+				property: "og:description",
+				content: defaultMetaTags.description,
+			},
+			{
+				property: "og:image",
+				content: defaultMetaTags.image,
+			},
+			{
+				property: "og:url",
+				content: window.location.href,
+			},
+			{
+				name: "twitter:card",
+				content: "summary_large_image",
+			},
+		];
+
+		tags.forEach((tagDef) => {
 			const tag = document.createElement("meta");
 			Object.keys(tagDef).forEach((key) => {
 				tag.setAttribute(key, tagDef[key]);

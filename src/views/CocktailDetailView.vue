@@ -288,64 +288,58 @@ useHead(
 		if (!details) {
 			// Default tags while loading or if error
 			return {
-				title: "Cocktail Details - ChloroFill",
+				title: "Loading Cocktail - ChloroFill",
 				meta: [
 					{
 						name: "description",
 						content: "Loading cocktail details...",
 					},
-					// Add default OG/Twitter tags if desired
 					{
 						property: "og:title",
-						content: "Cocktail Details - ChloroFill",
+						content: "Loading Cocktail - ChloroFill",
 					},
 					{
 						property: "og:description",
 						content: "Loading cocktail details...",
 					},
-					// maybe a default og:image?
-					// { property: 'og:image', content: '/img/default-og-image.png' },
-					{ name: "twitter:card", content: "summary" },
+					{
+						property: "og:image",
+						content: "/img/og-default.jpg",
+					},
+					{
+						name: "twitter:card",
+						content: "summary",
+					},
 				],
 			};
 		}
 
 		// Dynamic tags based on fetched details
 		const title = `${details.strDrink} - ChloroFill Cocktail`;
-		// Use computed shareText
-		const description = shareText.value;
+		const description = details.strInstructions
+			? details.strInstructions.substring(0, 160) + "..."
+			: `Learn how to make the ${details.strDrink}. Get the full recipe on ChloroFill.`;
 		const imageUrl = details.strDrinkThumb
 			? `${details.strDrinkThumb}/preview`
-			: "/img/default-og-image.png"; // Ensure you have this fallback image
-		// Use computed pageUrl
-		const canonicalUrl = pageUrl.value;
+			: "/img/og-default.jpg";
+		const canonicalUrl = `${window.location.origin}/cocktail/${details.idDrink}`;
 
 		return {
-			title: title,
+			title,
 			meta: [
-				// General Meta
-				{ name: "description", content: description }, // Use computed description
-				// Open Graph
+				{ name: "description", content: description },
 				{ property: "og:title", content: title },
-				{ property: "og:description", content: description }, // Use computed description
+				{ property: "og:description", content: description },
 				{ property: "og:image", content: imageUrl },
-				{ property: "og:url", content: canonicalUrl }, // Use computed canonicalUrl
+				{ property: "og:url", content: canonicalUrl },
 				{ property: "og:type", content: "article" },
 				{ property: "og:site_name", content: "ChloroFill" },
-				// Twitter Card
 				{ name: "twitter:card", content: "summary_large_image" },
 				{ name: "twitter:title", content: title },
-				{ name: "twitter:description", content: description }, // Use computed description
+				{ name: "twitter:description", content: description },
 				{ name: "twitter:image", content: imageUrl },
-				// Add other relevant meta tags like article:tag for category/alcoholic type if desired
-				// { property: 'article:tag', content: details.strCategory },
-				// { property: 'article:tag', content: details.strAlcoholic },
-				// ... map tags if available details.strTags ? details.strTags.split(',') : [] ...
 			],
-			link: [
-				{ rel: "canonical", href: canonicalUrl }, // Use computed canonicalUrl
-				// Add other link types like alternates if needed
-			],
+			link: [{ rel: "canonical", href: canonicalUrl }],
 		};
 	})
 );
