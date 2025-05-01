@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html class="no-js" lang="">
+<html class="no-js" lang="en">
 
 <head>
 	<meta charset="utf-8" />
-	<!-- Title will be managed by Vue Router later -->
-	<title>ChloroFill 🍴🍹 - A Vue Recipe</title>
-	<meta name="description" content="Find delicious recipes  and cocktails  with ChloroFill 🍴🍹" />
+	<title><%- title %></title>
+	<meta name="description" content="<%- description %>" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="author" content="Harikrishna Nair" />
 
+	<!-- Favicons -->
 	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	<link rel="shortcut icon" href="/favicon.ico" />
@@ -16,10 +16,29 @@
 	<meta name="apple-mobile-web-app-title" content="ChloroFill" />
 	<link rel="manifest" href="/site.webmanifest" />
 
+	<!-- Open Graph / Social Media -->
+	<meta property="og:title" content="<%- title %>" />
+	<meta property="og:description" content="<%- description %>" />
+	<meta property="og:image" content="<%- ogImage %>" />
+	<meta property="og:url" content="<%- ogUrl %>" />
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="ChloroFill" />
+
+	<!-- Twitter Card -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="<%- title %>" />
+	<meta name="twitter:description" content="<%- description %>" />
+	<meta name="twitter:image" content="<%- ogImage %>" />
+
+	<!-- Preconnect to External Resources -->
+	<link rel="preconnect" href="https://www.themealdb.com" />
+	<link rel="preconnect" href="https://www.thecocktaildb.com" />
+	<link rel="preconnect" href="https://www.googletagmanager.com" />
+
 	<!-- Google Site Verification -->
 	<meta name="google-site-verification" content="J8XII2yJpqGYwWIrVml_CL7Y2bdRlT_zIKQVagmuq6U" />
 
-	<!-- Google tag (gtag.js) -->
+	<!-- Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-EXP4CKP0TN"></script>
 	<script>
 		window.dataLayer = window.dataLayer || [];

@@ -28,6 +28,15 @@ const ProfileView = () => import("../views/ProfileView.vue"); // Import ProfileV
 const LoginView = () => import("../views/LoginView.vue");
 const SignupView = () => import("../views/SignupView.vue");
 
+// Default meta tags that will be used as fallback
+const defaultMetaTags = {
+	title: "ChloroFill 🍴🍹 - A Vue Recipe",
+	description:
+		"Discover and explore delicious recipes and cocktails with ChloroFill 🍴🍹",
+	image: "https://chlorofill.vercel.app/img/og-default.jpg",
+	url: "https://chlorofill.vercel.app",
+};
+
 const routes = [
 	{
 		// Default Layout Routes (implicitly handled by App.vue)
@@ -38,7 +47,35 @@ const routes = [
 				path: "", // Use empty path for the root / home
 				name: "Home",
 				component: HomeView,
-				meta: { title: "Home" },
+				meta: {
+					title: "Home",
+					metaTags: [
+						{
+							name: "description",
+							content: defaultMetaTags.description,
+						},
+						{
+							property: "og:title",
+							content: defaultMetaTags.title,
+						},
+						{
+							property: "og:description",
+							content: defaultMetaTags.description,
+						},
+						{
+							property: "og:image",
+							content: defaultMetaTags.image,
+						},
+						{
+							property: "og:url",
+							content: defaultMetaTags.url,
+						},
+						{
+							name: "twitter:card",
+							content: "summary_large_image",
+						},
+					],
+				},
 			},
 			{
 				path: "about",
@@ -87,7 +124,10 @@ const routes = [
 				name: "RecipeDetail",
 				component: RecipeDetailView,
 				props: true,
-				meta: { title: "Recipe Details" },
+				meta: {
+					title: "Recipe Details",
+					dynamicMetaTags: true, // Flag to indicate this route needs dynamic meta tags
+				},
 			},
 			// Route for Favorites page
 			{
@@ -116,8 +156,11 @@ const routes = [
 				path: "/cocktail/:id",
 				name: "CocktailDetail",
 				component: CocktailDetailView,
-				props: true, // Pass id as prop
-				meta: { title: "Cocktail Details" },
+				props: true,
+				meta: {
+					title: "Cocktail Details",
+					dynamicMetaTags: true, // Flag to indicate this route needs dynamic meta tags
+				},
 			},
 			// Route for Browse view
 			{
@@ -167,6 +210,45 @@ const router = createRouter({
 		// always scroll to top
 		return { top: 0 };
 	},
+});
+
+// Navigation guard to update meta tags
+router.beforeEach((to, from, next) => {
+	// Update meta tags
+	const nearestWithTitle = to.matched
+		.slice()
+		.reverse()
+		.find((r) => r.meta && r.meta.title);
+
+	const nearestWithMeta = to.matched
+		.slice()
+		.reverse()
+		.find((r) => r.meta && r.meta.metaTags);
+
+	if (nearestWithTitle) {
+		document.title = `${nearestWithTitle.meta.title} - ChloroFill`;
+	} else {
+		document.title = defaultMetaTags.title;
+	}
+
+	// Remove any stale meta tags from the document head
+	Array.from(document.querySelectorAll("[data-vue-router-controlled]")).map(
+		(el) => el.parentNode.removeChild(el)
+	);
+
+	// Add default meta tags if no specific ones are defined
+	if (!nearestWithMeta) {
+		defaultMetaTags.metaTags?.forEach((tagDef) => {
+			const tag = document.createElement("meta");
+			Object.keys(tagDef).forEach((key) => {
+				tag.setAttribute(key, tagDef[key]);
+			});
+			tag.setAttribute("data-vue-router-controlled", "");
+			document.head.appendChild(tag);
+		});
+	}
+
+	next();
 });
 
 export default router;
