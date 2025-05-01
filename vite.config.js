@@ -18,7 +18,13 @@ export default defineConfig(({ mode }) => {
 	return {
 		base: base,
 		plugins: [
-			vue(),
+			vue({
+				template: {
+					transformAssetUrls: {
+						includeAbsolute: false,
+					},
+				},
+			}),
 			createHtmlPlugin({
 				minify: true,
 				inject: {
@@ -72,7 +78,7 @@ export default defineConfig(({ mode }) => {
 			rollupOptions: {
 				output: {
 					manualChunks: {
-						"vue-vendor": ["vue", "vue-router", "@vueuse/head"],
+						"vue-vendor": ["vue", "vue-router", "unhead"],
 						"recipe-vendor": [
 							"@/services/mealApi.js",
 							"@/services/cocktailApi.js",

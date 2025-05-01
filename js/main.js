@@ -14,7 +14,9 @@ import "../scss/main.scss";
 
 // Import the router
 import router from "../src/router"; // Path relative to main.js
-import { createHead } from "@vueuse/head";
+
+// Import and setup unhead with the correct import and configuration
+import { createHead } from "@unhead/vue/client";
 
 // Import Toast notifications
 import Toast from "vue-toastification";
@@ -22,10 +24,20 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
 const app = createApp(App);
-const head = createHead();
+
+console.log("[DEBUG] About to create head instance");
+// Create head with DOM update enabled
+const head = createHead({
+	// Ensure unhead can manipulate the DOM and override static tags
+	document: window.document,
+	domDelayFn: (fn) => setTimeout(fn, 10), // small delay to let Vue render first
+	// Key tags by name/property for better deduplication
+	tagKeyMap: { meta: ["name", "property", "charset"] },
+});
+console.log("[DEBUG] head instance:", head);
 
 app.use(router); // Tell Vue to use the router
-app.use(head); // Use @vueuse/head for meta management
+app.use(head); // Use unhead for meta management
 
 // Configure Toast
 const options = {

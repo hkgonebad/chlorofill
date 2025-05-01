@@ -26,7 +26,7 @@ import { RouterView, useRoute } from "vue-router";
 import { initializeTheme } from "@/composables/useTheme.js";
 import FullScreenSearchModal from "@/components/FullScreenSearchModal.vue";
 import { ref, provide, computed, readonly } from "vue";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import ShareModal from "@/components/ShareModal.vue";
 
 // Apply theme on initial load
@@ -79,11 +79,13 @@ useHead(
 	computed(() => {
 		const baseMeta = [
 			{
+				key: "description",
 				name: "description",
 				content:
 					"Discover delicious meal and cocktail recipes on ChloroFill. Browse by category, area, type, or search for your favorites.",
 			},
 			{
+				key: "viewport",
 				name: "viewport",
 				content: "width=device-width, initial-scale=1.0",
 			},
@@ -104,6 +106,8 @@ useHead(
 				amp: false,
 			},
 			meta: baseMeta,
+			// Set a lower priority than detail views
+			tagPriority: 1,
 		};
 	})
 );
