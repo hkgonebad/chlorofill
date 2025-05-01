@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { fileURLToPath, URL } from "node:url";
+import { createHtmlPlugin } from "vite-plugin-html";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -16,7 +17,22 @@ export default defineConfig(({ mode }) => {
 
 	return {
 		base: base,
-		plugins: [vue()],
+		plugins: [
+			vue(),
+			createHtmlPlugin({
+				minify: true,
+				inject: {
+					data: {
+						title: "ChloroFill 🍴🍹 - A Vue Recipe",
+						description:
+							"Discover and explore delicious recipes and cocktails with ChloroFill 🍴🍹",
+						ogImage:
+							"https://chlorofill.vercel.app/img/og-default.jpg",
+						ogUrl: "https://chlorofill.vercel.app",
+					},
+				},
+			}),
+		],
 		resolve: {
 			alias: {
 				"@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -53,8 +69,17 @@ export default defineConfig(({ mode }) => {
 			},
 		},
 		build: {
-			// Optional: configure build options if needed
-			// outDir: 'dist', // Default is 'dist'
+			rollupOptions: {
+				output: {
+					manualChunks: {
+						"vue-vendor": ["vue", "vue-router", "@vueuse/head"],
+						"recipe-vendor": [
+							"@/services/mealApi.js",
+							"@/services/cocktailApi.js",
+						],
+					},
+				},
+			},
 		},
 	};
 });
