@@ -96,6 +96,57 @@ useHead(
 			route?.meta?.title || "ChloroFill 🍴🍹 - A Vue Recipe";
 		const isHome = route?.name === "Home";
 
+		// Add Open Graph tags for the home page or the current route
+		const ogTags = [
+			{
+				key: "og:title",
+				property: "og:title",
+				content: routeTitle,
+			},
+			{
+				key: "og:description",
+				property: "og:description",
+				content:
+					"Discover delicious meal and cocktail recipes on ChloroFill. Browse by category, area, type, or search for your favorites.",
+			},
+			{
+				key: "og:url",
+				property: "og:url",
+				content: `https://chlorofill.vercel.app${route.path}`,
+			},
+			{
+				key: "og:image",
+				property: "og:image",
+				content: "https://chlorofill.vercel.app/img/og-default.jpg",
+			},
+			{
+				key: "og:type",
+				property: "og:type",
+				content: "website",
+			},
+			{
+				key: "twitter:card",
+				name: "twitter:card",
+				content: "summary_large_image",
+			},
+			{
+				key: "twitter:title",
+				name: "twitter:title",
+				content: routeTitle,
+			},
+			{
+				key: "twitter:description",
+				name: "twitter:description",
+				content:
+					"Discover delicious meal and cocktail recipes on ChloroFill. Browse by category, area, type, or search for your favorites.",
+			},
+			{
+				key: "twitter:image",
+				name: "twitter:image",
+				content: "https://chlorofill.vercel.app/img/og-default.jpg",
+			},
+		];
+
 		return {
 			title: isHome ? routeTitle : routeTitle,
 			titleTemplate: isHome
@@ -105,7 +156,7 @@ useHead(
 				lang: "en",
 				amp: false,
 			},
-			meta: baseMeta,
+			meta: [...baseMeta, ...ogTags],
 			// Set a lower priority than detail views
 			tagPriority: 1,
 		};

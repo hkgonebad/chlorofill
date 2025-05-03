@@ -167,63 +167,6 @@
 										My Favorites</router-link
 									>
 								</li>
-
-								<!-- Auth Links (Conditional) -->
-								<li
-									v-if="!user && !authLoading"
-									class="nav-item mt-3 pt-3 border-top"
-								>
-									<router-link
-										class="nav-link"
-										to="/login"
-										@click="closeOffcanvas"
-									>
-										<i class="pi pi-sign-in"></i>
-										Login</router-link
-									>
-								</li>
-								<li
-									v-if="!user && !authLoading"
-									class="nav-item"
-								>
-									<router-link
-										class="nav-link"
-										to="/signup"
-										@click="closeOffcanvas"
-									>
-										<i class="pi pi-user-plus"></i>
-										Sign Up</router-link
-									>
-								</li>
-
-								<!-- User Info & Logout (Conditional) -->
-								<li
-									v-if="user"
-									class="nav-item mt-3 pt-3 border-top"
-								>
-									<span class="nav-link disabled pe-none">
-										<i class="pi pi-user"></i>
-										Signed in as:
-										{{ profile?.username || user.email }}
-									</span>
-								</li>
-								<li v-if="user" class="nav-item">
-									<a
-										href="#"
-										@click.prevent="handleLogout"
-										class="nav-link text-danger"
-										:disabled="logoutLoading"
-									>
-										<span
-											v-if="logoutLoading"
-											class="spinner-border spinner-border-sm me-1"
-											role="status"
-											aria-hidden="true"
-										></span>
-										<i class="pi pi-sign-out"></i>
-										Logout</a
-									>
-								</li>
 							</ul>
 						</div>
 					</div>
@@ -249,9 +192,7 @@
 						"
 						title="Toggle light & dark theme"
 					>
-						<!-- Replace old icons with SVG -->
-						<!-- <i class="pi pi-moon d-none d-theme-dark"></i> -->
-						<!-- <i class="pi pi-sun d-theme-light"></i>   -->
+						<!-- SVG Icon -->
 						<svg
 							class="sun-and-moon"
 							aria-hidden="true"
@@ -315,42 +256,6 @@
 					>
 						<i class="pi pi-search"></i>
 					</button>
-
-					<!-- User/Auth Button (Conditional) -->
-					<template v-if="authLoading">
-						<button
-							class="btn btn-sm btn-outline-secondary rounded-circle"
-							disabled
-						>
-							<span
-								class="spinner-border spinner-border-sm"
-								role="status"
-								aria-hidden="true"
-							></span>
-						</button>
-					</template>
-					<template v-else-if="user">
-						<!-- Simple Logout for now, can be dropdown later -->
-						<button
-							@click="handleLogout"
-							class="btn btn-sm btn-outline-danger rounded-circle"
-							:disabled="logoutLoading"
-							title="Logout"
-							aria-label="Logout"
-						>
-							<i class="pi pi-sign-out"></i>
-						</button>
-					</template>
-					<template v-else>
-						<router-link
-							:to="{ name: 'Login' }"
-							class="btn btn-sm btn-outline-secondary rounded-circle"
-							title="Login or Sign Up"
-							aria-label="Login or Sign Up"
-						>
-							<i class="pi pi-user"></i>
-						</router-link>
-					</template>
 				</div>
 			</div>
 		</div>
@@ -358,7 +263,7 @@
 </template>
 
 <script setup>
-import { ref, inject, computed } from "vue";
+import { ref, inject } from "vue";
 import { useRouter, RouterLink, useRoute } from "vue-router";
 import { getRandomCocktail } from "@/services/cocktailApi.js";
 import { getRandomMeal } from "@/services/mealApi.js";
@@ -368,19 +273,13 @@ import { useTheme } from "@/composables/useTheme.js";
 import cfLogoDark from "/img/cf-logo-dark.png";
 import cfLogoAlt from "/img/cf-logo-alt.png";
 
-import { useAuthUser } from "@/composables/useAuthUser";
-import { supabase } from "@/supabaseClient";
-import { useToast } from "vue-toastification";
+// import { useToast } from "vue-toastification"; // Not needed anymore
 
 const router = useRouter();
 const route = useRoute();
 const loadingRandom = ref(false);
 const loadingRandomCocktail = ref(false);
-const toast = useToast();
-
-// Auth state
-const { user, profile, loading: authLoading } = useAuthUser();
-const logoutLoading = ref(false);
+// const toast = useToast(); // Not needed anymore
 
 // Inject the search modal toggle function
 const toggleSearchModal = inject("toggleSearchModal", () => {
@@ -450,22 +349,5 @@ const goToRandomCocktail = async () => {
 // Function to call the injected toggle
 const openSearchModal = () => {
 	toggleSearchModal();
-};
-
-// Logout Handler
-const handleLogout = async () => {
-	logoutLoading.value = true;
-	try {
-		const { error } = await supabase.auth.signOut();
-		if (error) throw error;
-		toast.info("You have been logged out.");
-		closeOffcanvas(); // Close offcanvas if open
-		router.push({ name: "Home" }); // Redirect to home after logout
-	} catch (error) {
-		console.error("Logout error:", error.message);
-		toast.error(error.message || "Failed to log out.");
-	} finally {
-		logoutLoading.value = false;
-	}
 };
 </script>

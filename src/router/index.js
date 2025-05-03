@@ -21,12 +21,6 @@ const CocktailListView = () => import("../views/CocktailListView.vue"); // <-- I
 const CocktailDetailView = () => import("../views/CocktailDetailView.vue"); // <-- Import CocktailDetailView
 const BrowseView = () => import("../views/BrowseView.vue"); // <-- Import BrowseView
 const NotFoundView = () => import("../views/NotFoundView.vue"); // <-- Import NotFoundView
-const ProfileView = () => import("../views/ProfileView.vue"); // Import ProfileView
-
-// New imports for Auth
-// const AuthLayout = () => import("../layouts/AuthLayout.vue"); // No longer needed here
-const LoginView = () => import("../views/LoginView.vue");
-const SignupView = () => import("../views/SignupView.vue");
 
 // Default meta tags that will be used as fallback
 const defaultMetaTags = {
@@ -169,27 +163,7 @@ const routes = [
 				component: BrowseView,
 				meta: { title: "Browse All" },
 			},
-			// Add Profile route under default layout
-			{
-				path: "profile", // Define the path for the profile page
-				name: "Profile",
-				component: ProfileView,
-				meta: { title: "My Profile", requiresAuth: true }, // Add requiresAuth meta if needed later
-			},
 		],
-	},
-	{
-		// Auth Layout Routes
-		path: "/login",
-		name: "Login",
-		component: LoginView,
-		meta: { title: "Login", layout: "AuthLayout" }, // Add layout meta
-	},
-	{
-		path: "/signup",
-		name: "Signup",
-		component: SignupView,
-		meta: { title: "Sign Up", layout: "AuthLayout" }, // Add layout meta
 	},
 
 	// Catch-all 404 route (should be last)

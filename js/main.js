@@ -59,3 +59,10 @@ const options = {
 app.use(Toast, options);
 
 app.mount("#app");
+
+// After the app is mounted, wait a short time to ensure everything is rendered
+// before dispatching the event for prerendering
+setTimeout(() => {
+	document.dispatchEvent(new Event("app.rendered"));
+	console.log("[PRERENDER] Dispatched app.rendered event");
+}, 1000); // Adjust timeout as needed
