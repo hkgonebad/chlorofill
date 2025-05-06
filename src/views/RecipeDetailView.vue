@@ -214,7 +214,7 @@ import { useFavorites } from "../composables/useFavorites";
 import BackButton from "@/components/BackButton.vue";
 import { getAmazonSearchUrl } from "@/utils/affiliateLinks.js";
 import { getMealDetailsById } from "@/services/mealApi.js";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 import ShareButtons from "../components/ShareButtons.vue";
 
 const route = useRoute();
@@ -317,75 +317,65 @@ const pageUrl = computed(() => {
 		: window.location.href;
 });
 
-// --- Meta Tags using @vueuse/head ---
-useHead(
-	computed(() => {
-		const details = recipeDetails.value;
-		if (!details) {
-			// Default tags while loading or if error
-			return {
-				title: "Recipe Details - ChloroFill",
-				meta: [
-					{
-						name: "description",
-						content: "Loading recipe details...",
-					},
-					// Add default OG/Twitter tags if desired
-					{
-						property: "og:title",
-						content: "Recipe Details - ChloroFill",
-					},
-					{
-						property: "og:description",
-						content: "Loading recipe details...",
-					},
-					// maybe a default og:image?
-					// { property: 'og:image', content: '/img/default-og-image.png' },
-					{ name: "twitter:card", content: "summary" },
-				],
-			};
-		}
-
-		// Dynamic tags based on fetched details
-		const title = `${details.strMeal} - ChloroFill Recipe`;
-		const description = details.strInstructions
-			? details.strInstructions.substring(0, 160) + "..."
-			: `Learn how to make ${details.strMeal}. Get the full recipe on ChloroFill.`;
-		const imageUrl = details.strMealThumb
-			? `${details.strMealThumb}/preview`
-			: "/img/default-og-image.png"; // Ensure you have this fallback image
-		const canonicalUrl = `${window.location.origin}/recipe/${details.idMeal}`; // Use the constructed canonical URL
-
+// Create a computed property for meta tags based on recipe details
+const metaTags = computed(() => {
+	if (!recipeDetails.value)
 		return {
-			title: title,
-			meta: [
-				// General Meta
-				{ name: "description", content: shareText.value },
-				// Open Graph
-				{ property: "og:title", content: title },
-				{ property: "og:description", content: shareText.value },
-				{ property: "og:image", content: imageUrl },
-				{ property: "og:url", content: pageUrl.value },
-				{ property: "og:type", content: "article" },
-				{ property: "og:site_name", content: "ChloroFill" },
-				// Twitter Card
-				{ name: "twitter:card", content: "summary_large_image" },
-				{ name: "twitter:title", content: title },
-				{ name: "twitter:description", content: shareText.value },
-				{ name: "twitter:image", content: imageUrl },
-				// Add other relevant meta tags like article:published_time if available
-				// { property: 'article:tag', content: details.strCategory },
-				// { property: 'article:tag', content: details.strArea },
-				// ... map tags if available details.strTags ? details.strTags.split(',') : [] ...
-			],
-			link: [
-				{ rel: "canonical", href: pageUrl.value },
-				// Add other link types like alternates if needed
-			],
+			title: "Recipe Detail - ChloroFill 🍴🍹",
+			meta: [],
 		};
-	})
-);
-// --- End Meta Tags ---
+
+	const details = recipeDetails.value;
+	const title = `${details.strMeal} - ChloroFill Recipe`;
+	const description = details.strInstructions
+		? `${details.strMeal} recipe - ${details.strInstructions.substring(
+				0,
+				120
+		  )}...`
+		: `Learn how to make ${details.strMeal}. Get the full recipe on ChloroFill.`;
+	const image = details.strMealThumb;
+	const url = window.location.href;
+
+	return {
+		title,
+		meta: [
+			{ key: "description", name: "description", content: description },
+			{ key: "og:title", property: "og:title", content: title },
+			{
+				key: "og:description",
+				property: "og:description",
+				content: description,
+			},
+			{ key: "og:image", property: "og:image", content: image },
+			{ key: "og:url", property: "og:url", content: url },
+			{ key: "og:type", property: "og:type", content: "article" },
+			{
+				key: "og:site_name",
+				property: "og:site_name",
+				content: "ChloroFill",
+			},
+			{
+				key: "twitter:card",
+				name: "twitter:card",
+				content: "summary_large_image",
+			},
+			{ key: "twitter:title", name: "twitter:title", content: title },
+			{
+				key: "twitter:description",
+				name: "twitter:description",
+				content: description,
+			},
+			{ key: "twitter:image", name: "twitter:image", content: image },
+		],
+		// Set a high priority to ensure these tags override static ones
+		tagPriority: 10,
+	};
+});
+
+// Use useHead at the setup level with the computed property
+useHead(metaTags);
+
+// No need for the updateMetaTags function or watcher anymore
 
 // Update share handler to call the injected function
 const openShareModal = () => {

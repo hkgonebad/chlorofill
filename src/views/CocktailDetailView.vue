@@ -184,7 +184,7 @@ import BackButton from "@/components/BackButton.vue";
 import { getAmazonSearchUrl } from "@/utils/affiliateLinks.js";
 import { useCocktailFavorites } from "@/composables/useCocktailFavorites.js";
 import ShareButtons from "@/components/ShareButtons.vue";
-import { useHead } from "@vueuse/head";
+import { useHead } from "@unhead/vue";
 
 const props = defineProps({
 	id: {
@@ -281,75 +281,63 @@ const pageUrl = computed(() => {
 		: window.location.href;
 });
 
-// --- Meta Tags using @vueuse/head ---
-useHead(
-	computed(() => {
-		const details = cocktail.value;
-		if (!details) {
-			// Default tags while loading or if error
-			return {
-				title: "Cocktail Details - ChloroFill",
-				meta: [
-					{
-						name: "description",
-						content: "Loading cocktail details...",
-					},
-					// Add default OG/Twitter tags if desired
-					{
-						property: "og:title",
-						content: "Cocktail Details - ChloroFill",
-					},
-					{
-						property: "og:description",
-						content: "Loading cocktail details...",
-					},
-					// maybe a default og:image?
-					// { property: 'og:image', content: '/img/default-og-image.png' },
-					{ name: "twitter:card", content: "summary" },
-				],
-			};
-		}
-
-		// Dynamic tags based on fetched details
-		const title = `${details.strDrink} - ChloroFill Cocktail`;
-		// Use computed shareText
-		const description = shareText.value;
-		const imageUrl = details.strDrinkThumb
-			? `${details.strDrinkThumb}/preview`
-			: "/img/default-og-image.png"; // Ensure you have this fallback image
-		// Use computed pageUrl
-		const canonicalUrl = pageUrl.value;
-
+// Create a computed property for meta tags based on cocktail details
+const metaTags = computed(() => {
+	if (!cocktail.value)
 		return {
-			title: title,
-			meta: [
-				// General Meta
-				{ name: "description", content: description }, // Use computed description
-				// Open Graph
-				{ property: "og:title", content: title },
-				{ property: "og:description", content: description }, // Use computed description
-				{ property: "og:image", content: imageUrl },
-				{ property: "og:url", content: canonicalUrl }, // Use computed canonicalUrl
-				{ property: "og:type", content: "article" },
-				{ property: "og:site_name", content: "ChloroFill" },
-				// Twitter Card
-				{ name: "twitter:card", content: "summary_large_image" },
-				{ name: "twitter:title", content: title },
-				{ name: "twitter:description", content: description }, // Use computed description
-				{ name: "twitter:image", content: imageUrl },
-				// Add other relevant meta tags like article:tag for category/alcoholic type if desired
-				// { property: 'article:tag', content: details.strCategory },
-				// { property: 'article:tag', content: details.strAlcoholic },
-				// ... map tags if available details.strTags ? details.strTags.split(',') : [] ...
-			],
-			link: [
-				{ rel: "canonical", href: canonicalUrl }, // Use computed canonicalUrl
-				// Add other link types like alternates if needed
-			],
+			title: "Cocktail Detail - ChloroFill 🍴🍹",
+			meta: [],
 		};
-	})
-);
-// --- End Meta Tags ---
+
+	const details = cocktail.value;
+	const title = `${details.strDrink} - ChloroFill Cocktail`;
+	const description = details.strInstructions
+		? `${details.strDrink} cocktail - ${details.strInstructions.substring(
+				0,
+				120
+		  )}...`
+		: `Learn how to make ${details.strDrink}. Get the full cocktail recipe on ChloroFill.`;
+	const image = details.strDrinkThumb;
+	const url = window.location.href;
+
+	return {
+		title,
+		meta: [
+			{ key: "description", name: "description", content: description },
+			{ key: "og:title", property: "og:title", content: title },
+			{
+				key: "og:description",
+				property: "og:description",
+				content: description,
+			},
+			{ key: "og:image", property: "og:image", content: image },
+			{ key: "og:url", property: "og:url", content: url },
+			{ key: "og:type", property: "og:type", content: "article" },
+			{
+				key: "og:site_name",
+				property: "og:site_name",
+				content: "ChloroFill",
+			},
+			{
+				key: "twitter:card",
+				name: "twitter:card",
+				content: "summary_large_image",
+			},
+			{ key: "twitter:title", name: "twitter:title", content: title },
+			{
+				key: "twitter:description",
+				name: "twitter:description",
+				content: description,
+			},
+			{ key: "twitter:image", name: "twitter:image", content: image },
+		],
+		// Set a high priority to ensure these tags override static ones
+		tagPriority: 10,
+	};
+});
+
+// Use useHead at the setup level with the computed property
+useHead(metaTags);
 
 // Inject the global openShareModal function
 const openShareModalFunc = inject("openShareModal");

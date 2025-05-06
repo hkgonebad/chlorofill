@@ -1,6 +1,15 @@
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { fileURLToPath, URL } from "node:url";
+import { createHtmlPlugin } from "vite-plugin-html";
+import path from "path";
+
+// Only load the prerender plugin during build to avoid dev issues
+const isProd = process.env.NODE_ENV === "production";
+let vitePrerender = null;
+if (isProd) {
+	vitePrerender = require("vite-plugin-prerender").default;
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -14,9 +23,62 @@ export default defineConfig(({ mode }) => {
 	// For Vercel deployment (or standard root deployment), base should usually be '/'
 	const base = "/";
 
+	const plugins = [
+		vue({
+			template: {
+				transformAssetUrls: {
+					includeAbsolute: false,
+				},
+			},
+		}),
+		createHtmlPlugin({
+			minify: true,
+			inject: {
+				data: {
+					title: "ChloroFill 🍴🍹 - A Vue Recipe",
+					description:
+						"Discover and explore delicious recipes and cocktails with ChloroFill 🍴🍹",
+					ogImage: "https://chlorofill.vercel.app/img/og-default.jpg",
+					ogUrl: "https://chlorofill.vercel.app",
+				},
+			},
+		}),
+	];
+
+	// Only add prerender in production builds
+	if (isProd && vitePrerender) {
+		plugins.push(
+			vitePrerender({
+				staticDir: path.resolve(__dirname, "dist"),
+				// Add routes that need dynamic meta tags
+				routes: [
+					"/",
+					"/recipe/52775", // Example recipe ID
+					"/cocktail/14588", // Example cocktail ID
+					// You should generate this list dynamically based on your data
+					// or include your most popular recipes/cocktails
+				],
+				// This will handle waiting for your app to fully render
+				renderAfterDocumentEvent: "app.rendered",
+				postProcess(renderedRoute) {
+					// Keep the original route to avoid redirect issues
+					renderedRoute.route = renderedRoute.originalRoute;
+					return renderedRoute;
+				},
+				minify: {
+					collapseBooleanAttributes: true,
+					collapseWhitespace: true,
+					decodeEntities: true,
+					keepClosingSlash: true,
+					sortAttributes: true,
+				},
+			})
+		);
+	}
+
 	return {
 		base: base,
-		plugins: [vue()],
+		plugins: plugins,
 		resolve: {
 			alias: {
 				"@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -53,8 +115,17 @@ export default defineConfig(({ mode }) => {
 			},
 		},
 		build: {
-			// Optional: configure build options if needed
-			// outDir: 'dist', // Default is 'dist'
+			rollupOptions: {
+				output: {
+					manualChunks: {
+						"vue-vendor": ["vue", "vue-router", "unhead"],
+						"recipe-vendor": [
+							"@/services/mealApi.js",
+							"@/services/cocktailApi.js",
+						],
+					},
+				},
+			},
 		},
 	};
 });
