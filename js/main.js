@@ -25,7 +25,7 @@ import "vue-toastification/dist/index.css";
 
 const app = createApp(App);
 
-console.log("[DEBUG] About to create head instance");
+// console.log("[DEBUG] About to create head instance");
 // Create head with DOM update enabled
 const head = createHead({
 	// Ensure unhead can manipulate the DOM and override static tags
@@ -34,7 +34,7 @@ const head = createHead({
 	// Key tags by name/property for better deduplication
 	tagKeyMap: { meta: ["name", "property", "charset"] },
 });
-console.log("[DEBUG] head instance:", head);
+// console.log("[DEBUG] head instance:", head);
 
 app.use(router); // Tell Vue to use the router
 app.use(head); // Use unhead for meta management
